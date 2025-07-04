@@ -19,6 +19,9 @@
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
+              "src/favicon.ico",
+              "src/index.php",
+              "src/assets",
               {
                 "glob": "**/*",
                 "input": "public"
@@ -75,12 +78,17 @@
               "zone.js/testing"
             ],
             "tsConfig": "tsconfig.spec.json",
+
             "assets": [
+              "src/favicon.ico",
+              "src/index.php",
+              "src/assets",
               {
                 "glob": "**/*",
-                "input": "public"
+                "output": "/assets/"
               }
             ],
+
             "styles": [
               "src/styles.css"
             ]
@@ -88,5 +96,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }
