@@ -8,7 +8,7 @@ import { Section4 } from '../../page1E/section4/section4';
 import { Contact } from '../../public/component/contact/contact';
 @Component({
   selector: 'app-accueil',
-  imports: [Header, Section1, Footer, Section2,Section3, Section4, Contact],
+  imports: [Header , Section1 , Footer , Section2 , Section3 , Section4 , Contact],
   templateUrl: './accueil.html',
   styleUrl: './accueil.css'
 })
