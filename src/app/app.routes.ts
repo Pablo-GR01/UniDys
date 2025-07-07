@@ -1,11 +1,12 @@
 import { Routes } from '@angular/router';
 import { connexion } from '../../page/connexion/connexion';
-// import { Accueil } from './accueil/accueil';
-// import { Inscription } from './inscription/inscription';
-
+import { inscription } from '../../page/inscription/inscription';
+import { accueil } from '../../page/accueil/accueil';
 export const routes: Routes = [
-  { path: '', component: connexion },
-//   { path: 'accueil', component: Accueil },
-//   { path: 'connexion', redirectTo: '', pathMatch: 'full' },  // redirection automatique
-//   { path: 'inscription', component: Inscription }
+  { path: 'connexion', component: connexion },
+  { path: '', redirectTo: 'connexion', pathMatch: 'full' },
+  { path: 'inscription', component: inscription },
+  { path: 'accueil', component: accueil}
 ];
+
+  

@@ -1,0 +1,57 @@
+<nav class="relative">
+  <!-- Ligne avec image, texte et flèche -->
+  <div class="flex items-center justify-between gap-4">
+
+    <!-- Image utilisateur -->
+    <img
+      src="assets/PP1.png"
+      alt="Utilisateur"
+      class="w-10 h-10 ml-426 -mt-11 rounded-full object-cover border-2 border-[#8002FF] shadow"
+    />
+
+     <!-- Lien "Mon Espace" -->
+    <a
+      routerLink="/mon-espace"
+      class="absolute ml-438 -mt-11 text-white font-bold text-lg hover:text-[#8002FF] transition duration-300"
+    >
+      Mon Espace
+    </a>
+
+    <!-- Flèche -->
+    <button
+      (click)="toggleMenu()"
+      aria-label="Ouvrir menu déroulant"
+      class="text-white hover:text-violet-400 transition duration-300"
+    >
+      <img
+        src="assets/flêche.png"
+        class="absolute -ml-8 -mt-8 w-5 h-5 transition-transform duration-300"
+        [ngClass]="{ 'rotate-180': isOpen }"
+      />
+
+    </button>
+
+    <!-- Menu déroulant -->
+    <ul
+      class="absolute ml-438 top-full  mt-2  bg-[#0F0E2E] rounded-md shadow-lg overflow-hidden transition-all duration-300 z-50"
+      [style.maxHeight]="isOpen ? '500px' : '0'"
+    >
+      <li class="px-4 py-2 text-white font-semibold hover:bg-[#8002FF] transition cursor-pointer border border-[#8002FF]">
+        <a routerLink="/" class="block w-full">Informations</a>
+      </li>
+      <a routerLink="/connexion" class="block w-full"><li class="px-4 py-2 text-white font-semibold hover:bg-[#8002FF] transition cursor-pointer border-[#8002FF] ">
+        Déconnexion
+      </li></a>
+    </ul>
+
+  </div>
+</nav>
+
+
+
+
+
+
+
+
+

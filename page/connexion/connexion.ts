@@ -1,13 +1,27 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common'; // nécessaire pour *ngIf
 import { RouterModule } from '@angular/router';
-//import { Logo } from "../logo/logo";
+import { Logo } from "../../public/component/logo/logo"; // pour routerLink
 
 @Component({
   selector: 'app-connexion',
   standalone: true,
-  imports: [CommonModule,RouterModule],  // Pour ngIf, ngFor etc.
+  imports: [CommonModule, RouterModule, Logo],
   templateUrl: './connexion.html',
-  styleUrls: ['./connexion.css']
 })
-export class connexion {}
+export class connexion{
+  actif: 'prof' | 'eleve' = 'eleve';
+
+  activerProf() {
+    this.actif = 'prof';
+  }
+
+  activerEleve() {
+    this.actif = 'eleve';
+  }
+
+  valider() {
+    console.log('Validation en tant que:', this.actif);
+    // Ici, tu peux ajouter la logique pour traiter le formulaire (ex: envoi API)
+  }
+}
