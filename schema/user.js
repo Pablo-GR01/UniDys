@@ -5,8 +5,10 @@ const utilisateurSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  mdp: { type: String, required: true },
-  role: { type: String, default: 'user' }
+  password: { type: String, required: true },
+  role: { type: String, enum:[ "eleve", "prof"]},
+  updatedAt: {type: String, required: true},
+  createdAt: {type: String, required: true},
 });
 
 const Utilisateur = mongoose.model('Utilisateur', utilisateurSchema);
