@@ -1,11 +1,11 @@
+<app-icon></app-icon>
 <app-logo></app-logo>
 
 <div class="min-h-screen flex items-center justify-center px-4 -mt-10">
   <div class="bg-[#0a0a1a] rounded-2xl p-8 w-full max-w-md shadow-xl border border-violet-700 relative">
-    
 
-    <!-- Connexion -->
-    <h2 class="text-center text-xl font-bold text-[#b100ff] mb-6 mt-6">S'Inscrire</h2>
+    <!-- Inscription -->
+    <h2 class="text-center text-xl font-bold text-[#b100ff] mb-6 mt-6">S'inscrire</h2>
 
     <!-- Choix profil -->
     <div class="flex justify-center gap-4 mb-4">
@@ -33,21 +33,26 @@
 
     <!-- Formulaire -->
     <form (ngSubmit)="valider()">
-      <!-- Champ NOM (prof uniquement) -->
-      <div *ngIf="actif === 'prof'" class="mb-4">
+
+      <!-- Nom -->
+      <div *ngIf="actif === 'prof' || actif === 'eleve'" class="mb-4">
         <label class="text-white text-sm">Nom</label>
         <input
           type="text"
           class="w-full mt-1 px-3 py-2 bg-[#14142b] text-white rounded-md outline-none"
           placeholder="Votre nom"
+          required
         />
       </div>
-      <div *ngIf="actif === 'eleve'" class="mb-4">
-        <label class="text-white text-sm">Nom</label>
+
+      <!-- Prénom -->
+      <div *ngIf="actif === 'prof' || actif === 'eleve'" class="mb-4">
+        <label class="text-white text-sm">Prénom</label>
         <input
           type="text"
           class="w-full mt-1 px-3 py-2 bg-[#14142b] text-white rounded-md outline-none"
-          placeholder="Votre nom"
+          placeholder="Votre prénom"
+          required
         />
       </div>
 
@@ -55,11 +60,12 @@
       <div class="mb-4">
         <label class="text-white text-sm">Adresse mail</label>
         <div class="flex items-center bg-[#14142b] px-3 py-2 rounded-md mt-1">
-          <span class="text-white mr-2">📧</span>
+          <i class="fa-solid fa-envelope text-white mr-2"></i>
           <input
             type="email"
             class="bg-transparent outline-none text-white w-full"
             placeholder="Adresse mail"
+            required
           />
         </div>
       </div>
@@ -68,11 +74,12 @@
       <div class="mb-4">
         <label class="text-white text-sm">Mot de passe</label>
         <div class="flex items-center bg-[#14142b] px-3 py-2 rounded-md mt-1">
-          <span class="text-white mr-2">🔒</span>
+          <i class="fa-solid fa-lock text-white mr-2"></i>
           <input
             type="password"
             class="bg-transparent outline-none text-white w-full"
             placeholder="Mot de passe"
+            required
           />
         </div>
       </div>
@@ -117,17 +124,18 @@
       </div>
 
       <!-- Valider -->
-      <a routerLink="/accueil"><button
+      <button
         type="submit"
+        routerLink="/accueil"
         class="bg-[#8002FF] text-white w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255]"
       >
         Valider
-      </button></a>
+      </button>
     </form>
 
-    <!-- Lien créer un compte -->
+    <!-- Lien vers connexion -->
     <p class="text-center text-xs text-white mt-4">
-      <a routerLink="/connexion" class="underline hover:text-[#8002FF]">Compte Déjà Créer</a>
+      <a routerLink="/connexion" class="underline hover:text-[#8002FF]">Compte déjà créé</a>
     </p>
   </div>
 </div>

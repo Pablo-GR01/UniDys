@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common'; // nécessaire pour *ngIf
 import { RouterModule } from '@angular/router';
 import { Logo } from "../../public/component/logo/logo"; // pour routerLink
+import { Icon } from "../../public/component/icon/icon"
 
 @Component({
   selector: 'app-inscription',
   standalone: true,
-  imports: [CommonModule, RouterModule, Logo],
+  imports: [CommonModule, RouterModule, Logo, Icon],
   templateUrl: './inscription.html',
 })
 

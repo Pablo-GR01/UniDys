@@ -1,9 +1,9 @@
+<app-icon></app-icon>
 <app-logo></app-logo>
 
 <div class="min-h-screen flex items-center justify-center px-4 -mt-10">
   <div class="bg-[#0a0a1a] rounded-2xl p-8 w-full max-w-md shadow-xl border border-violet-700 relative">
     
-
     <!-- Connexion -->
     <h2 class="text-center text-xl font-bold text-[#b100ff] mb-6 mt-6">Connexion</h2>
 
@@ -34,16 +34,16 @@
     <!-- Formulaire -->
     <form (ngSubmit)="valider()">
       
-
       <!-- Mail -->
       <div class="mb-4">
         <label class="text-white text-sm">Adresse mail</label>
         <div class="flex items-center bg-[#14142b] px-3 py-2 rounded-md mt-1">
-          <span class="text-white mr-2">📧</span>
+          <i class="fa-solid fa-envelope text-white mr-2"></i>
           <input
             type="email"
             class="bg-transparent outline-none text-white w-full"
             placeholder="Adresse mail"
+            required
           />
         </div>
       </div>
@@ -52,11 +52,12 @@
       <div class="mb-4">
         <label class="text-white text-sm">Mot de passe</label>
         <div class="flex items-center bg-[#14142b] px-3 py-2 rounded-md mt-1">
-          <span class="text-white mr-2">🔒</span>
+          <i class="fa-solid fa-lock text-white mr-2"></i>
           <input
             type="password"
             class="bg-transparent outline-none text-white w-full"
             placeholder="Mot de passe"
+            required
           />
         </div>
       </div>
@@ -101,12 +102,13 @@
       </div>
 
       <!-- Valider -->
-      <a routerLink="/accueil"><button
+      <button
         type="submit"
+        routerLink="/accueil"
         class="bg-[#8002FF] text-white w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255]"
       >
         Valider
-      </button></a>
+      </button>
     </form>
 
     <!-- Lien créer un compte -->
