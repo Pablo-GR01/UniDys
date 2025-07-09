@@ -35,10 +35,12 @@
     <form (ngSubmit)="valider()">
 
       <!-- Nom -->
-      <div *ngIf="actif === 'prof' || actif === 'eleve'" class="mb-4">
+      <div class="mb-4">
         <label class="text-white text-sm">Nom</label>
         <input
           type="text"
+          [(ngModel)]="inscriptionData.nom"
+          name="nom"
           class="w-full mt-1 px-3 py-2 bg-[#14142b] text-white rounded-md outline-none"
           placeholder="Votre nom"
           required
@@ -46,10 +48,12 @@
       </div>
 
       <!-- Prénom -->
-      <div *ngIf="actif === 'prof' || actif === 'eleve'" class="mb-4">
+      <div class="mb-4">
         <label class="text-white text-sm">Prénom</label>
         <input
           type="text"
+          [(ngModel)]="inscriptionData.prenom"
+          name="prenom"
           class="w-full mt-1 px-3 py-2 bg-[#14142b] text-white rounded-md outline-none"
           placeholder="Votre prénom"
           required
@@ -63,6 +67,8 @@
           <i class="fa-solid fa-envelope text-white mr-2"></i>
           <input
             type="email"
+            [(ngModel)]="inscriptionData.email"
+            name="email"
             class="bg-transparent outline-none text-white w-full"
             placeholder="Adresse mail"
             required
@@ -77,6 +83,8 @@
           <i class="fa-solid fa-lock text-white mr-2"></i>
           <input
             type="password"
+            [(ngModel)]="inscriptionData.password"
+            name="password"
             class="bg-transparent outline-none text-white w-full"
             placeholder="Mot de passe"
             required
@@ -86,11 +94,14 @@
 
       <!-- Code (prof uniquement) -->
       <div *ngIf="actif === 'prof'" class="mb-4">
-        <label class="text-white text-sm">Code</label>
+        <label class="text-white text-sm">Code professeur</label>
         <input
-          type="text"
+          type="password"
+          [(ngModel)]="inscriptionData.codeProf"
+          name="codeProf"
           class="w-full mt-1 px-3 py-2 bg-[#14142b] text-white rounded-md outline-none"
           placeholder="Code professeur"
+          required
         />
       </div>
 
@@ -127,7 +138,8 @@
       <button
         type="submit"
         routerLink="/accueil"
-        class="bg-[#8002FF] text-white w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255]"
+        [disabled]="!formulaireValide()"
+        class="bg-[#8002FF] text-white w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255] disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Valider
       </button>
