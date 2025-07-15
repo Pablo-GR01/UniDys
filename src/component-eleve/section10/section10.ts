@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { Icon } from '../../public/component/icon/icon'
+import { Icon } from '../../../public/component/icon/icon';
+
 
 @Component({
   selector: 'app-section10',

@@ -1,11 +1,10 @@
 import { Routes } from '@angular/router';
-import { connexion } from '../../page/connexion/connexion';
-import { inscription } from '../../page/inscription/inscription';
-import { accueil } from '../../page/accueil/accueil';
-import { Cours } from '../../page/cours/cours'
-import { Apropos } from '../../page/apropos/apropos'
-import { Monespace } from '../../page/monespace/monespace'
-
+import { connexion } from '../page/connexion/connexion';
+import { inscription } from '../page/inscription/inscription';
+import { accueil } from '../page/accueil/accueil';
+import { Cours } from '../page/cours/cours'
+import { Apropos } from '../page/apropos/apropos'
+import { Monespace } from '../page/monespace/monespace'
 
 
 
@@ -19,4 +18,3 @@ export const routes: Routes = [
   { path: 'monespace', component: Monespace}
 ];
 
-  
