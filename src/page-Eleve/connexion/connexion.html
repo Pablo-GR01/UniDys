@@ -44,6 +44,8 @@
             class="bg-transparent outline-none text-white w-full"
             placeholder="Adresse mail"
             required
+            name="email"
+            [(ngModel)]="connexionData.email"
           />
         </div>
       </div>
@@ -58,6 +60,8 @@
             class="bg-transparent outline-none text-white w-full"
             placeholder="Mot de passe"
             required
+            name="password"
+            [(ngModel)]="connexionData.password"
           />
         </div>
       </div>
@@ -69,8 +73,11 @@
           type="text"
           class="w-full mt-1 px-3 py-2 bg-[#14142b] text-white rounded-md outline-none"
           placeholder="Code professeur"
+          name="codeProf"
+          [(ngModel)]="connexionData.codeProf"
         />
       </div>
+
 
       <!-- Se souvenir -->
       <div class="mb-4 flex items-center text-white text-sm">
@@ -101,15 +108,16 @@
         </button>
       </div>
 
+      
       <!-- Valider -->
       <button
         type="submit"
-        routerLink="/accueil"
         [disabled]="!formulaireValide()"
         class="bg-[#8002FF] text-white w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255] disabled:opacity-50 disabled:cursor-not-allowed"
       >
         Valider
       </button>
+
 
     </form>
 

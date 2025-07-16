@@ -1,8 +1,8 @@
 <app-icon></app-icon>
 
-
-<footer class="bg-[#020118] text-white py-10 px-10 mt-20">
+<footer class="bg-[#020118] text-white py-10 px-10 mt-20" >
   <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between gap-10">
+
     <!-- Logo + Description -->
     <div class="flex-1">
       <img src="assets/LOGO.png" alt="Logo UniDys" class="w-32 absolute -ml-75 -mt-25" />
@@ -24,16 +24,24 @@
       <h2 class="font-bold mb-4 text-2xl">Newsletter</h2>
       <p class="text-sm mb-4">Restez informé de nos dernières actualités</p>
       <div class="flex items-center">
-        <input type="email" placeholder="Votre mail" class="bg-transparent border border-[#8002FF] px-4 py-2 rounded-2xl focus:outline-none">
-        <button class="bg-[#8002FF] ml-3 text-white px-3 py-2 rounded-2xl hover:bg-[#3F0255]">
+        <input
+          type="email"
+          [(ngModel)]="emailNewsletter"
+          placeholder="Votre mail"
+          class="bg-transparent border border-[#8002FF] px-4 py-2 rounded-2xl focus:outline-none"
+        />
+        <button
+          (click)="inscrireNewsletter()"
+          class="bg-[#8002FF] ml-3 text-white px-3 py-2 rounded-2xl hover:bg-[#3F0255]"
+        >
           ➤
         </button>
       </div>
     </div>
   </div>
+
   <!-- Séparateur -->
   <div class="border-t border-white mt-20"></div>
-
 
   <!-- Bas de page -->
   <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center text-sm px-4 mt-5">
@@ -54,10 +62,7 @@
       </a>
     </div>
   </div>
-
-  
 </footer>
-
 
 
 

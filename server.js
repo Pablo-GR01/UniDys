@@ -7,13 +7,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// ✅ Connexion MongoDB
 mongoose.connect('mongodb://localhost:27017/unidys', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('✅ Connecté à MongoDB'))
-.catch(err => console.error('Erreur MongoDB:', err));
+.then(() => console.log('✅ Connecté à MongoDB unidys'))
+.catch(err => console.error('❌ Erreur MongoDB:', err));
 
+/* =======================
+   🔹 SCHEMA UTILISATEUR
+========================== */
 const utilisateurSchema = new mongoose.Schema({
   nom: String,
   prenom: String,
@@ -21,19 +25,40 @@ const utilisateurSchema = new mongoose.Schema({
   password: String,
   role: { type: String, enum: ['prof', 'eleve'] },
   codeProf: String,
+  initiale: String,
+});
+
+// Générer les initiales avant sauvegarde
+utilisateurSchema.pre('save', function (next) {
+  if (this.nom && this.prenom) {
+    this.initiale = (this.prenom[0] + this.nom[0]).toUpperCase();
+  }
+  next();
 });
 
 const User = mongoose.model('User', utilisateurSchema);
 
-app.post('/api/inscription', async (req, res) => {
+/* =======================
+   🔹 SCHEMA NEWSLETTER
+========================== */
+const newsletterSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  newsletter: { type: String, enum: ['Oui', 'Non'], default: 'Non' },
+});
+
+const Newsletter = mongoose.model('Newsletter', newsletterSchema);
+
+/* =======================
+   ✅ ROUTES UTILISATEUR
+========================== */
+
+// Créer un utilisateur
+app.post('/api/unidys/users', async (req, res) => {
   try {
     const { nom, prenom, email, password, role, codeProf } = req.body;
 
-    // Attention : utiliser User avec majuscule
     const exist = await User.findOne({ email });
-    if (exist) {
-      return res.status(400).json({ message: 'Email déjà utilisé' });
-    }
+    if (exist) return res.status(400).json({ message: 'Email déjà utilisé' });
 
     if (role === 'prof' && codeProf !== 'PROF2025') {
       return res.status(400).json({ message: 'Code professeur invalide' });
@@ -41,36 +66,122 @@ app.post('/api/inscription', async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Utiliser User ici aussi
     const nouvelUtilisateur = new User({
       nom,
       prenom,
       email,
       password: hashedPassword,
       role,
-      codeProf: role === 'prof' ? codeProf : undefined,
+      codeProf: role === 'prof' ? codeProf : undefined
     });
 
     await nouvelUtilisateur.save();
-
     res.status(201).json({ message: 'Utilisateur créé avec succès' });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
 
+// Obtenir tous les utilisateurs (sans mot de passe)
 app.get('/api/user', async (req, res) => {
   try {
-    // Toujours User ici
-    const users = await User.find({}, '-password'); // exclut le champ password
+    const users = await User.find({}, '-password');
     res.json(users);
   } catch (err) {
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
 
+// Obtenir un utilisateur connecté par ID
+app.get('/api/utilisateur-connecte', async (req, res) => {
+  try {
+    const userId = req.query.id;
+
+    if (!userId) {
+      return res.status(400).json({ message: 'ID utilisateur manquant' });
+    }
+
+    const user = await User.findById(userId).select('nom prenom');
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    const initiale = `${user.prenom?.[0] ?? ''}${user.nom?.[0] ?? ''}`.toUpperCase();
+
+    res.json({
+      nom: user.nom,
+      prenom: user.prenom,
+      initiale,
+    });
+
+  } catch (err) {
+    console.error('Erreur utilisateur-connecte:', err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// Login utilisateur
+app.post('/api/unidys/login', async (req, res) => {
+  try {
+    const { email, password, role } = req.body;
+
+    const utilisateur = await User.findOne({ email, role });
+    if (!utilisateur) {
+      return res.status(401).json({ message: 'Utilisateur non trouvé ou rôle incorrect' });
+    }
+
+    const passwordOk = await bcrypt.compare(password, utilisateur.password);
+    if (!passwordOk) {
+      return res.status(401).json({ message: 'Mot de passe incorrect' });
+    }
+
+    res.json({
+      _id: utilisateur._id,
+      nom: utilisateur.nom,
+      prenom: utilisateur.prenom,
+      email: utilisateur.email,
+      role: utilisateur.role,
+      initiale: utilisateur.initiale,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+/* =======================
+   ✅ ROUTE NEWSLETTER
+========================== */
+
+app.post('/api/newsletter', async (req, res) => {
+  try {
+    const { email, newsletter } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Email requis' });
+    }
+
+    const saved = await Newsletter.findOneAndUpdate(
+      { email },
+      { email, newsletter },
+      { upsert: true, new: true }
+    );
+
+    res.status(201).json({ message: 'Inscription newsletter enregistrée', data: saved });
+
+  } catch (err) {
+    console.error('Erreur newsletter :', err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+/* =======================
+   🚀 SERVEUR EXPRESS
+========================== */
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`Serveur backend démarré sur http://localhost:${PORT}`);
+  console.log(`🚀 Serveur backend démarré sur http://localhost:${PORT}`);
 });

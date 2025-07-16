@@ -1,10 +1,11 @@
 import { Routes } from '@angular/router';
-import { connexion } from '../page/connexion/connexion';
-import { inscription } from '../page/inscription/inscription';
-import { accueil } from '../page/accueil/accueil';
-import { Cours } from '../page/cours/cours'
-import { Apropos } from '../page/apropos/apropos'
-import { Monespace } from '../page/monespace/monespace'
+import { connexion } from '../page-Eleve/connexion/connexion';
+import { inscription } from '../page-Eleve/inscription/inscription';
+import { AccueilE } from '../page-Eleve/accueil/accueil';
+import { Cours } from '../page-Eleve/cours/cours'
+import { Apropos } from '../page-Eleve/apropos/apropos'
+import { Monespace } from '../page-Eleve/monespace/monespace'
+import { AccueilP } from '../page-Prof/accueil/accueil';
 
 
 
@@ -12,7 +13,8 @@ export const routes: Routes = [
   { path: 'connexion', component: connexion },
   { path: '', redirectTo: 'connexion', pathMatch: 'full' },
   { path: 'inscription', component: inscription },
-  { path: 'accueil', component: accueil},
+  { path: 'accueilE', component: AccueilE},
+  {path: 'accueilP', component: AccueilP},
   { path: 'cours', component: Cours},
   { path: 'apropos', component: Apropos},
   { path: 'monespace', component: Monespace}

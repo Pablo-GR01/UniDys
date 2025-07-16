@@ -1,0 +1,131 @@
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { Logo } from "../../../public/component/logo/logo";
+import { Icon } from "../../../public/component/icon/icon";
+
+interface InscriptionData {
+  nom: string;
+  prenom: string;
+  email: string;
+  password: string;
+  codeProf?: string;
+  role: 'prof' | 'eleve';
+  initiale?: string; // ✅ Ajouté ici
+}
+
+@Component({
+  selector: 'app-inscription',
+  standalone: true,
+  imports: [CommonModule, RouterModule, FormsModule, HttpClientModule, Logo, Icon],
+  templateUrl: './inscription.html',
+})
+export class inscription implements OnInit {
+  actif: 'prof' | 'eleve' = 'eleve';
+  readonly CODE_PROF = 'PROF2025';
+
+  inscriptionData: InscriptionData = {
+    nom: '',
+    prenom: '',
+    email: '',
+    password: '',
+    codeProf: '',
+    role: 'eleve',
+    initiale: '', // ✅ Ajouté ici
+  };
+
+  constructor(private http: HttpClient, private router: Router) {}
+
+  ngOnInit() {
+    console.log("ngOnInit called");
+    document.body.style.overflow = 'hidden';
+  }
+
+  ngOnDestroy() {
+    console.log("ngOnDestroy called");
+    document.body.style.overflow = 'auto';
+  }
+
+  activerProf(): void {
+    console.log("Activation profil prof");
+    this.actif = 'prof';
+    this.inscriptionData.role = 'prof';
+  }
+
+  activerEleve(): void {
+    console.log("Activation profil eleve");
+    this.actif = 'eleve';
+    this.inscriptionData.role = 'eleve';
+    this.inscriptionData.codeProf = '';
+  }
+
+  formulaireValide(): boolean {
+    const { nom, prenom, email, password, role, codeProf } = this.inscriptionData;
+    console.log("Validation formulaire:", { nom, prenom, email, password, role, codeProf });
+    if (!nom || !prenom || !email || !password) {
+      console.log("Formulaire invalide: champs manquants");
+      return false;
+    }
+    if (role === 'prof' && codeProf !== this.CODE_PROF) {
+      console.log("Formulaire invalide: code prof incorrect");
+      return false;
+    }
+    return true;
+  }
+
+  valider(): void {
+    console.log("Début de la validation");
+
+    if (!this.formulaireValide()) {
+      alert(
+        this.inscriptionData.role === 'prof'
+          ? 'Veuillez entrer un code professeur valide.'
+          : 'Veuillez remplir tous les champs requis.'
+      );
+      console.log("Formulaire non valide, arrêt de la soumission");
+      return;
+    }
+
+    // ✅ Calcul automatique de l'initiale
+    const initiale = (this.inscriptionData.prenom?.[0] ?? '').toUpperCase() +
+                     (this.inscriptionData.nom?.[0] ?? '').toUpperCase();
+
+    const payload = {
+      ...this.inscriptionData,
+      initiale, // ✅ Ajout dans les données envoyées
+    };
+
+    if (payload.role !== 'prof') {
+      delete payload.codeProf;
+    }
+
+    console.log('Données envoyées au serveur:', payload);
+
+    this.http.post('http://localhost:3000/api/unidys/users', payload).subscribe({
+      next: (res) => {
+        console.log('Réponse serveur reçue:', res);
+        alert('Compte créé !');
+        this.inscriptionData = {
+          nom: '',
+          prenom: '',
+          email: '',
+          password: '',
+          codeProf: '',
+          role: this.actif,
+          initiale: '', // ✅ Réinitialisation
+        };
+        this.router.navigate(['/connexion']);
+      },
+      error: (err) => {
+        console.error('Erreur lors de la création du compte', err);
+        if (err.status === 400) {
+          alert('Cet email est déjà utilisé');
+        } else {
+          alert('Erreur lors de la création du compte.');
+        }
+      },
+    });
+  }
+}

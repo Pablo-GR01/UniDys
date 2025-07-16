@@ -13,40 +13,55 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 export class HamburgerMenu implements OnInit {
   userNom = '';
   userPrenom = '';
-  userInitiales = '';
+  userInitiales = ''; // ← Utilisé dans l’avatar
   userColor = '';
-  isOpen = false; // ✅ Ajout de la propriété manquante
+  isOpen = false;
 
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.http.get<{nom: string, prenom: string}>('http://localhost:3000/api/utilisateur-connecte')
-      .subscribe({
-        next: user => {
-          this.userNom = user.nom;
-          this.userPrenom = user.prenom;
-          this.userInitiales = this.getInitiales(this.userNom, this.userPrenom);
+    const userId = localStorage.getItem('userId');
 
-          const savedColor = localStorage.getItem('userColor');
-          if (savedColor) {
-            this.userColor = savedColor;
-          } else {
-            this.userColor = this.getRandomColor();
-            localStorage.setItem('userColor', this.userColor);
-          }
-        },
-        error: err => {
-          console.error('Erreur récupération utilisateur', err);
-          this.userNom = 'Inconnu';
-          this.userPrenom = '';
-          this.userInitiales = '??';
-          this.userColor = '#999999';
+    this.userInitiales = 'AB';
+    console.log('Initiales utilisateur:', this.userInitiales);
+
+
+    if (!userId) {
+      console.warn('Aucun userId trouvé dans le localStorage');
+      this.userNom = 'Inconnu';
+      this.userPrenom = '';
+      this.userInitiales = '??';
+      this.userColor = '#999999';
+      return;
+    }
+
+    this.http.get<{ nom: string; prenom: string; initiale?: string }>(
+      `http://localhost:3000/api/utilisateur-connecte?id=${userId}`
+    ).subscribe({
+      next: user => {
+        this.userNom = user.nom;
+        this.userPrenom = user.prenom;
+        // Prend la valeur "initiale" si elle existe, sinon on la génère
+        this.userInitiales = user.initiale || 
+          ((user.prenom?.charAt(0) || '') + (user.nom?.charAt(0) || '')).toUpperCase();
+
+        // Couleur avatar
+        const savedColor = localStorage.getItem('userColor');
+        if (savedColor) {
+          this.userColor = savedColor;
+        } else {
+          this.userColor = this.getRandomColor();
+          localStorage.setItem('userColor', this.userColor);
         }
-      });
-  }
-
-  getInitiales(nom: string, prenom: string): string {
-    return (nom?.charAt(0).toUpperCase() || '') + (prenom?.charAt(0).toUpperCase() || '');
+      },
+      error: err => {
+        console.error('Erreur lors de la récupération de l’utilisateur :', err);
+        this.userNom = 'Inconnu';
+        this.userPrenom = '';
+        this.userInitiales = '??';
+        this.userColor = '#999999';
+      }
+    });
   }
 
   getRandomColor(): string {

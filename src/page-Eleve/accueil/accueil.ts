@@ -12,6 +12,6 @@ import { Contact } from '../../../public/component/contact/contact';
   templateUrl: './accueil.html',
   styleUrl: './accueil.css'
 })
-export class accueil{
+export class AccueilE{
 
 }
