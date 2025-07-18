@@ -5,13 +5,13 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Icon } from '../icon/icon';
 
 @Component({
-  selector: 'app-menu-hamburger',
-  templateUrl: './menu-hamburger.html',
-  styleUrls: ['./menu-hamburger.css'],
+  selector: 'app-menu-hamburgerP',
+  templateUrl: './menu-hamburgerP.html',
+  styleUrls: ['./menu-hamburgerP.css'],
   standalone: true,
   imports: [RouterModule, CommonModule, HttpClientModule, Icon]
 })
-export class HamburgerMenu implements OnInit {
+export class HamburgerMenuP implements OnInit {
   userNom = '';
   userPrenom = '';
   userInitiales = ''; // ← Utilisé dans l’avatar

@@ -6,6 +6,7 @@ import { Cours } from '../page-Eleve/cours/cours'
 import { Apropos } from '../page-Eleve/apropos/apropos'
 import { Monespace } from '../page-Eleve/monespace/monespace'
 import { AccueilP } from '../page-Prof/accueil/accueil';
+import { MonespaceP } from '../page-Prof/monespace-p/monespace-p';
 
 
 
@@ -14,9 +15,11 @@ export const routes: Routes = [
   { path: '', redirectTo: 'connexion', pathMatch: 'full' },
   { path: 'inscription', component: inscription },
   { path: 'accueilE', component: AccueilE},
-  {path: 'accueilP', component: AccueilP},
   { path: 'cours', component: Cours},
   { path: 'apropos', component: Apropos},
-  { path: 'monespace', component: Monespace}
+  { path: 'monespace', component: Monespace},
+  // Route vers les page coté prof
+  {path: 'accueilP', component: AccueilP},
+  {path: 'monespaceP', component: MonespaceP}
 ];
 
