@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Header2 } from '../../../public/component/header2/header2';
 import { Section4 } from '../../component-prof/section4/section4';
+
 import { Section13 } from '../../component-eleve/section13/section13';
 
 @Component({
@@ -24,18 +25,18 @@ export class MonespaceP implements OnInit {
       return;
     }
 
-    this.http.get<{ nom: string, prenom: string, role: string }>(
-      `http://localhost:3000/api/user/${userId}`
-    ).subscribe({
-      next: (res) => {
-        this.welcomeMessage = res.role === 'prof'
-          ? `Bonjour Mr ${res.nom} ${res.prenom}`
-          : `Bonjour ${res.prenom} ${res.nom}`;
-      },
-      error: (err) => {
-        console.error('Erreur API:', err);
-        this.welcomeMessage = 'Erreur lors du chargement du profil';
-      }
-    });
+    this.http.get<{ nom: string; prenom: string; role: string }>(`http://localhost:3000/api/user/${userId}`)
+      .subscribe({
+        next: (res) => {
+          console.log('Réponse API :', res);
+          this.welcomeMessage = res.role === 'prof'
+            ? `Bonjour Mr ${res.nom} ${res.prenom}`
+            : `Bonjour ${res.prenom} ${res.nom}`;
+        },
+        error: (err) => {
+          console.error('Erreur API:', err);
+          this.welcomeMessage = 'Erreur lors du chargement du profil';
+        }
+      });
   }
 }
