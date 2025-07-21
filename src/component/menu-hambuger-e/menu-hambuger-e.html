@@ -1,0 +1,38 @@
+<!-- Conteneur principal -->
+<div class="relative flex items-center justify-between rounded-xl shadow-md w-full max-w-lg mx-auto text-white">
+  
+  <!-- Initiales visibles en permanence à gauche -->
+  <div class="absolute -mt-10 ml-237 bg-violet-700 w-12 h-12 flex items-center justify-center rounded-full font-black text-xl text-white">
+    {{ userService.getInitiales() }}
+  </div>
+
+  <!-- Bouton Mon Espace + Flèche -->
+  <div class="absolute -mt-10 ml-251 -mr-200  flex items-center gap-2 cursor-pointer select-none" (click)="toggleMenu()">
+    <span class="font-semibold text-2xl">Mon Espace</span>
+    <svg
+      class="w-8 h-8 transition-transform duration-300"
+      [class.rotate-180]="menuOuvert"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+    </svg>
+  </div>
+</div>
+
+<!-- Menu déroulant -->
+<div *ngIf="menuOuvert" class="absolute ml-419 mt-2 bg-[#020118] border-2 border-[#8002FF] text-white rounded-xl shadow-md z-50">
+  <ul class="flex flex-col  gap-1">
+    <li class="font-semibold hover:bg-[#8002FF] transition cursor-pointer px-4 py-2 rounded flex items-center gap-2">
+      <i class="fa-solid fa-circle-info"></i>
+      <a routerLink="/" class="block w-full text-xl ">Informations</a>
+    </li>
+    <li class="font-semibold hover:bg-[#8002FF] transition cursor-pointer px-4 py-2 rounded flex items-center gap-2">
+      <i class="fa-solid fa-power-off"></i>
+      <a routerLink="/connexion" class="block w-full text-xl">Déconnexion</a>
+    </li>
+  </ul>
+</div>

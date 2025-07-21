@@ -7,7 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ✅ Connexion MongoDB
+// Connexion MongoDB
 mongoose.connect('mongodb://localhost:27017/unidys', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -15,15 +15,13 @@ mongoose.connect('mongodb://localhost:27017/unidys', {
 .then(() => console.log('✅ Connecté à MongoDB unidys'))
 .catch(err => console.error('❌ Erreur MongoDB:', err));
 
-/* =======================
-   🔹 SCHEMA UTILISATEUR
-========================== */
+// Schema Utilisateur
 const utilisateurSchema = new mongoose.Schema({
   nom: String,
   prenom: String,
   email: { type: String, unique: true },
   password: String,
-  role: { type: String, enum: ['prof', 'eleve'] },
+  role: { type: String, enum: ['prof', 'eleve', 'admin'], default: 'eleve' },
   codeProf: String,
   initiale: String,
 });
@@ -38,9 +36,7 @@ utilisateurSchema.pre('save', function (next) {
 
 const User = mongoose.model('User', utilisateurSchema);
 
-/* =======================
-   🔹 SCHEMA NEWSLETTER
-========================== */
+// Schema Newsletter
 const newsletterSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   newsletter: { type: String, enum: ['Oui', 'Non'], default: 'Non' },
@@ -48,20 +44,27 @@ const newsletterSchema = new mongoose.Schema({
 
 const Newsletter = mongoose.model('Newsletter', newsletterSchema);
 
-/* =======================
-   ✅ ROUTES UTILISATEUR
-========================== */
+/* ROUTES UTILISATEUR */
 
 // Créer un utilisateur
 app.post('/api/unidys/users', async (req, res) => {
   try {
     const { nom, prenom, email, password, role, codeProf } = req.body;
 
+    // Vérifier si email existe déjà
     const exist = await User.findOne({ email });
     if (exist) return res.status(400).json({ message: 'Email déjà utilisé' });
 
+    // Validation codeProf si prof
     if (role === 'prof' && codeProf !== 'PROF2025') {
       return res.status(400).json({ message: 'Code professeur invalide' });
+    }
+
+    // Exemple simple validation admin (optionnel)
+    if (role === 'admin') {
+      // Ici tu peux vérifier un secret ou un token spécial
+      // Pour l'exemple on refuse la création admin via cette route
+      return res.status(403).json({ message: 'Création admin interdite via cette route' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -72,7 +75,7 @@ app.post('/api/unidys/users', async (req, res) => {
       email,
       password: hashedPassword,
       role,
-      codeProf: role === 'prof' ? codeProf : undefined
+      codeProf: role === 'prof' ? codeProf : undefined,
     });
 
     await nouvelUtilisateur.save();
@@ -84,7 +87,7 @@ app.post('/api/unidys/users', async (req, res) => {
   }
 });
 
-// Obtenir tous les utilisateurs (sans mot de passe)
+// Liste tous les utilisateurs (sans mot de passe)
 app.get('/api/user', async (req, res) => {
   try {
     const users = await User.find({}, '-password');
@@ -94,21 +97,20 @@ app.get('/api/user', async (req, res) => {
   }
 });
 
-// ✅ Route correcte pour récupérer l'utilisateur connecté
+// Récupérer un utilisateur par ID
 app.get('/api/user/:id', async (req, res) => {
-  const id = req.params.id;
   try {
-    const user = await User.findById(id);
+    const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
 
     res.json({
       nom: user.nom,
       prenom: user.prenom,
-      role: user.role
+      email: user.email,
+      role: user.role,
+      initiale: user.initiale,
     });
-
   } catch (err) {
-    console.error('Erreur API utilisateur:', err);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
@@ -116,18 +118,17 @@ app.get('/api/user/:id', async (req, res) => {
 // Login utilisateur
 app.post('/api/unidys/login', async (req, res) => {
   try {
-    const { email, password, role } = req.body;
+    const { email, password } = req.body; // plus de role ici
 
-    const utilisateur = await User.findOne({ email, role });
-    if (!utilisateur) {
-      return res.status(401).json({ message: 'Utilisateur non trouvé ou rôle incorrect' });
-    }
+    // Recherche utilisateur par email
+    const utilisateur = await User.findOne({ email });
+    if (!utilisateur) return res.status(401).json({ message: 'Utilisateur non trouvé' });
 
+    // Vérifier mot de passe
     const passwordOk = await bcrypt.compare(password, utilisateur.password);
-    if (!passwordOk) {
-      return res.status(401).json({ message: 'Mot de passe incorrect' });
-    }
+    if (!passwordOk) return res.status(401).json({ message: 'Mot de passe incorrect' });
 
+    // On ne vérifie plus le rôle ici, on renvoie tel quel
     res.json({
       _id: utilisateur._id,
       nom: utilisateur.nom,
@@ -143,16 +144,13 @@ app.post('/api/unidys/login', async (req, res) => {
   }
 });
 
-/* =======================
-   ✅ ROUTE NEWSLETTER
-========================== */
+
+/* ROUTE NEWSLETTER */
 app.post('/api/newsletter', async (req, res) => {
   try {
     const { email, newsletter } = req.body;
 
-    if (!email) {
-      return res.status(400).json({ message: 'Email requis' });
-    }
+    if (!email) return res.status(400).json({ message: 'Email requis' });
 
     const saved = await Newsletter.findOneAndUpdate(
       { email },
@@ -168,9 +166,7 @@ app.post('/api/newsletter', async (req, res) => {
   }
 });
 
-/* =======================
-   🚀 SERVEUR EXPRESS
-========================== */
+// Lancer le serveur
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Serveur backend démarré sur http://localhost:${PORT}`);

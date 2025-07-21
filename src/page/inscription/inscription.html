@@ -1,0 +1,128 @@
+<app-icon></app-icon>
+<app-logo></app-logo>
+
+<div *ngIf="messageBienvenue" class="absolute bg-[#8002FF] items-center ml-200 mr-180 p-4 mt-4 rounded-xl text-white  shadow-md text-center text-lg font-semibold animate-fade-in">
+  {{ messageBienvenue }}
+</div>
+
+
+<div class="min-h-screen flex items-center justify-center px-4 mt-2">
+  <div class="bg-[#0a0a1a] rounded-2xl p-8 pt-1 w-full max-w-md shadow-xl border border-violet-700 relative">
+
+    <!-- Inscription -->
+    <h2 class="text-center text-xl font-bold text-[#b100ff] mb-6 mt-6">S'inscrire</h2>
+
+    <!-- Choix profil -->
+    <div class="flex justify-center gap-4 mb-4">
+      <button
+        (click)="activerProf()"
+        [ngClass]="{
+          'bg-[#b100ff]': actif === 'prof',
+          'bg-transparent': actif !== 'prof'
+        }"
+        class="text-white px-4 py-1 rounded-full font-semibold border border-white"
+      >
+        Prof
+      </button>
+      <button
+        (click)="activerEleve()"
+        [ngClass]="{
+          'bg-[#b100ff]': actif === 'eleve',
+          'bg-transparent': actif !== 'eleve'
+        }"
+        class="text-white px-4 py-1 rounded-full font-semibold border border-white"
+      >
+        Élève
+      </button>
+    </div>
+
+    <!-- Formulaire -->
+    <form (ngSubmit)="valider()">
+
+      <!-- Nom -->
+      <div class="mb-4">
+        <label class="text-white text-sm">Nom</label>
+        <input
+          type="text"
+          [(ngModel)]="inscriptionData.nom"
+          name="nom"
+          class="w-full mt-1 px-3 py-2 bg-[#14142b] text-white rounded-md outline-none"
+          placeholder="Votre nom"
+          required
+        />
+      </div>
+
+      <!-- Prénom -->
+      <div class="mb-4">
+        <label class="text-white text-sm">Prénom</label>
+        <input
+          type="text"
+          [(ngModel)]="inscriptionData.prenom"
+          name="prenom"
+          class="w-full mt-1 px-3 py-2 bg-[#14142b] text-white rounded-md outline-none"
+          placeholder="Votre prénom"
+          required
+        />
+      </div>
+
+      <!-- Mail -->
+      <div class="mb-4">
+        <label class="text-white text-sm">Adresse mail</label>
+        <div class="flex items-center bg-[#14142b] px-3 py-2 rounded-md mt-1">
+          <i class="fa-solid fa-envelope text-white mr-2"></i>
+          <input
+            type="email"
+            [(ngModel)]="inscriptionData.email"
+            name="email"
+            class="bg-transparent outline-none text-white w-full"
+            placeholder="Adresse mail"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Mot de passe -->
+      <div class="mb-4">
+        <label class="text-white text-sm">Mot de passe</label>
+        <div class="flex items-center bg-[#14142b] px-3 py-2 rounded-md mt-1">
+          <i class="fa-solid fa-lock text-white mr-2"></i>
+          <input
+            type="password"
+            [(ngModel)]="inscriptionData.password"
+            name="password"
+            class="bg-transparent outline-none text-white w-full"
+            placeholder="Mot de passe"
+            required
+          />
+        </div>
+      </div>
+
+      <!-- Code (prof uniquement) -->
+      <div *ngIf="actif === 'prof'" class="mb-4">
+        <label class="text-white text-sm">Code professeur</label>
+        <input
+          type="password"
+          [(ngModel)]="inscriptionData.codeProf"
+          name="codeProf"
+          class="w-full mt-1 px-3 py-2 bg-[#14142b] text-white rounded-md outline-none"
+          placeholder="Code professeur"
+          required
+        />
+      </div>
+
+      <!-- Valider -->
+      <button
+        type="submit"
+        [disabled]="!formulaireValide()"
+        class="bg-[#8002FF] text-white w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255] disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Valider
+      </button>
+    </form>
+
+    <!-- Lien vers connexion -->
+    <p class="text-center text-xs text-white mt-4">
+      <a routerLink="/connexion" class="underline hover:text-[#8002FF]">Compte déjà créé</a>
+    </p>
+  </div>
+</div>

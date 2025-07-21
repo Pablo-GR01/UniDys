@@ -1,27 +1,18 @@
 import { Routes } from '@angular/router';
-import { connexion } from '../page-Eleve/connexion/connexion';
-import { inscription } from '../page-Eleve/inscription/inscription';
-import { AccueilE } from '../page-Eleve/accueil/accueil';
-import { Cours } from '../page-Eleve/cours/cours'
-import { Apropos } from '../page-Eleve/apropos/apropos'
-import { Monespace } from '../page-Eleve/monespace/monespace'
-import { AccueilP } from '../page-Prof/accueil-p/accueil';
-import { MonespaceP } from '../page-Prof/monespace-p/monespace-p';
-import { CoursP } from '../page-Prof/cours-p/cours-p';
+import { Connexion } from '../page/connexion/connexion';
+import { inscription } from '../page/inscription/inscription';
+import { AccueilA } from '../page/page-user/admin/accueil-a/accueil-a';
+import { AccueilP } from '../page/page-user/prof/accueil-p/accueil-p';
+import { AccueilE } from '../page/page-user/eleve/accueil-e/accueil-e';
 
 
 
 export const routes: Routes = [
-  { path: 'connexion', component: connexion },
+  { path: 'connexion', component: Connexion },
   { path: '', redirectTo: 'connexion', pathMatch: 'full' },
   { path: 'inscription', component: inscription },
+  { path: 'accueilA', component: AccueilA},
+  { path: 'accueilP', component: AccueilP},
   { path: 'accueilE', component: AccueilE},
-  { path: 'cours', component: Cours},
-  { path: 'apropos', component: Apropos},
-  { path: 'monespace', component: Monespace},
-  // Route vers les page coté prof
-  {path: 'accueilP', component: AccueilP},
-  {path: 'monespaceP', component: MonespaceP},
-  {path: 'coursP', component: CoursP}
 ];
 
