@@ -17,10 +17,10 @@ mongoose.connect('mongodb://localhost:27017/unidys', {
 
 // Schema Utilisateur
 const utilisateurSchema = new mongoose.Schema({
-  nom: String,
-  prenom: String,
-  email: { type: String, unique: true },
-  password: String,
+  nom: { type: String, required: true },
+  prenom: { type: String, required: true },
+  email: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
   role: { type: String, enum: ['prof', 'eleve', 'admin'], default: 'eleve' },
   codeProf: String,
   initiale: String,
@@ -38,8 +38,11 @@ const User = mongoose.model('User', utilisateurSchema);
 
 // Schema Newsletter
 const newsletterSchema = new mongoose.Schema({
+  nom: { type: String, default: '' },
+  prenom: { type: String, default: '' },
   email: { type: String, required: true, unique: true },
-  newsletter: { type: String, enum: ['Oui', 'Non'], default: 'Non' },
+  accepteNewsletter: { type: String, enum: ['oui', 'non'], default: 'oui' },
+  dateInscription: { type: Date, default: Date.now },
 });
 
 const Newsletter = mongoose.model('Newsletter', newsletterSchema);
@@ -51,6 +54,10 @@ app.post('/api/unidys/users', async (req, res) => {
   try {
     const { nom, prenom, email, password, role, codeProf } = req.body;
 
+    if (!email || !password || !nom || !prenom) {
+      return res.status(400).json({ message: 'Nom, prénom, email et mot de passe sont obligatoires.' });
+    }
+
     // Vérifier si email existe déjà
     const exist = await User.findOne({ email });
     if (exist) return res.status(400).json({ message: 'Email déjà utilisé' });
@@ -60,10 +67,8 @@ app.post('/api/unidys/users', async (req, res) => {
       return res.status(400).json({ message: 'Code professeur invalide' });
     }
 
-    // Exemple simple validation admin (optionnel)
+    // Interdire création admin via cette route
     if (role === 'admin') {
-      // Ici tu peux vérifier un secret ou un token spécial
-      // Pour l'exemple on refuse la création admin via cette route
       return res.status(403).json({ message: 'Création admin interdite via cette route' });
     }
 
@@ -100,16 +105,10 @@ app.get('/api/user', async (req, res) => {
 // Récupérer un utilisateur par ID
 app.get('/api/user/:id', async (req, res) => {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id, '-password');
     if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
 
-    res.json({
-      nom: user.nom,
-      prenom: user.prenom,
-      email: user.email,
-      role: user.role,
-      initiale: user.initiale,
-    });
+    res.json(user);
   } catch (err) {
     res.status(500).json({ message: 'Erreur serveur' });
   }
@@ -118,17 +117,14 @@ app.get('/api/user/:id', async (req, res) => {
 // Login utilisateur
 app.post('/api/unidys/login', async (req, res) => {
   try {
-    const { email, password } = req.body; // plus de role ici
+    const { email, password } = req.body;
 
-    // Recherche utilisateur par email
     const utilisateur = await User.findOne({ email });
     if (!utilisateur) return res.status(401).json({ message: 'Utilisateur non trouvé' });
 
-    // Vérifier mot de passe
     const passwordOk = await bcrypt.compare(password, utilisateur.password);
     if (!passwordOk) return res.status(401).json({ message: 'Mot de passe incorrect' });
 
-    // On ne vérifie plus le rôle ici, on renvoie tel quel
     res.json({
       _id: utilisateur._id,
       nom: utilisateur.nom,
@@ -144,17 +140,18 @@ app.post('/api/unidys/login', async (req, res) => {
   }
 });
 
-
 /* ROUTE NEWSLETTER */
+
+// Inscription newsletter (création ou mise à jour)
 app.post('/api/newsletter', async (req, res) => {
   try {
-    const { email, newsletter } = req.body;
+    const { nom = '', prenom = '', email, accepteNewsletter = 'oui' } = req.body;
 
     if (!email) return res.status(400).json({ message: 'Email requis' });
 
     const saved = await Newsletter.findOneAndUpdate(
       { email },
-      { email, newsletter },
+      { nom, prenom, email, accepteNewsletter },
       { upsert: true, new: true }
     );
 

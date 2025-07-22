@@ -1,0 +1,95 @@
+<footer class="bg-[#020118] text-white px-6 py-10 md:px-20">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+
+    <!-- Colonne 1 -->
+    <div class="relative">
+      <div class="flex items-center gap-2 mb-4">
+        <img src="assets/LOGO.png" alt="Logo UniDys" class="absolute 2xl:w-32 md:w-26 md:-ml-17" />
+      </div>
+      <p class="2xl:text-xl md:text-md md:-ml-16 md:mt-10 font-bold text-gray-300">
+        Plateforme éducative adaptée<br />
+        pour les personnes DYS
+      </p>
+    </div>
+
+    <!-- Colonne 2 -->
+    <div class="space-y-2 2xl:ml-63 md:ml-15">
+      <h3 class="font-bold mb-2 text-xl">Navigation</h3>
+      <ul class="text-sm text-gray-300 space-y-1">
+        <li><a routerLink="/accueil" class="hover:text-white">Accueil</a></li>
+        <li><a routerLink="/coursE" class="hover:text-white">Cours</a></li>
+        <li><a routerLink="/apropos" class="hover:text-white">À propos</a></li>
+      </ul>
+    </div>
+
+    <!-- Colonne 3 -->
+    <div class="space-y-3 2xl:ml-70 md:ml-15">
+      <h3 class="font-bold text-xl">Newsletter</h3>
+      <p class="text-sm text-gray-300">
+        Restez informé de nos<br />dernières actualités
+      </p>
+      <div class="flex items-center gap-2">
+        <input
+          type="email"
+          [(ngModel)]="email"
+          placeholder="Votre Mail"
+          class="px-3 py-2 rounded-2xl bg-transparent border-2 border-[#8002FF] text-white placeholder-gray-400 text-sm 2xl:w-52 md:w-32"
+        />
+        <button
+          (click)="enregistrerEmail()"
+          class="bg-[#8002FF] hover:bg-[#3F0255] text-white px-4 py-2 rounded-2xl"
+          aria-label="Envoyer"
+        >
+          <!-- Icône flèche -->
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <hr class="my-6 border-white" />
+
+  <div class="flex flex-col md:flex-row justify-between items-center text-xs text-white">
+    <p class="text-sm">©2025 UniDys. Tous droits réservés</p>
+    <div class="flex gap-5 mt-4 md:mt-0">
+  <!-- Instagram -->
+  <a href="#" aria-label="Instagram" class="hover:text-[#8002FF]">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+      <path
+        d="M7.75 2A5.75 5.75 0 002 7.75v8.5A5.75 5.75 0 007.75 22h8.5A5.75 5.75 0 0022 16.25v-8.5A5.75 5.75 0 0016.25 2h-8.5zM12 7a5 5 0 110 10 5 5 0 010-10zm5.5-.25a1.25 1.25 0 11-2.5 0 1.25 1.25 0 012.5 0zM12 9.5a2.5 2.5 0 100 5 2.5 2.5 0 000-5z"
+      />
+    </svg>
+  </a>
+
+  <!-- Facebook -->
+  <a href="#" aria-label="Facebook" class="hover:text-[#8002FF]">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+      <path
+        d="M22 12c0-5.522-4.477-10-10-10S2 6.478 2 12c0 4.991 3.657 9.128 8.438 9.876v-6.987H7.898v-2.89h2.54V9.845c0-2.507 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.463h-1.26c-1.243 0-1.63.772-1.63 1.562v1.875h2.773l-.443 2.89h-2.33v6.987C18.343 21.128 22 16.991 22 12z"
+      />
+    </svg>
+  </a>
+
+  <!-- LinkedIn -->
+  <a href="#" aria-label="LinkedIn" class="hover:text-[#8002FF]">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+      <path
+        d="M19 3A2 2 0 0121 5v14a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14zM8.339 16.983V10.23H5.67v6.753h2.669zm-1.335-7.603a1.544 1.544 0 11.003-3.088 1.544 1.544 0 01-.003 3.088zm7.365 7.603v-3.6c0-.945-.339-1.59-1.187-1.59-.647 0-1.033.438-1.204.86-.06.148-.08.355-.08.563v3.767h-2.668v-6.753h2.668v.94c.353-.544.985-1.316 2.395-1.316 1.75 0 3.066 1.142 3.066 3.594v3.535h-2.99z"
+      />
+    </svg>
+  </a>
+
+  <!-- Twitter -->
+  <a href="#" aria-label="Twitter" class="hover:text-[#8002FF]">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" class="w-6 h-6">
+      <path
+        d="M23 3a10.9 10.9 0 01-3.14.86 4.48 4.48 0 001.97-2.48 9.03 9.03 0 01-2.86 1.1 4.52 4.52 0 00-7.7 4.12 12.83 12.83 0 01-9.3-4.72 4.52 4.52 0 001.4 6.05A4.48 4.48 0 012 8.63v.06a4.52 4.52 0 003.62 4.44 4.52 4.52 0 01-2.04.08 4.52 4.52 0 004.22 3.14 9.05 9.05 0 01-5.61 1.93A9.07 9.07 0 012 18.16a12.79 12.79 0 006.92 2.03c8.3 0 12.85-6.87 12.85-12.84 0-.2 0-.42-.01-.63A9.18 9.18 0 0023 3z"
+      />
+    </svg>
+  </a>
+</div>
+
+  </div>
+</footer>
