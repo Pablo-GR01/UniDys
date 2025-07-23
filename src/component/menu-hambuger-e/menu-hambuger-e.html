@@ -1,5 +1,5 @@
 <!-- Conteneur principal -->
-<div class="relative flex items-center justify-between rounded-xl shadow-md w-full max-w-lg mx-auto text-white">
+<div class="relative lg:ml-97 2xl:ml-179 flex items-center justify-between rounded-xl shadow-md w-full max-w-lg mx-auto text-white">
   
   <!-- Initiales visibles en permanence à gauche -->
   <div class="absolute 2xl:-mt-10 2xl:ml-237 md:-mt-7 md:ml-114 bg-violet-700 2xl:w-12 2xl:h-12 md:w-10 md:h-10 flex items-center justify-center rounded-full font-black 2xl:text-xl md:text-md text-white">
@@ -8,7 +8,7 @@
 
   <!-- Bouton Mon Espace + Flèche -->
   <div class="absolute 2xl:-mt-10 2xl:ml-251 md:-mt-8 md:ml-127 md:-mr-200 2xl:-mr-200  flex items-center gap-2 cursor-pointer select-none" (click)="toggleMenu()">
-    <span class="font-semibold 2xl:text-2xl md:text-md">Mon Espace</span>
+    <a routerLink="/monespaceE"><span class="font-semibold 2xl:text-2xl md:text-md hover:text-[#8002FF]">Mon Espace</span></a>
     <svg
       class="2xl:w-8 2xl:h-8 md:w-5 md:h-5 transition-transform duration-300"
       [class.rotate-180]="menuOuvert"
@@ -24,7 +24,7 @@
 </div>
 
 <!-- Menu déroulant -->
-<div *ngIf="menuOuvert" class="absolute md:ml-152 md:mt-4 2xl:ml-419 2xl:mt-2 bg-[#020118] border-2 border-[#8002FF] text-white rounded-xl shadow-md z-50">
+<div *ngIf="menuOuvert" class="absolute lg:ml-217 md:ml-152 md:mt-4 2xl:ml-429 2xl:mt-2 bg-[#020118] border-2 border-[#8002FF] text-white rounded-xl shadow-md z-50">
   <ul class="flex flex-col  gap-1">
     <li class="font-semibold hover:bg-[#8002FF] transition cursor-pointer px-4 py-2 rounded flex items-center gap-2">
       <i class="fa-solid fa-circle-info"></i>

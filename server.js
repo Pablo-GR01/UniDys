@@ -47,6 +47,16 @@ const newsletterSchema = new mongoose.Schema({
 
 const Newsletter = mongoose.model('Newsletter', newsletterSchema);
 
+// Schema Avis
+const avisSchema = new mongoose.Schema({
+  nom: { type: String, required: true },
+  prenom: { type: String, required: true },
+  message: { type: String, required: true },
+  date: { type: Date, default: Date.now },
+});
+
+const Avis = mongoose.model('Avis', avisSchema);
+
 /* ROUTES UTILISATEUR */
 
 // Créer un utilisateur
@@ -162,6 +172,27 @@ app.post('/api/newsletter', async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
+
+app.post('/api/avis', async (req, res) => {
+  console.log('Requête reçue:', req.body);
+  try {
+    const { nom, prenom, message } = req.body;
+
+    if (!nom || !prenom || !message) {
+      return res.status(400).json({ message: 'Tous les champs sont requis.' });
+    }
+
+    const nouvelAvis = new Avis({ nom, prenom, message });
+    const result = await nouvelAvis.save();
+    console.log('Avis sauvegardé:', result);
+
+    res.status(201).json({ message: 'Avis enregistré avec succès !', data: result });
+  } catch (err) {
+    console.error('Erreur enregistrement avis:', err);
+    res.status(500).json({ message: 'Erreur serveur lors de l\'enregistrement de l\'avis.' });
+  }
+});
+
 
 // Lancer le serveur
 const PORT = 3000;

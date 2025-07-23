@@ -11,23 +11,30 @@ export class UserService {
     }
   }
 
+  getInitiales(): string {
+    if (!this.utilisateur) return 'IN';
+    const { prenom, nom } = this.utilisateur;
+    return `${prenom?.charAt(0) || ''}${nom?.charAt(0) || ''}`.toUpperCase();
+  }
+
+  getNomComplet(): string {
+    if (!this.utilisateur) return 'Invité';
+    const { prenom, nom } = this.utilisateur;
+    return `${nom} ${prenom}`;
+  }
+
   setUser(user: any) {
     this.utilisateur = user;
     localStorage.setItem('utilisateur', JSON.stringify(user));
   }
 
-  getUser() {
-    return this.utilisateur;
-  }
-
-  getInitiales(): string {
-    if (!this.utilisateur) return '';
-    const { prenom, nom } = this.utilisateur;
-    return `${prenom?.charAt(0) || ''}${nom?.charAt(0) || ''}`.toUpperCase();
-  }
-
   clearUser() {
     this.utilisateur = null;
     localStorage.removeItem('utilisateur');
+  }
+
+  // AJOUTER CE GETTER POUR ACCEDER A L'UTILISATEUR DEPUIS L'EXTERIEUR
+  getUtilisateur(): { prenom: string; nom: string; email: string; role: string } | null {
+    return this.utilisateur;
   }
 }

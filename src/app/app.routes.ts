@@ -5,6 +5,8 @@ import { AccueilA } from '../page/page-user/admin/accueil-a/accueil-a';
 import { AccueilP } from '../page/page-user/prof/accueil-p/accueil-p';
 import { AccueilE } from '../page/page-user/eleve/accueil-e/accueil-e';
 import { CoursE } from '../page/page-user/eleve/cours-e/cours-e';
+import { AproposE } from '../page/page-user/eleve/apropos-e/apropos-e';
+import { MonEspaceE } from '../page/page-user/eleve/monespace-e/monespace-e';
 
 
 
@@ -15,6 +17,8 @@ export const routes: Routes = [
   { path: 'accueilA', component: AccueilA},
   { path: 'accueilP', component: AccueilP},
   { path: 'accueilE', component: AccueilE},
-  {path: 'coursE', component: CoursE}
+  {path: 'coursE', component: CoursE},
+  {path: 'aproposE', component: AproposE},
+  {path: 'monespaceE', component: MonEspaceE}
 ];
 
