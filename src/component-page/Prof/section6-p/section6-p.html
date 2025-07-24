@@ -1,0 +1,55 @@
+<app-icon></app-icon>
+<div class="flex items-center text-white 2xl:mt-5 2xl:ml-5">
+    <!-- Initiales -->
+    <div class="2xl:w-16 2xl:h-16 lg:w-10 lg  flex items-center justify-center rounded-full bg-[#8002FF] font-black text-2xl">
+        {{ userService.getInitiales() || 'IN' }}
+    </div>
+
+    <!-- Bonjour + nom complet ou invité -->
+    <div class="2xl:text-2xl 2xl:font-bold 2xl:ml-5">
+        Bonjour {{ userService.getNomComplet() }}
+    </div>
+
+
+
+    <!-- Pop-up -->
+    <!-- BOUTON OUVRIR LA POP-UP -->
+    <button (click)="ouvrirPopup()"
+        class="bg-[#8002FF] text-white px-4 py-2 rounded hover:bg-[#3F0255] transition 2xl:ml-335 flex items-center gap-2"
+        >
+        <i class="fas fa-plus"></i>
+        Laisser un avis
+    </button>
+
+
+    
+    <!-- POP-UP -->
+    <div *ngIf="popupOuvert"
+        class="fixed top-0 left-0 w-full h-full bg-black/80 flex items-center justify-center z-50">
+        
+        <div class="bg-[#020118] rounded-xl p-6 w-full max-w-md shadow-lg text-white">
+            <h2 class="text-xl font-bold mb-4">Laisser un avis</h2>
+
+            <!-- Prénom -->
+            <input type="text" [(ngModel)]="prenom" placeholder="Prénom"
+                class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded text-white" />
+
+            <!-- Nom -->
+            <input type="text" [(ngModel)]="nom" placeholder="Nom"
+                class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded text-white" />
+
+            <!-- Message -->
+            <textarea [(ngModel)]="avisMessage" placeholder="Votre message" rows="4"
+                class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded resize-none text-white"></textarea>
+
+            <!-- Boutons -->
+            <div class="flex justify-end gap-3">
+                <button (click)="fermerPopup()" class="text-white px-4 py-1 rounded hover:bg-[#3F0255]">Annuler</button>
+                <button (click)="validerAvis()" class="bg-[#8002FF] text-white px-4 py-1 rounded hover:bg-[#3F0255]">Valider</button>
+            </div>
+        </div>
+    </div>
+
+
+
+</div>

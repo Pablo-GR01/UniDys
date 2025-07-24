@@ -2,7 +2,14 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
-  private utilisateur: { prenom: string; nom: string; email: string; role: string } | null = null;
+ private utilisateur: { 
+  _id: string;
+  prenom: string; 
+  nom: string; 
+  email: string; 
+  role: string; 
+} | null = null;
+
 
   constructor() {
     const data = localStorage.getItem('utilisateur');
@@ -32,6 +39,11 @@ export class UserService {
     this.utilisateur = null;
     localStorage.removeItem('utilisateur');
   }
+
+  getUser() {
+    return this.utilisateur;
+  }
+
 
   // AJOUTER CE GETTER POUR ACCEDER A L'UTILISATEUR DEPUIS L'EXTERIEUR
   getUtilisateur(): { prenom: string; nom: string; email: string; role: string } | null {

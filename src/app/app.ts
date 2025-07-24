@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
-import { Connexion } from "../page/connexion/connexion";
+import { Connexion } from '../page/connexion/connexion';
+
 
 @Component({
   selector: 'app-root',

@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CoursService } from '../../../services/cours.service';
-import { CoursUser} from '../../../model/';
+import { CoursUser } from '../../../model/coursUser';
 import { UserService } from '../../../services/user.service';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-mes-cours-e',
   templateUrl: './mes-cours-e.html',
   styleUrls: ['./mes-cours-e.css'],
-  imports:[FormsModule]
+  standalone: true,
+  imports: [FormsModule, CommonModule]
 })
 export class MesCoursE implements OnInit {
   cours: CoursUser[] = [];
@@ -21,15 +23,22 @@ export class MesCoursE implements OnInit {
   ngOnInit() {
     const utilisateur = this.userService.getUser();
     if (utilisateur) {
-      this.utilisateurId = utilisateur._id;
+      this.utilisateurId = utilisateur._id || '';
       this.prenom = utilisateur.prenom;
       this.chargerCours();
     }
   }
 
   chargerCours() {
-    this.coursService.getCoursParUtilisateur(this.utilisateurId).subscribe(data => {
-      this.cours = data;
+    if (!this.utilisateurId) return;
+    this.coursService.getCoursParUtilisateur(this.utilisateurId).subscribe({
+      next: data => {
+        console.log('Cours reçus:', data);
+        this.cours = data;
+      },
+      error: err => {
+        console.error('Erreur getCoursParUtilisateur:', err);
+      }
     });
   }
 

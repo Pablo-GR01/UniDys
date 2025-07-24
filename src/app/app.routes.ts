@@ -7,16 +7,29 @@ import { AccueilE } from '../page/page-user/eleve/accueil-e/accueil-e';
 import { CoursE } from '../page/page-user/eleve/cours-e/cours-e';
 import { AproposE } from '../page/page-user/eleve/apropos-e/apropos-e';
 import { MonEspaceE } from '../page/page-user/eleve/monespace-e/monespace-e';
-
-
+import { AproposP } from '../page/page-user/prof/apropos-p/apropos-p';
+import { CoursP } from '../page/page-user/prof/cours-p/cours-p';
+import { MonespaceP } from '../page/page-user/prof/monespace-p/monespace-p';
 
 export const routes: Routes = [
-  { path: 'connexion', component: Connexion },
-  { path: '', redirectTo: 'connexion', pathMatch: 'full' },
-  { path: 'inscription', component: inscription },
-  { path: 'accueilA', component: AccueilA},
-  { path: 'accueilP', component: AccueilP},
-  { path: 'accueilE', component: AccueilE},
+  {path: 'connexion', component: Connexion },
+  {path: '', redirectTo: 'connexion', pathMatch: 'full' },
+  {path: 'inscription', component: inscription },
+
+  // route page admin
+  {path: 'accueilA', component: AccueilA},
+
+
+
+  // route page prof
+  {path: 'accueilP', component: AccueilP},
+  {path: 'aproposP', component: AproposP},
+  {path: 'coursP', component: CoursP},
+  {path: 'monespaceP', component: MonespaceP},
+
+
+  // route page eleve
+  {path: 'accueilE', component: AccueilE},
   {path: 'coursE', component: CoursE},
   {path: 'aproposE', component: AproposE},
   {path: 'monespaceE', component: MonEspaceE}

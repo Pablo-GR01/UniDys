@@ -1,26 +1,23 @@
-<div class="p-6">
-  <h2 class="text-2xl font-bold mb-4">Cours de {{ prenom }}</h2>
+<div class="container mx-auto p-4">
+  <h2 class="text-xl font-bold mb-4">Bonjour {{ prenom }}, voici tes cours :</h2>
 
-  <!-- Boutons niveau -->
-  <div class="mb-4 flex gap-2">
-    <button (click)="changerNiveau('tous')" class="px-3 py-1 bg-gray-700 text-white rounded">Tous</button>
-    <button (click)="changerNiveau('CP')" class="px-3 py-1 bg-[#8002FF] text-white rounded">CP</button>
-    <button (click)="changerNiveau('CE1')" class="px-3 py-1 bg-[#8002FF] text-white rounded">CE1</button>
-    <button (click)="changerNiveau('CE2')" class="px-3 py-1 bg-[#8002FF] text-white rounded">CE2</button>
-    <!-- Ajoute d'autres niveaux si besoin -->
+  <div class="mb-4">
+    <label for="niveau">Filtrer par niveau :</label>
+    <select id="niveau" [(ngModel)]="niveauFiltre" (change)="changerNiveau(niveauFiltre)">
+      <option value="tous">Tous</option>
+      <option value="CP">CP</option>
+      <option value="CE1">CE1</option>
+      <option value="CE2">CE2</option>
+      <!-- ajoute d'autres niveaux si besoin -->
+    </select>
   </div>
 
-  <!-- Aucun cours -->
-  <div *ngIf="coursFiltres().length === 0" class="text-gray-400">
-    Vous n'avez pas encore de cours réalisés pour ce niveau.
-  </div>
-
-  <!-- Liste des cours -->
-  <div *ngFor="let cours of coursFiltres()" class="bg-[#1c1c2c] text-white p-4 mb-3 rounded shadow">
-    <h3 class="text-lg font-semibold">{{ cours.titre }} ({{ cours.niveau }})</h3>
-    <p class="mt-1">
-      <span *ngIf="cours.etat === 'termine'" class="text-green-400 font-bold">Terminé</span>
-      <span *ngIf="cours.etat === 'en_cours'" class="text-yellow-400">À continuer</span>
-    </p>
-  </div>
+  <ul>
+    <li *ngFor="let cours of coursFiltres()" class="mb-2 p-2 border rounded">
+      <strong>{{ cours.titre }}</strong> - Niveau : {{ cours.niveau }}
+      <span *ngIf="cours.etat === 'termine'" class="text-green-600 font-semibold">Terminé</span>
+      <span *ngIf="cours.etat === 'en_cours'" class="text-yellow-600 font-semibold">En cours</span>
+      <span *ngIf="!cours.etat" class="text-gray-600 italic">Pas d'état</span>
+    </li>
+  </ul>
 </div>

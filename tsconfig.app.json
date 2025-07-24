@@ -8,7 +8,7 @@
   },
   "include": [
     "src/**/*.ts"
-, "src/model/avis.js"  ],
+, "src/model/avis.ts"  ],
   "exclude": [
     "src/**/*.spec.ts"
   ]

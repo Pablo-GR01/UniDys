@@ -1,0 +1,51 @@
+<!-- Bouton pour ouvrir la pop-up -->
+<button (click)="ouvrirPopupCours()"
+    class="bg-[#8002FF] text-white px-4 py-2 rounded hover:bg-[#3F0255] transition flex items-center gap-2">
+    <i class="fas fa-plus"></i> Créer un cours
+</button>
+
+<!-- Pop-up création cours -->
+<div *ngIf="popupCoursOuvert"
+    class="fixed top-0 left-0 w-full h-full bg-black/80 flex items-center justify-center z-50">
+    
+    <div class="bg-[#020118] rounded-xl p-6 w-full max-w-md shadow-lg text-white">
+        <h2 class="text-xl font-bold mb-4">Créer un cours</h2>
+
+        <input type="text" [(ngModel)]="titreCours" placeholder="Nom du cours"
+            class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded text-white" />
+
+        <input type="file" (change)="onPdfSelected($event)" accept="application/pdf"
+            class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded text-white bg-[#0D0B22]" />
+
+        <input type="text" [(ngModel)]="lienYoutube" placeholder="Lien vidéo YouTube (facultatif)"
+            class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded text-white" />
+
+        <select [(ngModel)]="matiere" (change)="mettreAJourImage()"
+            class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded text-black">
+            <option value="" disabled selected>Choisir une matière</option>
+            <option value="Français">Français</option>
+            <option value="Maths">Maths</option>
+            <option value="Histoire">Histoire</option>
+            <option value="Sciences">Sciences</option>
+        </select>
+
+        <div *ngIf="imageMatiere" class="mb-3 flex justify-center">
+            <img [src]="imageMatiere" alt="Image matière" class="w-32 h-32 object-contain" />
+        </div>
+
+        <select [(ngModel)]="niveau"
+            class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded text-black">
+            <option value="" disabled selected>Choisir un niveau</option>
+            <option value="CP">CP</option>
+            <option value="CE1">CE1</option>
+            <option value="CE2">CE2</option>
+            <option value="CM1">CM1</option>
+            <option value="CM2">CM2</option>
+        </select>
+
+        <div class="flex justify-end gap-3">
+            <button (click)="fermerPopupCours()" class="text-white px-4 py-1 rounded hover:bg-[#3F0255]">Annuler</button>
+            <button (click)="validerCours()" class="bg-[#8002FF] text-white px-4 py-1 rounded hover:bg-[#3F0255]">Valider</button>
+        </div>
+    </div>
+</div>

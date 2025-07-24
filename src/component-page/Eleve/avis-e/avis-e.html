@@ -1,4 +1,17 @@
-<!-- 1 : je veut un bouton qui pour laisser un avis avec le avec photo de profile c'est les initiales de l'utilisateur -->
-<!-- 2 : Je veut une pop up pour créer cette avis en question avec un bouton valider qui affiche l'avis pour tout le monde -->
-<!-- 3 : je veut que tu le sécuriser pour ne pas mettre des insulte -->
-<!-- 4 : tu peut me faire étape par étape on passe pas a l'étape suivant si je ne le dite pas -->
+<div class="space-y-6 p-4">
+  <div *ngIf="avisList.length === 0" class="text-gray-500">Aucun avis pour l’instant.</div>
+
+  <div *ngFor="let avis of avisList" class="bg-white p-4 rounded-lg shadow">
+    <div class="flex items-center space-x-4">
+      <!-- Initiales -->
+      <div class="w-12 h-12 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold text-lg">
+        {{ getInitiales(avis.prenom) }}
+      </div>
+      <!-- Prénom -->
+      <div class="font-semibold text-gray-800">{{ avis.prenom }}</div>
+    </div>
+
+    <!-- Message -->
+    <p class="mt-3 text-gray-700">{{ avis.message }}</p>
+  </div>
+</div>

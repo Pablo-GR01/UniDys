@@ -8,7 +8,7 @@
 
   <!-- Bouton Mon Espace + Flèche -->
   <div class="absolute 2xl:-mt-10 2xl:ml-251 md:-mt-8 md:ml-127 md:-mr-200 2xl:-mr-200  flex items-center gap-2 cursor-pointer select-none" (click)="toggleMenu()">
-    <span class="font-semibold 2xl:text-2xl md:text-md">Mon Espace</span>
+    <a routerLink="/monespaceP"><span class="font-semibold 2xl:text-2xl md:text-md hover:text-[#8002FF]">Mon Espace</span></a>
     <svg
       class="2xl:w-8 2xl:h-8 md:w-5 md:h-5 transition-transform duration-300"
       [class.rotate-180]="menuOuvert"
