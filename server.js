@@ -2,12 +2,17 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
+const path = require('path');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Connexion MongoDB
+// 📁 Servir les fichiers PDF statiques depuis /uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// 🔌 Connexion MongoDB
 mongoose.connect('mongodb://localhost:27017/unidys', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -15,7 +20,11 @@ mongoose.connect('mongodb://localhost:27017/unidys', {
 .then(() => console.log('✅ Connecté à MongoDB unidys'))
 .catch(err => console.error('❌ Erreur MongoDB:', err));
 
-// Schema Utilisateur
+// ========================
+// 🔹 SCHEMAS & MODELS
+// ========================
+
+// --- Utilisateur
 const utilisateurSchema = new mongoose.Schema({
   nom: { type: String, required: true },
   prenom: { type: String, required: true },
@@ -25,18 +34,15 @@ const utilisateurSchema = new mongoose.Schema({
   codeProf: String,
   initiale: String,
 });
-
-// Générer les initiales avant sauvegarde
 utilisateurSchema.pre('save', function (next) {
   if (this.nom && this.prenom) {
     this.initiale = (this.prenom[0] + this.nom[0]).toUpperCase();
   }
   next();
 });
-
 const User = mongoose.model('User', utilisateurSchema);
 
-// Schema Newsletter
+// --- Newsletter
 const newsletterSchema = new mongoose.Schema({
   nom: { type: String, default: '' },
   prenom: { type: String, default: '' },
@@ -44,22 +50,47 @@ const newsletterSchema = new mongoose.Schema({
   accepteNewsletter: { type: String, enum: ['oui', 'non'], default: 'oui' },
   dateInscription: { type: Date, default: Date.now },
 });
-
 const Newsletter = mongoose.model('Newsletter', newsletterSchema);
 
-// Schema Avis
+// --- Avis
 const avisSchema = new mongoose.Schema({
   nom: { type: String, required: true },
   prenom: { type: String, required: true },
   message: { type: String, required: true },
   date: { type: Date, default: Date.now },
 });
-
 const Avis = mongoose.model('Avis', avisSchema);
 
-/* ROUTES UTILISATEUR */
+// --- Cours
+const coursSchema = new mongoose.Schema({
+  utilisateurId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  nomProf: { type: String, required: true },
+  titre: String,
+  niveau: String,
+  matiere: String,
+  lienYoutube: String,
+  fichierPdf: String,
+  dateCreation: { type: Date, default: Date.now },
+});
+const Cours = mongoose.model('Cours', coursSchema);
 
-// Créer un utilisateur
+// ========================
+// 🔸 MULTER PDF Upload
+// ========================
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, 'uploads/'),
+  filename: (req, file, cb) => {
+    const uniqueName = Date.now() + '-' + file.originalname;
+    cb(null, uniqueName);
+  }
+});
+const upload = multer({ storage });
+
+// ========================
+// 🔹 ROUTES API
+// ========================
+
+// --- Créer un utilisateur
 app.post('/api/unidys/users', async (req, res) => {
   try {
     const { nom, prenom, email, password, role, codeProf } = req.body;
@@ -68,16 +99,13 @@ app.post('/api/unidys/users', async (req, res) => {
       return res.status(400).json({ message: 'Nom, prénom, email et mot de passe sont obligatoires.' });
     }
 
-    // Vérifier si email existe déjà
     const exist = await User.findOne({ email });
     if (exist) return res.status(400).json({ message: 'Email déjà utilisé' });
 
-    // Validation codeProf si prof
     if (role === 'prof' && codeProf !== 'PROF2025') {
       return res.status(400).json({ message: 'Code professeur invalide' });
     }
 
-    // Interdire création admin via cette route
     if (role === 'admin') {
       return res.status(403).json({ message: 'Création admin interdite via cette route' });
     }
@@ -102,29 +130,7 @@ app.post('/api/unidys/users', async (req, res) => {
   }
 });
 
-// Liste tous les utilisateurs (sans mot de passe)
-app.get('/api/user', async (req, res) => {
-  try {
-    const users = await User.find({}, '-password');
-    res.json(users);
-  } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur' });
-  }
-});
-
-// Récupérer un utilisateur par ID
-app.get('/api/user/:id', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id, '-password');
-    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
-
-    res.json(user);
-  } catch (err) {
-    res.status(500).json({ message: 'Erreur serveur' });
-  }
-});
-
-// Login utilisateur
+// --- Connexion utilisateur
 app.post('/api/unidys/login', async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -150,13 +156,10 @@ app.post('/api/unidys/login', async (req, res) => {
   }
 });
 
-/* ROUTE NEWSLETTER */
-
-// Inscription newsletter (création ou mise à jour)
+// --- Inscription newsletter
 app.post('/api/newsletter', async (req, res) => {
   try {
     const { nom = '', prenom = '', email, accepteNewsletter = 'oui' } = req.body;
-
     if (!email) return res.status(400).json({ message: 'Email requis' });
 
     const saved = await Newsletter.findOneAndUpdate(
@@ -173,18 +176,16 @@ app.post('/api/newsletter', async (req, res) => {
   }
 });
 
+// --- Créer un avis
 app.post('/api/avis', async (req, res) => {
-  console.log('Requête reçue:', req.body);
   try {
     const { nom, prenom, message } = req.body;
-
     if (!nom || !prenom || !message) {
       return res.status(400).json({ message: 'Tous les champs sont requis.' });
     }
 
     const nouvelAvis = new Avis({ nom, prenom, message });
     const result = await nouvelAvis.save();
-    console.log('Avis sauvegardé:', result);
 
     res.status(201).json({ message: 'Avis enregistré avec succès !', data: result });
   } catch (err) {
@@ -193,8 +194,63 @@ app.post('/api/avis', async (req, res) => {
   }
 });
 
+// --- Créer un cours
+app.post('/api/cours', upload.single('pdf'), async (req, res) => {
+  try {
+    const { titre, niveau, matiere, nomProf, lienYoutube } = req.body;
+    const fichier = req.file;
 
-// Lancer le serveur
+    if (!titre || !niveau || !matiere || !nomProf || !fichier) {
+      return res.status(400).json({ message: 'Champs manquants. Vérifiez le formulaire.' });
+    }
+
+    // Debug log
+    console.log("Ajout cours → titre:", titre, "| prof:", nomProf, "| fichier:", fichier.filename);
+
+    // Analyser nomProf (attendu "Prénom Nom")
+    const parts = nomProf.trim().split(' ');
+    if (parts.length < 2) {
+      return res.status(400).json({ message: 'Format nomProf invalide, attendu "Prénom Nom"' });
+    }
+    const prenom = parts.shift();
+    const nom = parts.join(' ');
+
+    // Rechercher l'utilisateur correspondant (prof)
+    const utilisateur = await User.findOne({
+      nom: new RegExp(`^${nom}$`, 'i'),
+      prenom: new RegExp(`^${prenom}$`, 'i'),
+      role: 'prof',
+    });
+
+    if (!utilisateur) {
+      return res.status(404).json({ message: 'Professeur non trouvé avec ce nom.' });
+    }
+
+    // Création du cours
+    const nouveauCours = new Cours({
+      titre,
+      niveau,
+      matiere,
+      utilisateurId: utilisateur._id,
+      nomProf: `${prenom} ${nom}`,
+      lienYoutube: lienYoutube || '',
+      fichierPdf: fichier.filename,
+    });
+
+    await nouveauCours.save();
+
+    res.status(201).json({ message: 'Cours enregistré avec succès', data: nouveauCours });
+
+  } catch (err) {
+    console.error('Erreur lors de l\'enregistrement du cours:', err);
+    res.status(500).json({ message: 'Erreur serveur lors de l\'enregistrement du cours.' });
+  }
+});
+
+
+// ========================
+// 🔸 Lancer le serveur
+// ========================
 const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`🚀 Serveur backend démarré sur http://localhost:${PORT}`);

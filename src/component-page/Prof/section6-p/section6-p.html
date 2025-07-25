@@ -1,12 +1,20 @@
 <app-icon></app-icon>
-<div class="flex items-center text-white 2xl:mt-5 2xl:ml-5">
+<div class="flex items-center text-white 2xl:mt-5 2xl:ml-5 lg:mt-2">
     <!-- Initiales -->
-    <div class="2xl:w-16 2xl:h-16 lg:w-10 lg  flex items-center justify-center rounded-full bg-[#8002FF] font-black text-2xl">
+    <div class="absolute flex items-center justify-center rounded-full border-2 border-[#8002FF] font-black
+    2xl:w-16 2xl:h-16 2xl:text-2xl
+    lg:w-14 lg:h-14 lg:text-2xl lg:ml-5 lg:mt-15
+    md:w-14 md:h-14 md:text-2xl md:ml-3 md:mt-16
+    ">
         {{ userService.getInitiales() || 'IN' }}
     </div>
 
     <!-- Bonjour + nom complet ou invité -->
-    <div class="2xl:text-2xl 2xl:font-bold 2xl:ml-5">
+    <div class="absolute
+    2xl:text-2xl 2xl:font-bold 2xl:ml-25
+    lg:text-2xl lg:ml-23 lg:mt-15
+    md:text-2xl md:mt-16 md:ml-20
+    ">
         Bonjour {{ userService.getNomComplet() }}
     </div>
 
@@ -15,8 +23,11 @@
     <!-- Pop-up -->
     <!-- BOUTON OUVRIR LA POP-UP -->
     <button (click)="ouvrirPopup()"
-        class="bg-[#8002FF] text-white px-4 py-2 rounded hover:bg-[#3F0255] transition 2xl:ml-335 flex items-center gap-2"
-        >
+        class="absolute bg-[#8002FF] text-white px-4 py-2 rounded hover:bg-[#3F0255] transition flex items-center gap-2
+        2xl:ml-430
+        lg:ml-170 lg:mt-16
+        md:mt-17 md:ml-150
+        ">
         <i class="fas fa-plus"></i>
         Laisser un avis
     </button>

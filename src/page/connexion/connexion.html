@@ -14,7 +14,7 @@
 
       <!-- Choix profil -->
       <div class="flex justify-center gap-4 mb-4">
-        <button 5(click)="activerProf()" [ngClass]="{
+        <button (click)="activerProf()" [ngClass]="{
           'bg-[#b100ff]': actif === 'prof',
           'bg-transparent': actif !== 'prof'
         }" class="text-white px-4 py-1 rounded-full font-semibold border border-white">
