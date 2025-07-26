@@ -1,138 +1,87 @@
 <!-- Bouton pour ouvrir la pop-up -->
 <button (click)="ouvrirPopupCours()"
-    class="bg-[#8002FF] hover:bg-[#3F0255] text-white px-6 py-3 rounded transition-all duration-300 shadow-md flex items-center gap-2
-    2xl:ml-[388px]
-    lg:ml-212 lg:mt-3
-    md:mt-3.5 md:ml-[108px]">
-    <i class="fas fa-plus text-lg"></i> 
-    <span class="text-base font-semibold">Créer un cours</span>
+  class="bg-[#8002FF] hover:bg-[#3F0255] text-white px-6 py-3 rounded transition-all duration-300 shadow-md flex items-center gap-2
+  2xl:ml-[388px] lg:ml-212 lg:mt-3 md:mt-3.5 md:ml-[108px]">
+  <i class="fas fa-plus text-lg"></i>
+  <span class="text-base font-semibold">Créer un cours</span>
 </button>
 
 <!-- Pop-up création cours -->
-<div *ngIf="popupCoursOuvert"
-    class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-4">
+<div *ngIf="popupCoursOuvert" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 px-4">
+  <div class="bg-[#0D0B22] rounded-2xl p-8 w-full max-w-2xl shadow-2xl text-white overflow-y-auto max-h-[90vh]">
 
-    <div class="bg-[#0D0B22] rounded-2xl p-8 w-full max-w-xl shadow-2xl text-white">
-        <h2 class="text-2xl font-extrabold text-center mb-6">Créer un cours</h2>
+    <h2 class="text-2xl font-extrabold text-center mb-6">Créer un cours</h2>
 
-        <!-- Titre du cours -->
-        <input type="text" [(ngModel)]="titreCours" placeholder="Nom du cours"
-            class="w-full border border-[#8002FF] bg-transparent p-3 mb-4 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8002FF]" />
+    <!-- Titre -->
+    <input type="text" [(ngModel)]="titreCours" placeholder="Nom du cours"
+      class="w-full border border-[#8002FF] bg-transparent p-3 mb-4 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8002FF]" />
 
-        <!-- Nom du professeur -->
-        <input type="text" [(ngModel)]="nomProf" placeholder="Nom du professeur"
-            class="w-full border border-[#8002FF] bg-transparent p-3 mb-4 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8002FF]" />
+    <!-- Professeur -->
+    <input type="text" [(ngModel)]="nomProf" placeholder="Nom du professeur"
+      class="w-full border border-[#8002FF] bg-transparent p-3 mb-4 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8002FF]" />
 
-        <!-- Fichier PDF -->
-        <input type="file" (change)="onPdfSelected($event)" accept="application/pdf"
-            class="w-full border border-[#8002FF] p-3 mb-4 rounded-lg text-white bg-[#1B1838] file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-[#8002FF] file:text-white" />
+    <!-- PDF -->
+    <input type="file" (change)="onPdfSelected($event)" accept="application/pdf"
+      class="w-full border border-[#8002FF] p-3 mb-4 rounded-lg text-white bg-[#1B1838] file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:bg-[#8002FF] file:text-white" />
 
-        <!-- Lien YouTube -->
-        <input type="text" [(ngModel)]="lienYoutube" placeholder="Lien vidéo YouTube (facultatif)"
-            class="w-full border border-[#8002FF] bg-transparent p-3 mb-4 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8002FF]" />
+    <!-- Lien YouTube -->
+    <input type="text" [(ngModel)]="lienYoutube" placeholder="Lien vidéo YouTube (facultatif)"
+      class="w-full border border-[#8002FF] bg-transparent p-3 mb-4 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#8002FF]" />
 
-        <!-- Matière -->
-        <select [(ngModel)]="matiere" (change)="mettreAJourImage()"
-            class="w-full border border-[#8002FF] bg-[#1B1838] p-3 mb-4 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#8002FF]">
-            <option value="" disabled selected>Choisir une matière</option>
-            <option class="text-black" value="Français">Français</option>
-            <option class="text-black" value="Maths">Maths</option>
-            <option class="text-black" value="Histoire">Histoire</option>
-            <option class="text-black" value="Sciences">Sciences</option>
-        </select>
+    <!-- Matière -->
+    <select [(ngModel)]="matiere" (change)="mettreAJourImage()"
+      class="w-full border border-[#8002FF] bg-[#1B1838] p-3 mb-4 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#8002FF]">
+      <option value="" disabled selected>Choisir une matière</option>
+      <option class="text-black" value="Français">Français</option>
+      <option class="text-black" value="Maths">Maths</option>
+      <option class="text-black" value="Histoire">Histoire</option>
+      <option class="text-black" value="Sciences">Sciences</option>
+    </select>
 
-        <!-- Image matière -->
-        <div *ngIf="imageMatiere" class="mb-4 flex justify-center">
-            <img [src]="imageMatiere" alt="Image matière" class="w-28 h-28 object-contain rounded-lg shadow-md" />
-        </div>
-
-        <!-- Niveau -->
-        <select [(ngModel)]="niveau"
-            class="w-full border border-[#8002FF] bg-[#1B1838] p-3 mb-6 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#8002FF]">
-            <option value="" disabled selected>Choisir un niveau</option>
-            <option class="text-black" value="CP">CP</option>
-            <option class="text-black" value="CE1">CE1</option>
-            <option class="text-black" value="CE2">CE2</option>
-            <option class="text-black" value="CM1">CM1</option>
-            <option class="text-black" value="CM2">CM2</option>
-        </select>
-
-        <!-- Boutons -->
-        <div class="flex justify-end gap-4">
-            <button (click)="fermerPopupCours()"
-                class="px-4 py-2 rounded-md border border-gray-500 text-white hover:bg-gray-700 transition-all">Annuler</button>
-            <button (click)="validerCours()"
-                class="px-4 py-2 rounded-md bg-[#8002FF] hover:bg-[#3F0255] transition-all font-semibold text-white">Valider</button>
-        </div>
+    <!-- Image matière -->
+    <div *ngIf="imageMatiere" class="mb-4 flex justify-center">
+      <img [src]="imageMatiere" alt="Image matière" class="w-28 h-28 object-contain rounded-lg shadow-md" />
     </div>
+
+    <!-- Niveau -->
+    <select [(ngModel)]="niveau"
+      class="w-full border border-[#8002FF] bg-[#1B1838] p-3 mb-6 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#8002FF]">
+      <option value="" disabled selected>Choisir un niveau</option>
+      <option class="text-black" value="CP">CP</option>
+      <option class="text-black" value="CE1">CE1</option>
+      <option class="text-black" value="CE2">CE2</option>
+      <option class="text-black" value="CM1">CM1</option>
+      <option class="text-black" value="CM2">CM2</option>
+    </select>
+
+    <!-- QCMs -->
+    <div class="mb-6">
+      <h3 class="text-lg font-bold mb-2">Ajouter des activités (QCM)</h3>
+      <div *ngFor="let qcm of qcms; let i = index" class="mb-4 border p-4 rounded-lg bg-[#1B1838] border-[#8002FF]">
+        <input [(ngModel)]="qcm.question" placeholder="Question"
+          class="w-full p-2 mb-2 rounded bg-transparent border border-white text-white placeholder-gray-400" />
+
+        <div *ngFor="let rep of qcm.reponses; let j = index" class="flex items-center gap-2 mb-1">
+          <input [(ngModel)]="qcm.reponses[j]" placeholder="Réponse {{ j + 1 }}"
+            class="flex-1 p-2 rounded bg-transparent border border-gray-400 text-white placeholder-gray-400" />
+          <input type="radio" name="bonneReponse-{{i}}" [value]="j" [(ngModel)]="qcm.bonneReponse" />
+          <label class="text-sm text-white">Bonne réponse</label>
+        </div>
+
+        <button (click)="ajouterReponse(i)" type="button"
+          class="text-sm text-white hover:underline mt-2">+ Ajouter une réponse</button>
+      </div>
+
+      <button (click)="ajouterQCM()" type="button"
+        class="px-4 py-2 bg-[#8002FF] hover:bg-[#3F0255] text-white rounded-md font-semibold">+ Ajouter un QCM</button>
+    </div>
+
+    <!-- Boutons -->
+    <div class="flex justify-end gap-4">
+      <button (click)="fermerPopupCours()"
+        class="px-4 py-2 rounded-md border border-gray-500 text-white hover:bg-gray-700 transition-all">Annuler</button>
+      <button (click)="validerCours()"
+        class="px-4 py-2 rounded-md bg-[#8002FF] hover:bg-[#3F0255] transition-all font-semibold text-white">Valider</button>
+    </div>
+  </div>
 </div>
-
-
-
-
-<!-- Bouton pour ouvrir la pop-up
-<button (click)="ouvrirPopupCours()"
-    class="bg-[#8002FF] text-white px-4 py-2 rounded hover:bg-[#3F0255] transition flex items-center gap-2
-    2xl:ml-388
-    lg:ml-212 lg:mt-3
-    md:mt-3.5 md:ml-108
-    ">
-    <i class="fas fa-plus"></i> Créer un cours
-</button>
-
-<!-- Pop-up création cours --
-<div *ngIf="popupCoursOuvert"
-    class="fixed top-0 left-0 w-full h-full bg-black/80 flex items-center justify-center z-50">
-
-    <div class="bg-[#020118] rounded-xl p-6 w-full max-w-md shadow-lg text-white font-black">
-        <h2 class="text-xl font-bold mb-4">Créer un cours</h2>
-
-        <!-- Titre du cours --
-        <input type="text" [(ngModel)]="titreCours" placeholder="Nom du cours"
-            class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded text-white font-black" />
-
-        <!-- Nom du professeur --
-        <input type="text" [(ngModel)]="nomProf" placeholder="Nom du professeur"
-            class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded text-white font-black" />
-
-        <!-- Fichier PDF --
-        <input type="file" (change)="onPdfSelected($event)" accept="application/pdf"
-            class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded text-white font-black bg-[#0D0B22]" />
-
-        <!-- Lien YouTube --
-        <input type="text" [(ngModel)]="lienYoutube" placeholder="Lien vidéo YouTube (facultatif)"
-            class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded text-white font-black" />
-
-        <!-- Matière --
-        <select [(ngModel)]="matiere" (change)="mettreAJourImage()"
-            class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded text-white">
-            <option class="text-black font-black" value="" disabled selected>Choisir une matière</option>
-            <option class="text-black font-black" value="Français">Français</option>
-            <option class="text-black font-black" value="Maths">Maths</option>
-            <option class="text-black font-black" value="Histoire">Histoire</option>
-            <option class="text-black font-black" value="Sciences">Sciences</option>
-        </select>
-
-        <!-- Image matière --
-        <div *ngIf="imageMatiere" class="mb-3 flex justify-center">
-            <img [src]="imageMatiere" alt="Image matière" class="w-32 h-32 object-contain" />
-        </div>
-
-        <!-- Niveau --
-        <select [(ngModel)]="niveau"
-            class="w-full border-2 border-[#8002FF] text-white font-black p-2 mb-3 rounded">
-            <option value="" disabled selected>Choisir un niveau</option>
-            <option class="text-black font-black" value="CP">CP</option>
-            <option class="text-black font-black" value="CE1">CE1</option>
-            <option class="text-black font-black" value="CE2">CE2</option>
-            <option class="text-black font-black" value="CM1">CM1</option>
-            <option class="text-black font-black" value="CM2">CM2</option>
-        </select>
-
-        <!-- Boutons --
-        <div class="flex justify-end gap-3">
-            <button (click)="fermerPopupCours()" class="text-white px-4 py-1 rounded hover:bg-[#3F0255]">Annuler</button>
-            <button (click)="validerCours()" class="bg-[#8002FF] text-white px-4 py-1 rounded hover:bg-[#3F0255]">Valider</button>
-        </div>
-    </div>
-</div> -->

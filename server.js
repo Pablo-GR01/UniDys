@@ -17,8 +17,8 @@ mongoose.connect('mongodb://localhost:27017/unidys', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
-.then(() => console.log('✅ Connecté à MongoDB unidys'))
-.catch(err => console.error('❌ Erreur MongoDB:', err));
+  .then(() => console.log('✅ Connecté à MongoDB unidys'))
+  .catch(err => console.error('❌ Erreur MongoDB:', err));
 
 // ========================
 // 🔹 SCHEMAS & MODELS
@@ -61,7 +61,7 @@ const avisSchema = new mongoose.Schema({
 });
 const Avis = mongoose.model('Avis', avisSchema);
 
-// --- Cours
+// --- Cours (avec QCM intégrés)
 const coursSchema = new mongoose.Schema({
   utilisateurId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   nomProf: { type: String, required: true },
@@ -70,6 +70,13 @@ const coursSchema = new mongoose.Schema({
   matiere: String,
   lienYoutube: String,
   fichierPdf: String,
+  qcms: [
+    {
+      question: { type: String, required: true },
+      reponses: [{ type: String, required: true }],
+      bonneReponse: { type: Number, required: true }
+    }
+  ],
   dateCreation: { type: Date, default: Date.now },
 });
 const Cours = mongoose.model('Cours', coursSchema);
@@ -194,64 +201,80 @@ app.post('/api/avis', async (req, res) => {
   }
 });
 
-// --- Créer un cours
+// --- Créer un cours (avec QCM facultatif et prof optionnel)
 app.post('/api/cours', upload.single('pdf'), async (req, res) => {
   try {
     const { titre, niveau, matiere, nomProf, lienYoutube } = req.body;
     const fichier = req.file;
 
-    if (!titre || !niveau || !matiere || !nomProf || !fichier) {
-      return res.status(400).json({ message: 'Champs manquants. Vérifiez le formulaire.' });
+    if (!titre || !niveau || !matiere || !fichier) {
+      return res.status(400).json({ message: 'Titre, niveau, matière et fichier PDF sont requis.' });
     }
 
-    // Debug log
-    console.log("Ajout cours → titre:", titre, "| prof:", nomProf, "| fichier:", fichier.filename);
+    let utilisateurId = null;
 
-    // Analyser nomProf (attendu "Prénom Nom")
-    const parts = nomProf.trim().split(' ');
-    if (parts.length < 2) {
-      return res.status(400).json({ message: 'Format nomProf invalide, attendu "Prénom Nom"' });
-    }
-    const prenom = parts.shift();
-    const nom = parts.join(' ');
+    // Si nomProf fourni, essayer de trouver le prof
+    if (nomProf) {
+      const parts = nomProf.trim().split(' ');
+      if (parts.length >= 2) {
+        const prenom = parts.shift();
+        const nom = parts.join(' ');
+        const utilisateur = await User.findOne({
+          nom: new RegExp(`^${nom}$`, 'i'),
+          prenom: new RegExp(`^${prenom}$`, 'i'),
+          role: 'prof',
+        });
 
-    // Rechercher l'utilisateur correspondant (prof)
-    const utilisateur = await User.findOne({
-      nom: new RegExp(`^${nom}$`, 'i'),
-      prenom: new RegExp(`^${prenom}$`, 'i'),
-      role: 'prof',
-    });
-
-    if (!utilisateur) {
-      return res.status(404).json({ message: 'Professeur non trouvé avec ce nom.' });
+        if (utilisateur) {
+          utilisateurId = utilisateur._id;
+        }
+      }
     }
 
-    // Création du cours
+    // Si aucun prof trouvé ou pas de nomProf, mettre un utilisateurId fictif
+    if (!utilisateurId) {
+      utilisateurId = new mongoose.Types.ObjectId(); // ✅ ID bidon
+    }
+
+    // 🧠 Traitement des QCM
+    let qcms = [];
+    if (req.body.qcms) {
+      try {
+        const parsed = JSON.parse(req.body.qcms);
+        if (Array.isArray(parsed)) {
+          qcms = parsed.filter(q =>
+            q.question && Array.isArray(q.reponses) && typeof q.bonneReponse === 'number'
+          );
+        }
+      } catch (err) {
+        return res.status(400).json({ message: 'Erreur de format des QCM.' });
+      }
+    }
+
     const nouveauCours = new Cours({
       titre,
       niveau,
       matiere,
-      utilisateurId: utilisateur._id,
-      nomProf: `${prenom} ${nom}`,
+      nomProf: nomProf || '', // chaîne vide si absent
       lienYoutube: lienYoutube || '',
       fichierPdf: fichier.filename,
+      utilisateurId,
+      qcms
     });
 
     await nouveauCours.save();
-
     res.status(201).json({ message: 'Cours enregistré avec succès', data: nouveauCours });
 
   } catch (err) {
-    console.error('Erreur lors de l\'enregistrement du cours:', err);
-    res.status(500).json({ message: 'Erreur serveur lors de l\'enregistrement du cours.' });
+    console.error('Erreur cours:', err);
+    res.status
+
   }
-});
-
-
-// ========================
-// 🔸 Lancer le serveur
-// ========================
-const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Serveur backend démarré sur http://localhost:${PORT}`);
-});
+})
+    // ========================
+    // 🔸 Lancer le serveur
+    // ========================
+    const PORT = 3000;
+    app.listen(PORT, () => {
+      console.log(`🚀 Serveur backend démarré sur http://localhost:${PORT}`);
+    });

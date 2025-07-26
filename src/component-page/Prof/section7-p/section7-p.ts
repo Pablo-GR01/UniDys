@@ -1,106 +1,99 @@
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-section7-p',
-  standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './section7-p.html',
-  styleUrls: ['./section7-p.css']
+  styleUrls: ['./section7-p.css'], // optionnel
+  standalone: true,
+  imports: [CommonModule, FormsModule]
 })
 export class Section7P {
-  popupCoursOuvert: boolean = false;
+  popupCoursOuvert = false;
 
-  nomProf: string = '';
-  titreCours: string = '';
-  lienYoutube: string = '';
-  matiere: string = '';
-  niveau: string = '';
-  pdfFichier: File | null = null;
-  imageMatiere: string | null = null;
+  titreCours = '';
+  nomProf = '';
+  niveau = '';
+  matiere = '';
+  lienYoutube = '';
+  imageMatiere = '';
+  pdfFile!: File;
 
-  constructor(private http: HttpClient) {
-    // Récupérer automatiquement le nom du prof s'il est déjà stocké dans localStorage
-    this.nomProf = localStorage.getItem('nomProf') || '';
-  }
+  // QCMs vides par défaut (pas obligatoire)
+  qcms: {
+    question: string;
+    reponses: string[];
+    bonneReponse: number;
+  }[] = [];
 
-  ouvrirPopupCours(): void {
+  constructor(private http: HttpClient) {}
+
+  ouvrirPopupCours() {
     this.popupCoursOuvert = true;
   }
 
-  fermerPopupCours(): void {
+  fermerPopupCours() {
     this.popupCoursOuvert = false;
+    this.titreCours = '';
+    this.nomProf = '';
+    this.niveau = '';
+    this.matiere = '';
+    this.lienYoutube = '';
+    this.imageMatiere = '';
+    this.qcms = [];
   }
 
-  onPdfSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.pdfFichier = input.files[0];
-    }
+  onPdfSelected(event: any) {
+    this.pdfFile = event.target.files[0];
   }
 
-  mettreAJourImage(): void {
-    const images: Record<string, string> = {
-      'Français': 'assets/coursfrançais.png',
-      'Maths': 'assets/coursmaths.png',
-      'Histoire': 'assets/courshistoire.png',
-      'Sciences': 'assets/images/sciences.png',
+  mettreAJourImage() {
+    const images: any = {
+      'Français': 'assets/francais.png',
+      'Maths': 'assets/maths.png',
+      'Histoire': 'assets/histoire.png',
+      'Sciences': 'assets/sciences.png'
     };
-    this.imageMatiere = images[this.matiere] || null;
+    this.imageMatiere = images[this.matiere] || '';
   }
 
-  validerCours(): void {
-    // Vérifications basiques
-    if (!this.titreCours.trim()) {
-      alert("Titre du cours manquant");
-      return;
-    }
-    if (!this.pdfFichier) {
-      alert("PDF manquant");
-      return;
-    }
-    if (!this.matiere.trim()) {
-      alert("Matière manquante");
-      return;
-    }
-    if (!this.niveau.trim()) {
-      alert("Niveau manquant");
-      return;
-    }
-    if (!this.nomProf.trim()) {
-      alert("Nom du professeur manquant");
-      return;
-    }
+  ajouterQCM() {
+    this.qcms.push({
+      question: '',
+      reponses: ['', ''],
+      bonneReponse: 0
+    });
+  }
 
-    // Construction des données à envoyer
+  ajouterReponse(index: number) {
+    this.qcms[index].reponses.push('');
+  }
+
+  validerCours() {
     const formData = new FormData();
     formData.append('titre', this.titreCours);
-    formData.append('pdf', this.pdfFichier, this.pdfFichier.name);
-    formData.append('matiere', this.matiere);
-    formData.append('niveau', this.niveau);
     formData.append('nomProf', this.nomProf);
-    if (this.lienYoutube.trim()) {
-      formData.append('video', this.lienYoutube);
+    formData.append('niveau', this.niveau);
+    formData.append('matiere', this.matiere);
+    formData.append('lienYoutube', this.lienYoutube || '');
+    formData.append('pdf', this.pdfFile);
+
+    // N’ajouter les QCMs que si au moins une question est remplie
+    const qcmUtiles = this.qcms.filter(q => q.question.trim() !== '');
+    if (qcmUtiles.length > 0) {
+      formData.append('qcms', JSON.stringify(qcmUtiles));
     }
 
     this.http.post('http://localhost:3000/api/cours', formData).subscribe({
       next: () => {
-        alert(`Cours ajouté avec succès par : ${this.nomProf}`);
+        alert('Cours créé avec succès !');
         this.fermerPopupCours();
-
-        // Réinitialiser le formulaire
-        this.titreCours = '';
-        this.lienYoutube = '';
-        this.matiere = '';
-        this.niveau = '';
-        this.pdfFichier = null;
-        this.imageMatiere = null;
       },
-      error: (err) => {
-        console.error("Erreur lors de l'ajout du cours:", err);
-        alert("Erreur lors de l'ajout du cours.");
+      error: err => {
+        console.error('Erreur lors de la création du cours', err);
+        alert('Erreur lors de la création du cours.');
       }
     });
   }
