@@ -153,6 +153,7 @@ app.post('/api/avis', async (req, res) => {
 });
 
 // --- Créer un cours (avec QCM facultatif et prof optionnel)
+// Dans ta route POST /api/cours
 app.post('/api/cours', upload.single('pdf'), async (req, res) => {
   try {
     const { titre, niveau, matiere, nomProf, lienYoutube } = req.body;
@@ -164,7 +165,6 @@ app.post('/api/cours', upload.single('pdf'), async (req, res) => {
 
     let utilisateurId = null;
 
-    // Si nomProf fourni, essayer de trouver le prof
     if (nomProf) {
       const parts = nomProf.trim().split(' ');
       if (parts.length >= 2) {
@@ -182,18 +182,20 @@ app.post('/api/cours', upload.single('pdf'), async (req, res) => {
       }
     }
 
-    // Si aucun prof trouvé ou pas de nomProf, mettre un utilisateurId bidon
     if (!utilisateurId) {
       utilisateurId = new mongoose.Types.ObjectId(); // ID bidon
     }
 
-    // 🧠 Traitement des QCM
+    // Parse bien le JSON contenu dans req.body.qcms (string)
     let qcms = [];
     if (req.body.qcms) {
       try {
-        const parsed = JSON.parse(req.body.qcms);
-        if (Array.isArray(parsed)) {
-          qcms = parsed.filter(q =>
+        qcms = JSON.parse(req.body.qcms);
+
+        // On filtre les QCM invalides, sécu
+        if (!Array.isArray(qcms)) qcms = [];
+        else {
+          qcms = qcms.filter(q => 
             q.question && Array.isArray(q.reponses) && typeof q.bonneReponse === 'number'
           );
         }
@@ -221,6 +223,37 @@ app.post('/api/cours', upload.single('pdf'), async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur lors de la création du cours.' });
   }
 });
+
+
+// --- 🔍 Obtenir les cours créés par un utilisateur (professeur)
+app.get('/api/cours/prof/:nomProf', async (req, res) => {
+  try {
+    const { nomProf } = req.params;
+    const cours = await Cours.find({ nomProf }); // bien 'nomProf'
+    res.json(cours);
+  } catch (err) {
+    console.error('Erreur récupération cours par nomProf :', err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+app.get('/api/cours/:id', async (req, res) => {
+  try {
+    const cours = await Cours.findById(req.params.id);
+    res.json(cours);
+  } catch (error) {
+    res.status(404).json({ message: 'Cours introuvable' });
+  }
+});
+
+// Exemple de route pour servir un fichier PDF stocké sur le serveur
+app.get('/uploads/:filename', (req, res) => {
+  const filePath = path.join(__dirname, 'uploads', req.params.filename);
+  res.sendFile(filePath);
+});
+
+
+
 
 // ========================
 // 🔸 Lancer le serveur

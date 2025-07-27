@@ -1,0 +1,45 @@
+<div class="text-white p-6" *ngIf="!isLoading && cours">
+    <h1 class="text-2xl font-black mb-4 text-center text-[#8002FF]">{{ cours.titre }}</h1>
+  
+    <div class="bg-[#1B1838] p-6 rounded-xl shadow-lg">
+      <p class="mb-2"><strong>Matière :</strong> {{ cours.matiere }}</p>
+      <p class="mb-4"><strong>Niveau :</strong> {{ cours.niveau }}</p>
+  
+      <div *ngIf="cours.description">
+        <h2 class="font-bold text-lg mb-2">Description du cours :</h2>
+        <p>{{ cours.description }}</p>
+      </div>
+  
+      <div *ngIf="cours.qcm && cours.qcm.length > 0" class="mt-6">
+        <h2 class="font-bold text-lg mb-2">QCM liés à ce cours :</h2>
+        <ul class="list-disc list-inside">
+          <li *ngFor="let question of cours.qcm">
+            <span class="font-medium">❓ {{ question.intitule }}</span>
+            <ul class="ml-4 mt-1 list-circle">
+              <li *ngFor="let reponse of question.reponses">{{ reponse }}</li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+  
+      <div *ngIf="!cours.qcm || cours.qcm.length === 0" class="mt-6 text-gray-300">
+        Aucun QCM associé à ce cours.
+      </div>
+    </div>
+  
+    <!-- Affichage PDF -->
+    <div class="mt-8">
+      <h2 class="text-xl font-bold mb-4 text-center text-[#F5F5F5]">📄 Fichier PDF du cours :</h2>
+      <iframe
+        [src]="pdfUrlSafe"
+        width="100%"
+        height="600"
+        class="border-2 border-[#8002FF] rounded-lg shadow"
+      ></iframe>
+    </div>
+  </div>
+  
+  <div *ngIf="isLoading" class="text-white text-center p-10">
+    <p>Chargement du cours...</p>
+  </div>
+  

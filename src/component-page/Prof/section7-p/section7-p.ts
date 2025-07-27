@@ -6,12 +6,13 @@ import { FormsModule } from '@angular/forms';
 @Component({
   selector: 'app-section7-p',
   templateUrl: './section7-p.html',
-  styleUrls: ['./section7-p.css'], // optionnel
+  styleUrls: ['./section7-p.css'],
   standalone: true,
   imports: [CommonModule, FormsModule]
 })
 export class Section7P {
   popupCoursOuvert = false;
+  popupQcmOuvert = false;
 
   titreCours = '';
   nomProf = '';
@@ -21,7 +22,6 @@ export class Section7P {
   imageMatiere = '';
   pdfFile!: File;
 
-  // QCMs vides par défaut (pas obligatoire)
   qcms: {
     question: string;
     reponses: string[];
@@ -36,6 +36,18 @@ export class Section7P {
 
   fermerPopupCours() {
     this.popupCoursOuvert = false;
+    this.resetForm();
+  }
+
+  ouvrirPopupQCM() {
+    this.popupQcmOuvert = true;
+  }
+
+  fermerPopupQCM() {
+    this.popupQcmOuvert = false;
+  }
+
+  resetForm() {
     this.titreCours = '';
     this.nomProf = '';
     this.niveau = '';
@@ -43,10 +55,13 @@ export class Section7P {
     this.lienYoutube = '';
     this.imageMatiere = '';
     this.qcms = [];
+    this.pdfFile = undefined!;
   }
 
   onPdfSelected(event: any) {
-    this.pdfFile = event.target.files[0];
+    if (event.target.files && event.target.files.length > 0) {
+      this.pdfFile = event.target.files[0];
+    }
   }
 
   mettreAJourImage() {
@@ -63,7 +78,7 @@ export class Section7P {
     this.qcms.push({
       question: '',
       reponses: ['', ''],
-      bonneReponse: 0
+      bonneReponse: 1 // par défaut la 1ère réponse bonne (valeur 1)
     });
   }
 
@@ -74,9 +89,40 @@ export class Section7P {
   supprimerQCM(index: number) {
     this.qcms.splice(index, 1);
   }
-  
+
+  validerQCM() {
+    if (this.qcms.length === 0) {
+      alert('Vous devez ajouter au moins un QCM avant de valider.');
+      return;
+    }
+
+    for (const qcm of this.qcms) {
+      if (!qcm.question.trim()) {
+        alert('Chaque QCM doit avoir une question.');
+        return;
+      }
+      // tu peux aussi vérifier qu'il y a au moins 2 réponses non vides
+      if (qcm.reponses.filter(r => r.trim() !== '').length < 2) {
+        alert('Chaque QCM doit avoir au moins deux réponses non vides.');
+        return;
+      }
+      // et vérifier que bonneReponse est valide
+      if (qcm.bonneReponse < 1 || qcm.bonneReponse > qcm.reponses.length) {
+        alert('Veuillez sélectionner une bonne réponse valide.');
+        return;
+      }
+    }
+
+    this.popupQcmOuvert = false;
+    // Les qcms sont déjà modifiés dans le formulaire, rien à faire
+  }
 
   validerCours() {
+    if (!this.titreCours || !this.nomProf || !this.matiere || !this.niveau || !this.pdfFile) {
+      alert('Veuillez remplir tous les champs obligatoires et sélectionner un PDF.');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('titre', this.titreCours);
     formData.append('nomProf', this.nomProf);
@@ -85,7 +131,7 @@ export class Section7P {
     formData.append('lienYoutube', this.lienYoutube || '');
     formData.append('pdf', this.pdfFile);
 
-    // N’ajouter les QCMs que si au moins une question est remplie
+    // Envoi des QCM sous forme JSON stringifiée uniquement s'il y en a
     const qcmUtiles = this.qcms.filter(q => q.question.trim() !== '');
     if (qcmUtiles.length > 0) {
       formData.append('qcms', JSON.stringify(qcmUtiles));
@@ -95,6 +141,7 @@ export class Section7P {
       next: () => {
         alert('Cours créé avec succès !');
         this.fermerPopupCours();
+        this.fermerPopupQCM();
       },
       error: err => {
         console.error('Erreur lors de la création du cours', err);

@@ -1,65 +1,64 @@
-<!-- <app-icon></app-icon>
-<div class="flex items-center text-white 2xl:mt-5 2xl:ml-5 lg:mt-2">
-    <!-- Initiales --
-    <div class="absolute flex items-center justify-center rounded-full border-2 border-[#8002FF] font-black
-    2xl:w-16 2xl:h-16 2xl:text-2xl
-    lg:w-14 lg:h-14 lg:text-2xl lg:ml-5 lg:mt-15
-    md:w-14 md:h-14 md:text-2xl md:ml-3 md:mt-16
-    ">
+<app-icon></app-icon>
+
+<div class="flex items-center text-white 2xl:mt-5 2xl:ml-5">
+    <!-- Initiales -->
+    <div
+        class="2xl:w-16 2xl:h-16 lg:w-10 lg:h-10 xl:w-15 xl:h-15 xl:mt-5 xl:ml-5  flex items-center justify-center rounded-full bg-[#8002FF] font-black text-2xl">
         {{ userService.getInitiales() || 'IN' }}
     </div>
 
-    <!-- Bonjour + nom complet ou invité --
-    <div class="absolute
-    2xl:text-2xl 2xl:font-bold 2xl:ml-25
-    lg:text-2xl lg:ml-23 lg:mt-15
-    md:text-2xl md:mt-16 md:ml-20
-    ">
-        Bonjour {{ userService.getNomComplet() }}
+    <!-- Bonjour + nom -->
+    <div class="2xl:text-2xl font-bold 2xl:ml-5 xl:text-xl xl:ml-5 xl:mt-5  ">
+        Bonjour {{ userService.getNomComplet() || 'Invité' }}
     </div>
 
-
-
-    <!-- Pop-up --
-    <!-- BOUTON OUVRIR LA POP-UP --
+    <!-- BOUTON OUVRIR POP-UP -->
     <button (click)="ouvrirPopup()"
-        class="absolute bg-[#8002FF] text-white px-4 py-2 rounded hover:bg-[#3F0255] transition flex items-center gap-2
-        2xl:ml-430
-        lg:ml-170 lg:mt-16
-        md:mt-17 md:ml-150
-        ">
+        class="bg-[#8002FF] text-white px-4 py-2 rounded hover:bg-[#3F0255] transition 2xl:ml-325 xl:ml-195 xl:mt-5 flex items-center gap-2">
         <i class="fas fa-plus"></i>
         Laisser un avis
     </button>
 
+    <!-- POP-UP -->
+    <!-- POP-UP -->
+    <div *ngIf="popupOuvert" class="fixed top-0 left-0 w-full h-full bg-black/80 flex items-center justify-center z-50">
+        <div class="bg-[#020118] rounded-xl p-6 w-full max-w-4xl shadow-xl text-white boder-2 border-[#8002FF] flex flex-col md:flex-row gap-8">
 
-    
-    <!-- POP-UP --
-    <div *ngIf="popupOuvert"
-        class="fixed top-0 left-0 w-full h-full bg-black/80 flex items-center justify-center z-50">
-        
-        <div class="bg-[#020118] rounded-xl p-6 w-full max-w-md shadow-lg text-white">
-            <h2 class="text-xl font-bold mb-4">Laisser un avis</h2>
-            <!-- Prénom --
-            <input type="text" [(ngModel)]="prenom" placeholder="Prénom"
-                class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded text-white" />
-
-            <!-- Nom --
-            <input type="text" [(ngModel)]="nom" placeholder="Nom"
-                class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded text-white" />
-
-            <!-- Message --
-            <textarea [(ngModel)]="avisMessage" placeholder="Votre message" rows="4"
-                class="w-full border-2 border-[#8002FF] p-2 mb-3 rounded resize-none text-white"></textarea>
-
-            <!-- Boutons --
-            <div class="flex justify-end gap-3">
-                <button (click)="fermerPopup()" class="text-white px-4 py-1 rounded hover:bg-[#3F0255]">Annuler</button>
-                <button (click)="validerAvis()" class="bg-[#8002FF] text-white px-4 py-1 rounded hover:bg-[#3F0255]">Valider</button>
+            <!-- ✅ Partie gauche : logo -->
+            <div class="flex items-center justify-center md:w-1/2">
+                <img src="/assets/LOGO.png" alt="Logo UniDys" class="w-68 h-auto" />
             </div>
+
+            <!-- ✅ Partie droite : formulaire -->
+            <div class="md:w-1/2">
+                <h2 class="text-2xl font-bold mb-6 text-center md:text-left">Laisser un avis</h2>
+
+                <!-- Prénom -->
+                <input type="text" [(ngModel)]="prenom" placeholder="Prénom"
+                    class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400" />
+
+                <!-- Nom -->
+                <input type="text" [(ngModel)]="nom" placeholder="Nom"
+                    class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400" />
+
+                <!-- Message -->
+                <textarea [(ngModel)]="avisMessage" placeholder="Votre message" rows="4"
+                    class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400 resize-none"></textarea>
+
+                <!-- Boutons -->
+                <div class="flex justify-end gap-3">
+                    <button (click)="fermerPopup()"
+                        class="px-4 py-2 rounded-lg border border-gray-500 hover:bg-[#3F0255] transition-all duration-200">
+                        Annuler
+                    </button>
+                    <button (click)="validerAvis()"
+                        class="bg-[#8002FF] px-4 py-2 rounded-lg hover:bg-[#3F0255] transition-all duration-200">
+                        Valider
+                    </button>
+                </div>
+            </div>
+
         </div>
     </div>
 
-
-
-</div> -->
+</div>

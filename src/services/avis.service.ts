@@ -7,11 +7,15 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class AvisService {
-  private apiUrl = 'http://localhost:3000/avis'; // adapte au besoin
+  private baseUrl = 'http://localhost:3000/api/avis';
 
   constructor(private http: HttpClient) {}
 
   getAvis(): Observable<Avis[]> {
-    return this.http.get<Avis[]>(this.apiUrl);
+    return this.http.get<Avis[]>(this.baseUrl);
+  }
+
+  postAvis(avis: Partial<Avis>): Observable<any> {
+    return this.http.post(this.baseUrl, avis);
   }
 }

@@ -10,11 +10,13 @@ import { MonEspaceE } from '../page/page-user/eleve/monespace-e/monespace-e';
 import { AproposP } from '../page/page-user/prof/apropos-p/apropos-p';
 import { CoursP } from '../page/page-user/prof/cours-p/cours-p';
 import { MonespaceP } from '../page/page-user/prof/monespace-p/monespace-p';
+import { Cours } from '../page/cours/cours';
 
 export const routes: Routes = [
   {path: 'connexion', component: Connexion },
   {path: '', redirectTo: 'connexion', pathMatch: 'full' },
   {path: 'inscription', component: Inscription },
+  { path: 'cours/:id', component: Cours},
 
   // route page admin
   {path: 'accueilA', component: AccueilA},

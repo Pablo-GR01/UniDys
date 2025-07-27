@@ -1,0 +1,34 @@
+<div class="text-white px-6 py-8">
+    <h2 class="text-2xl font-black mb-6 text-center text-[#F5F5F5]">📚 Mes cours</h2>
+  
+    <div *ngIf="cours.length === 0" class="text-center text-gray-300">
+      <p>Vous n'avez pas encore créé de cours.</p>
+    </div>
+  
+    <div *ngIf="cours.length > 0" class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <div *ngFor="let c of cours" class="border-2 border-[#8002FF] rounded-xl bg-[#1B1838] p-4 shadow-lg hover:scale-[1.02] transition-transform duration-200">
+        
+        <!-- Image conditionnelle selon la matière -->
+        <div class="flex justify-center mb-4">
+          <img 
+            [src]="getImageParMatiere(c.matiere)" 
+            alt="Illustration" 
+            class="w-24 h-24 object-contain"
+          />
+        </div>
+  
+        <h3 class="text-lg font-bold text-center mb-2">{{ c.titre }}</h3>
+        <p class="text-center text-sm text-gray-300">📘 Matière : {{ c.matiere }}</p>
+        <p class="text-center text-sm text-gray-300 mb-4">🎓 Niveau : {{ c.niveau }}</p>
+  
+        <!-- Bouton Voir le cours -->
+        <div class="flex justify-center">
+          <a [routerLink]="['/cours', c._id]" class="bg-[#8002FF] hover:bg-[#4B0082] text-white px-4 py-2 rounded-lg shadow">
+            Voir le cours
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+

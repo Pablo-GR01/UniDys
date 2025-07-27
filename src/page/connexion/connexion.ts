@@ -76,7 +76,7 @@ export class Connexion implements OnInit {
       (user: any) => {
         this.userService.setUser(user); // ✅ stocke l'utilisateur avec ses infos
         this.messageBienvenue = 'Connexion réussie !';
-        this.redirectionApresConnexion = this.actif === 'prof' ? '/accueilP' : '/monespaceE';
+        this.redirectionApresConnexion = this.actif === 'prof' ? '/accueilP' : '/accueilE';
       },
       (err) => {
         this.errorMessage = err.error.message || 'Erreur serveur';
