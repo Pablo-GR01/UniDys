@@ -1,28 +1,34 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { AvisService } from '../../../services/avis.service';
 import { Avis } from '../../../model/avis';
-
-
+import { AvisService } from '../../../services/avis.service';
 @Component({
   selector: 'app-avis-e',
-  imports: [CommonModule],
+  standalone: true,
   templateUrl: './avis-e.html',
-  styleUrls: ['./avis-e.css']
+  imports:[CommonModule,HttpClientModule]
 })
-export class AvisE implements OnInit {
+export class AvisComponent implements OnInit {
+
   avisList: Avis[] = [];
 
   constructor(private avisService: AvisService) {}
 
   ngOnInit(): void {
+    this.loadAvis();
+  }
+
+  loadAvis(): void {
     this.avisService.getAvis().subscribe({
       next: (data) => this.avisList = data,
-      error: (err) => console.error('Erreur récupération avis :', err)
+      error: (err) => console.error('Erreur chargement avis', err)
     });
   }
 
-  getInitiales(prenom: string): string {
-    return prenom?.substring(0, 1).toUpperCase() ?? '';
+  getInitiales(nom: string, prenom: string): string {
+    const initialNom = nom ? nom.charAt(0).toUpperCase() : '';
+    const initialPrenom = prenom ? prenom.charAt(0).toUpperCase() : '';
+    return initialNom + initialPrenom;
   }
 }

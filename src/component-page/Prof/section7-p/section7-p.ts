@@ -71,6 +71,11 @@ export class Section7P {
     this.qcms[index].reponses.push('');
   }
 
+  supprimerQCM(index: number) {
+    this.qcms.splice(index, 1);
+  }
+  
+
   validerCours() {
     const formData = new FormData();
     formData.append('titre', this.titreCours);

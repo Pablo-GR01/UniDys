@@ -5,7 +5,6 @@
   {{ messageBienvenue }}
 </div>
 
-
 <div class="min-h-screen flex items-center justify-center px-4 mt-2">
   <div class="bg-[#0a0a1a] rounded-2xl p-8 pt-1 w-full max-w-md shadow-xl border border-violet-700 relative">
 
@@ -84,16 +83,25 @@
       <!-- Mot de passe -->
       <div class="mb-4">
         <label class="text-white text-sm">Mot de passe</label>
-        <div class="flex items-center bg-[#14142b] px-3 py-2 rounded-md mt-1">
+        <div class="flex items-center bg-[#14142b] px-3 py-2 rounded-md mt-1 relative">
           <i class="fa-solid fa-lock text-white mr-2"></i>
           <input
-            type="password"
+            [type]="passwordVisible ? 'text' : 'password'"
             [(ngModel)]="inscriptionData.password"
             name="password"
-            class="bg-transparent outline-none text-white w-full"
+            class="bg-transparent outline-none text-white w-full pr-10"
             placeholder="Mot de passe"
             required
           />
+          <button
+            type="button"
+            class="absolute right-3 text-white"
+            (click)="togglePasswordVisibility()"
+            aria-label="Afficher / masquer mot de passe"
+            tabindex="-1"
+          >
+            <i class="fa" [ngClass]="passwordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
+          </button>
         </div>
       </div>
 
@@ -121,8 +129,14 @@
     </form>
 
     <!-- Lien vers connexion -->
-    <p class="text-center text-xs text-white mt-4">
-      <a routerLink="/connexion" class="underline hover:text-[#8002FF]">Compte déjà créé</a>
+    <p class="text-center text-sm text-gray-300 mt-6">
+      Vous avez déjà un compte ?
+      <a
+        routerLink="/connexion"
+        class="text-[#8002FF] font-semibold hover:underline transition duration-200"
+      >
+        Se connecter
+      </a>
     </p>
   </div>
 </div>

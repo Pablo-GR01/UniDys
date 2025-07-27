@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Logo } from '../../component/logo/logo';
 import { Icon } from '../../component/icon/icon';
+import { UserService } from '../../services/user.service';
 
 interface InscriptionData {
   nom: string;
@@ -19,10 +20,10 @@ interface InscriptionData {
 @Component({
   selector: 'app-inscription',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, HttpClientModule, Logo, Icon],
+  imports: [CommonModule, RouterModule, FormsModule, HttpClientModule, Logo, Icon, RouterLink],
   templateUrl: './inscription.html',
 })
-export class inscription implements OnInit {
+export class Inscription implements OnInit, OnDestroy {
   actif: 'prof' | 'eleve' = 'eleve';
   readonly CODE_PROF = 'PROF2025';
 
@@ -36,73 +37,69 @@ export class inscription implements OnInit {
     initiale: '',
   };
 
+  passwordVisible = false;
   messageBienvenue: string | null = null;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(
+    private http: HttpClient,
+    private router: Router,
+    private userService: UserService
+  ) {}
 
-  ngOnInit() {
-    console.log("ngOnInit called");
+  ngOnInit(): void {
     document.body.style.overflow = 'hidden';
-  
-    // Gestion du token dans l'URL
+
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
-  
     if (token) {
       localStorage.setItem('token', token);
-      this.router.navigate(['/accueilE']); // adapter selon le rôle
+      this.router.navigate(['/accueilE']);
     }
   }
-  
 
-  ngOnDestroy() {
-    console.log("ngOnDestroy called");
+  ngOnDestroy(): void {
     document.body.style.overflow = 'auto';
   }
 
   activerProf(): void {
-    console.log("Activation profil prof");
     this.actif = 'prof';
     this.inscriptionData.role = 'prof';
   }
 
   activerEleve(): void {
-    console.log("Activation profil eleve");
     this.actif = 'eleve';
     this.inscriptionData.role = 'eleve';
     this.inscriptionData.codeProf = '';
   }
 
+  togglePasswordVisibility(): void {
+    this.passwordVisible = !this.passwordVisible;
+  }
+
   formulaireValide(): boolean {
     const { nom, prenom, email, password, role, codeProf } = this.inscriptionData;
-    console.log("Validation formulaire:", { nom, prenom, email, password, role, codeProf });
-    if (!nom || !prenom || !email || !password) {
-      console.log("Formulaire invalide: champs manquants");
-      return false;
-    }
-    if (role === 'prof' && codeProf !== this.CODE_PROF) {
-      console.log("Formulaire invalide: code prof incorrect");
-      return false;
-    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!nom || !prenom) return false;
+    if (!emailRegex.test(email)) return false;
+    if (!password || password.length < 6) return false;
+    if (role === 'prof' && codeProf !== this.CODE_PROF) return false;
+
     return true;
   }
 
   valider(): void {
-    console.log("Début de la validation");
-
     if (!this.formulaireValide()) {
       alert(
         this.inscriptionData.role === 'prof'
           ? 'Veuillez entrer un code professeur valide.'
           : 'Veuillez remplir tous les champs requis.'
       );
-      console.log("Formulaire non valide, arrêt de la soumission");
       return;
     }
 
-    // Calcul automatique de l'initiale
-    const initiale = (this.inscriptionData.prenom?.[0] ?? '').toUpperCase() +
-                     (this.inscriptionData.nom?.[0] ?? '').toUpperCase();
+    const initiale = (this.inscriptionData.prenom[0] ?? '').toUpperCase() +
+                     (this.inscriptionData.nom[0] ?? '').toUpperCase();
 
     const payload = {
       ...this.inscriptionData,
@@ -113,13 +110,14 @@ export class inscription implements OnInit {
       delete payload.codeProf;
     }
 
-    console.log('Données envoyées au serveur:', payload);
-
     this.http.post('http://localhost:3000/api/unidys/users', payload).subscribe({
-      next: (res) => {
-        console.log('Réponse serveur reçue:', res);
+      next: (res: any) => {
         this.messageBienvenue = `Bienvenue sur UniDys, ${this.inscriptionData.prenom} !`;
 
+        // ✅ Stocker l'utilisateur dans le service
+        this.userService.setUser(res);
+
+        // Réinitialiser le formulaire
         this.inscriptionData = {
           nom: '',
           prenom: '',
@@ -130,11 +128,11 @@ export class inscription implements OnInit {
           initiale: '',
         };
 
-        const redirection = 
-        payload.role === 'prof' ? '/accueilP' :
-        payload.role === 'admin' ? '/accueilA' :
-        '/accueilE';
-
+        // Redirection selon le rôle
+        const redirection =
+          payload.role === 'prof' ? '/accueilP' :
+          payload.role === 'admin' ? '/accueilA' :
+          '/accueilE';
 
         setTimeout(() => {
           this.router.navigate([redirection]);
@@ -143,13 +141,11 @@ export class inscription implements OnInit {
       error: (err) => {
         console.error('Erreur lors de la création du compte', err);
         if (err.status === 400) {
-          alert('Cet email est déjà utilisé');
+          alert('Cet email est déjà utilisé.');
         } else {
           alert('Erreur lors de la création du compte.');
         }
-      },
+      }
     });
   }
-
- 
 }

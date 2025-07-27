@@ -1,6 +1,6 @@
 import { Routes } from '@angular/router';
 import { Connexion } from '../page/connexion/connexion';
-import { inscription } from '../page/inscription/inscription';
+import { Inscription } from '../page/inscription/inscription';
 import { AccueilA } from '../page/page-user/admin/accueil-a/accueil-a';
 import { AccueilP } from '../page/page-user/prof/accueil-p/accueil-p';
 import { AccueilE } from '../page/page-user/eleve/accueil-e/accueil-e';
@@ -14,7 +14,7 @@ import { MonespaceP } from '../page/page-user/prof/monespace-p/monespace-p';
 export const routes: Routes = [
   {path: 'connexion', component: Connexion },
   {path: '', redirectTo: 'connexion', pathMatch: 'full' },
-  {path: 'inscription', component: inscription },
+  {path: 'inscription', component: Inscription },
 
   // route page admin
   {path: 'accueilA', component: AccueilA},

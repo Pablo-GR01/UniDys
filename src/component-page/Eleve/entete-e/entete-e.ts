@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-entete-e',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './entete-e.html',
   styleUrl: './entete-e.css'
 })

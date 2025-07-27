@@ -3,8 +3,7 @@ import { UserService } from '../../../services/user.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Icon } from "../../../component/icon/icon";
-
-import { HttpClient, HttpClientModule } from '@angular/common/http';  // <-- Ajout import HttpClient
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 
@@ -13,7 +12,7 @@ import { throwError } from 'rxjs';
   templateUrl: './section5-e.html',
   styleUrls: ['./section5-e.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, Icon,HttpClientModule],
+  imports: [CommonModule, FormsModule, Icon, HttpClientModule],
 })
 export class Section5E {
   popupOuvert = false;
@@ -22,7 +21,6 @@ export class Section5E {
   nom: string = '';
   avisMessage: string = '';
 
-  // Injecter HttpClient
   constructor(public userService: UserService, private http: HttpClient) {}
 
   ouvrirPopup() {
@@ -43,7 +41,6 @@ export class Section5E {
     }
 
     const motsInterdits = ['con', 'merde', 'idiot', 'nul', 'putain'];
-
     const contientInsulte = motsInterdits.some((mot) =>
       this.avisMessage.toLowerCase().includes(mot)
     );
@@ -53,14 +50,12 @@ export class Section5E {
       return;
     }
 
-    // Préparer les données à envoyer
     const avis = {
       prenom: this.prenom,
       nom: this.nom,
       message: this.avisMessage,
     };
 
-    // Envoi HTTP POST à ton backend
     this.http.post('http://localhost:3000/api/avis', avis)
       .pipe(
         catchError(err => {
@@ -71,7 +66,6 @@ export class Section5E {
       )
       .subscribe((res: any) => {
         alert('Merci pour ton avis !');
-        console.log('Réponse serveur:', res);
         this.fermerPopup();
       });
   }

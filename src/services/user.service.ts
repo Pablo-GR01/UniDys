@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class UserService {
- private utilisateur: { 
-  _id: string;
-  prenom: string; 
-  nom: string; 
-  email: string; 
-  role: string; 
-} | null = null;
-
+  private utilisateur: {
+    _id: string;
+    prenom: string;
+    nom: string;
+    email: string;
+    role: string;
+    initiale: string;
+  } | null = null;
 
   constructor() {
     const data = localStorage.getItem('utilisateur');
@@ -18,35 +18,34 @@ export class UserService {
     }
   }
 
+  // ✅ Initiales calculées ou récupérées
   getInitiales(): string {
-    if (!this.utilisateur) return 'IN';
-    const { prenom, nom } = this.utilisateur;
-    return `${prenom?.charAt(0) || ''}${nom?.charAt(0) || ''}`.toUpperCase();
+    return this.utilisateur?.initiale || 'IN';
   }
 
-  getNomComplet(): string {
-    if (!this.utilisateur) return 'Invité';
-    const { prenom, nom } = this.utilisateur;
-    return `${nom} ${prenom}`;
-  }
-
+  // ✅ Sauvegarder l'utilisateur
   setUser(user: any) {
     this.utilisateur = user;
     localStorage.setItem('utilisateur', JSON.stringify(user));
   }
 
+  // ✅ Supprimer l'utilisateur
   clearUser() {
     this.utilisateur = null;
     localStorage.removeItem('utilisateur');
   }
 
+  // ✅ Accès à l'utilisateur complet
   getUser() {
     return this.utilisateur;
   }
 
-
-  // AJOUTER CE GETTER POUR ACCEDER A L'UTILISATEUR DEPUIS L'EXTERIEUR
-  getUtilisateur(): { prenom: string; nom: string; email: string; role: string } | null {
+  getUtilisateur() {
     return this.utilisateur;
+  }
+
+  // ✅ Correction ici : utiliser this.utilisateur au lieu de this.user
+  getNomComplet(): string {
+    return this.utilisateur ? `${this.utilisateur.prenom} ${this.utilisateur.nom}` : 'Invité';
   }
 }

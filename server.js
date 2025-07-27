@@ -21,65 +21,12 @@ mongoose.connect('mongodb://localhost:27017/unidys', {
   .catch(err => console.error('❌ Erreur MongoDB:', err));
 
 // ========================
-// 🔹 SCHEMAS & MODELS
+// 🔹 IMPORT DES MODELS
 // ========================
-
-// --- Utilisateur
-const utilisateurSchema = new mongoose.Schema({
-  nom: { type: String, required: true },
-  prenom: { type: String, required: true },
-  email: { type: String, unique: true, required: true },
-  password: { type: String, required: true },
-  role: { type: String, enum: ['prof', 'eleve', 'admin'], default: 'eleve' },
-  codeProf: String,
-  initiale: String,
-});
-utilisateurSchema.pre('save', function (next) {
-  if (this.nom && this.prenom) {
-    this.initiale = (this.prenom[0] + this.nom[0]).toUpperCase();
-  }
-  next();
-});
-const User = mongoose.model('User', utilisateurSchema);
-
-// --- Newsletter
-const newsletterSchema = new mongoose.Schema({
-  nom: { type: String, default: '' },
-  prenom: { type: String, default: '' },
-  email: { type: String, required: true, unique: true },
-  accepteNewsletter: { type: String, enum: ['oui', 'non'], default: 'oui' },
-  dateInscription: { type: Date, default: Date.now },
-});
-const Newsletter = mongoose.model('Newsletter', newsletterSchema);
-
-// --- Avis
-const avisSchema = new mongoose.Schema({
-  nom: { type: String, required: true },
-  prenom: { type: String, required: true },
-  message: { type: String, required: true },
-  date: { type: Date, default: Date.now },
-});
-const Avis = mongoose.model('Avis', avisSchema);
-
-// --- Cours (avec QCM intégrés)
-const coursSchema = new mongoose.Schema({
-  utilisateurId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  nomProf: { type: String, required: true },
-  titre: String,
-  niveau: String,
-  matiere: String,
-  lienYoutube: String,
-  fichierPdf: String,
-  qcms: [
-    {
-      question: { type: String, required: true },
-      reponses: [{ type: String, required: true }],
-      bonneReponse: { type: Number, required: true }
-    }
-  ],
-  dateCreation: { type: Date, default: Date.now },
-});
-const Cours = mongoose.model('Cours', coursSchema);
+const User = require('./schema/user')
+const Newsletter = require('./schema/newletter');
+const Avis = require('./schema/avis');
+const Cours = require('./schema/cours');
 
 // ========================
 // 🔸 MULTER PDF Upload
@@ -129,7 +76,11 @@ app.post('/api/unidys/users', async (req, res) => {
     });
 
     await nouvelUtilisateur.save();
-    res.status(201).json({ message: 'Utilisateur créé avec succès' });
+
+    // Récupérer utilisateur complet sans password
+    const utilisateurComplet = await User.findById(nouvelUtilisateur._id).select('-password');
+
+    res.status(201).json(utilisateurComplet);
 
   } catch (err) {
     console.error(err);
@@ -231,9 +182,9 @@ app.post('/api/cours', upload.single('pdf'), async (req, res) => {
       }
     }
 
-    // Si aucun prof trouvé ou pas de nomProf, mettre un utilisateurId fictif
+    // Si aucun prof trouvé ou pas de nomProf, mettre un utilisateurId bidon
     if (!utilisateurId) {
-      utilisateurId = new mongoose.Types.ObjectId(); // ✅ ID bidon
+      utilisateurId = new mongoose.Types.ObjectId(); // ID bidon
     }
 
     // 🧠 Traitement des QCM
@@ -255,7 +206,7 @@ app.post('/api/cours', upload.single('pdf'), async (req, res) => {
       titre,
       niveau,
       matiere,
-      nomProf: nomProf || '', // chaîne vide si absent
+      nomProf: nomProf || '',
       lienYoutube: lienYoutube || '',
       fichierPdf: fichier.filename,
       utilisateurId,
@@ -267,14 +218,14 @@ app.post('/api/cours', upload.single('pdf'), async (req, res) => {
 
   } catch (err) {
     console.error('Erreur cours:', err);
-    res.status
-
+    res.status(500).json({ message: 'Erreur serveur lors de la création du cours.' });
   }
-})
-    // ========================
-    // 🔸 Lancer le serveur
-    // ========================
-    const PORT = 3000;
-    app.listen(PORT, () => {
-      console.log(`🚀 Serveur backend démarré sur http://localhost:${PORT}`);
-    });
+});
+
+// ========================
+// 🔸 Lancer le serveur
+// ========================
+const PORT = 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Serveur backend démarré sur http://localhost:${PORT}`);
+});

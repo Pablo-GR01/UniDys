@@ -1,123 +1,95 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { UserService } from '../../services/user.service'; // Vérifie le chemin
-import { Logo } from '../../component/logo/logo';
 import { Icon } from '../../component/icon/icon';
-
-interface ConnexionData {
-  email: string;
-  password: string;
-  role: 'prof' | 'eleve' | 'admin'; // Ajout de admin ici
-  codeProf?: string;
-}
+import { Logo } from '../../component/logo/logo';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-connexion',
-  standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, HttpClientModule, Logo, Icon],
   templateUrl: './connexion.html',
+  styleUrls: ['./connexion.css'],
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    HttpClientModule,
+    Icon,
+    Logo
+  ],
 })
-export class Connexion implements OnInit, OnDestroy {
-  actif: 'prof' | 'eleve' = 'eleve'; // Par défaut élève
+export class Connexion implements OnInit {
+  actif: 'prof' | 'eleve' = 'eleve';
+  passwordVisible = false;
+  messageBienvenue: string | null = null;
+  redirectionApresConnexion: string | null = null;
+  errorMessage: string | null = null;
 
-  connexionData: ConnexionData = {
+  connexionData = {
     email: '',
     password: '',
-    role: 'eleve', // Par défaut élève
+    codeProf: '',
   };
 
-  messageBienvenue: string | null = null;
-
   constructor(
-    private http: HttpClient,
     private router: Router,
+    private http: HttpClient,
     private userService: UserService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     document.body.style.overflow = 'hidden';
   }
 
-  ngOnDestroy(): void {
-    document.body.style.overflow = 'auto';
-  }
-
   activerProf(): void {
     this.actif = 'prof';
-    this.connexionData.role = 'prof';
   }
 
   activerEleve(): void {
     this.actif = 'eleve';
-    this.connexionData.role = 'eleve';
+    this.connexionData.codeProf = '';
+  }
+
+  togglePasswordVisibility(): void {
+    this.passwordVisible = !this.passwordVisible;
   }
 
   formulaireValide(): boolean {
-    const { email, password } = this.connexionData;
-    return !!email && !!password;
+    const { email, password, codeProf } = this.connexionData;
+    if (!email || !password || password.length < 6) return false;
+    if (this.actif === 'prof' && !codeProf) return false;
+    return true;
   }
 
   valider(): void {
-    console.log('Données de connexion envoyées:', this.connexionData);
-
     if (!this.formulaireValide()) {
-      alert('Veuillez remplir tous les champs');
+      alert('Veuillez remplir correctement le formulaire.');
       return;
     }
 
     const { email, password } = this.connexionData;
 
-    // ✅ Sauter le backend pour l'admin
-    if (email === 'admin@gmail.com' && password === 'admin') {
-      this.userService.setUser({
-        email: 'admin@gmail.com',
-        role: 'admin',
-        nom: 'Admin',
-        prenom: '',
-      });
-
-      this.messageBienvenue = 'Bienvenue, administrateur !';
-
-      setTimeout(() => {
-        this.router.navigate(['/accueilA']); // redirection vers l'accueil admin
-      }, 500);
-      return;
-    }
-
-    // Sinon appel normal au serveur
-    this.http
-      .post<{
-        nom?: string;
-        prenom?: string;
-        email: string;
-        role: 'prof' | 'eleve' | 'admin';
-      }>('http://localhost:3000/api/unidys/login', this.connexionData)
-      .subscribe({
-        next: (utilisateur) => {
-          this.userService.setUser(utilisateur);
-
-          this.messageBienvenue =
-            utilisateur.role === 'admin'
-              ? `Bienvenue, administrateur ${utilisateur.prenom || utilisateur.nom} !`
-              : `Heureux de vous revoir, ${utilisateur.prenom || utilisateur.nom} !`;
-
-          let redirection = '/accueilE'; // par défaut élève
-          if (utilisateur.role === 'admin') redirection = '/accueilA';
-          else if (utilisateur.role === 'prof') redirection = '/accueilP';
-
-          setTimeout(() => {
-            this.router.navigate([redirection]);
-          }, 500);
-        },
-        error: (err) => {
-          console.error('Erreur de connexion:', err);
-          alert(err.error?.message || 'Email ou mot de passe incorrect.');
-        },
-      });
+    this.http.post('http://localhost:3000/api/unidys/login', { email, password }).subscribe(
+      (user: any) => {
+        this.userService.setUser(user); // ✅ stocke l'utilisateur avec ses infos
+        this.messageBienvenue = 'Connexion réussie !';
+        this.redirectionApresConnexion = this.actif === 'prof' ? '/accueilP' : '/monespaceE';
+      },
+      (err) => {
+        this.errorMessage = err.error.message || 'Erreur serveur';
+        console.error('Erreur de connexion :', err);
+      }
+    );
   }
 
-
+  confirmerRedirection(): void {
+    if (this.redirectionApresConnexion) {
+      this.router.navigate([this.redirectionApresConnexion]);
+      this.messageBienvenue = null;
+      this.redirectionApresConnexion = null;
+    }
+  }
 }
