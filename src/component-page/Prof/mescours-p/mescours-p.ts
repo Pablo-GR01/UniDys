@@ -34,13 +34,13 @@ export class MescoursP implements OnInit {
   getImageParMatiere(matiere: string): string {
     const lower = matiere.toLowerCase();
     if (lower.includes('français')) {
-      return 'assets/francais.png';
+      return 'assets/coursfrancais.png';
     }
     if (lower.includes('math') || lower.includes('maths')) {
-      return 'assets/maths.png';
+      return 'assets/coursmaths.png';
     }
     if (lower.includes('histoire')) {
-      return 'assets/images/histoire.png';
+      return 'assets/courshistoire.png';
     }
     if (lower.includes('svt')) {
       return 'assets/svt.png';
