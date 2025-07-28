@@ -148,5 +148,6 @@ export class Section7P {
         alert('Erreur lors de la création du cours.');
       }
     });
+    this.http.get<any[]>(`http://localhost:3000/api/cours/prof/${encodeURIComponent(this.nomProf)}`)
   }
 }

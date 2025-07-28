@@ -17,5 +17,7 @@ export class CoursService {
   getCoursById(id: string) {
     return this.http.get<any>(`${this.apiUrl}/cours/${id}`);
   }
+
+  
   
 }

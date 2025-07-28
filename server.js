@@ -4,6 +4,7 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs'); // Ajouté pour la gestion des fichiers
 
 const app = express();
 app.use(cors());
@@ -237,15 +238,48 @@ app.get('/api/cours/prof/:nomProf', async (req, res) => {
   }
 });
 
-// --- Récupérer un cours par ID
-app.get('/api/cours/prof/:nomProf', async (req, res) => {
+// Route pour modifier le fichier PDF d’un cours
+app.put('/api/cours/:id/fichier', upload.single('pdf'), async (req, res) => {
   try {
-    const { nomProf } = req.params;
-    const cours = await Cours.find({ nomProf: new RegExp(`^${nomProf}$`, 'i') });
-    res.json(cours);
+    if (!req.file) {
+      return res.status(400).json({ error: 'Fichier PDF requis' });
+    }
+
+    const cours = await Cours.findById(req.params.id);
+    if (!cours) return res.status(404).json({ error: 'Cours non trouvé' });
+
+    // Supprimer l'ancien fichier si existant
+    if (cours.fichierPdf) {
+      const ancienPath = path.join(__dirname, 'uploads', cours.fichierPdf);
+      if (fs.existsSync(ancienPath)) fs.unlinkSync(ancienPath);
+    }
+
+    cours.fichierPdf = req.file.filename;
+    await cours.save();
+    res.json({ message: 'Fichier PDF mis à jour', cours });
   } catch (err) {
-    console.error('Erreur récupération cours par nomProf :', err);
-    res.status(500).json({ message: 'Erreur serveur' });
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Route pour supprimer un cours
+app.delete('/api/cours/:id', async (req, res) => {
+  try {
+    const cours = await Cours.findById(req.params.id);
+    if (!cours) return res.status(404).json({ error: 'Cours non trouvé' });
+
+    // Supprimer fichier PDF associé
+    if (cours.fichierPdf) {
+      const pdfPath = path.join(__dirname, 'uploads', cours.fichierPdf);
+      if (fs.existsSync(pdfPath)) fs.unlinkSync(pdfPath);
+    }
+
+    await cours.deleteOne();
+    res.json({ message: 'Cours supprimé' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
 });
 
