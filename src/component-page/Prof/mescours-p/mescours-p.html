@@ -1,34 +1,116 @@
 <div class="text-white px-6 py-8">
-    <h2 class="text-2xl font-black mb-6 text-center text-[#F5F5F5]">📚 Mes cours</h2>
-  
-    <div *ngIf="cours.length === 0" class="text-center text-gray-300">
-      <p>Vous n'avez pas encore créé de cours.</p>
-    </div>
-  
-    <div *ngIf="cours.length > 0" class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-      <div *ngFor="let c of cours" class="border-2 border-[#8002FF] rounded-xl bg-[#1B1838] p-4 shadow-lg hover:scale-[1.02] transition-transform duration-200">
-        
-        <!-- Image conditionnelle selon la matière -->
-        <div class="flex justify-center mb-4">
-          <img 
-            [src]="getImageParMatiere(c.matiere)" 
-            alt="Illustration" 
-            class="w-24 h-24 object-contain"
-          />
-        </div>
-  
-        <h3 class="text-lg font-bold text-center mb-2">{{ c.titre }}</h3>
-        <p class="text-center text-sm text-gray-300">📘 Matière : {{ c.matiere }}</p>
-        <p class="text-center text-sm text-gray-300 mb-4">🎓 Niveau : {{ c.niveau }}</p>
-  
-        <!-- Bouton Voir le cours -->
-        <div class="flex justify-center">
-          <a [routerLink]="['/cours', c._id]" class="bg-[#8002FF] hover:bg-[#4B0082] text-white px-4 py-2 rounded-lg shadow">
-            Voir le cours
-          </a>
-        </div>
+  <h2 class="text-2xl font-black mb-6 text-center text-[#F5F5F5]">📚 Mes cours</h2>
+
+  <!-- Aucun cours -->
+  <div *ngIf="cours.length === 0" class="text-center text-gray-300">
+    <p>Vous n'avez pas encore créé de cours.</p>
+  </div>
+
+  <!-- Liste des cours -->
+  <div *ngIf="cours.length > 0" class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+    <div
+      *ngFor="let c of cours"
+      class="border-2 border-[#8002FF] rounded-xl bg-[#1B1838] p-4 shadow-lg hover:scale-[1.02] transition-transform duration-200"
+    >
+      <!-- Image du cours -->
+      <div *ngIf="c.image" class="mb-4">
+        <img
+          [src]="'http://localhost:3000/uploads/' + c.image"
+          alt="Image du cours"
+          class="w-full h-40 object-cover rounded-lg"
+        />
+      </div>
+
+      <h3 class="text-lg font-bold text-center mb-2">{{ c.titre }}</h3>
+      <p class="text-center text-sm text-gray-300">📘 Matière : {{ c.matiere }}</p>
+      <p class="text-center text-sm text-gray-300 mb-4">🎓 Niveau : {{ c.niveau }}</p>
+
+      <!-- Bouton Voir (ouvre la modale) -->
+      <div class="flex justify-center">
+        <button
+          (click)="ouvrirPopup(c)"
+          class="bg-[#8002FF] hover:bg-[#4B0082] text-white px-4 py-2 rounded-lg shadow"
+        >
+          Voir le cours
+        </button>
       </div>
     </div>
   </div>
-  
+</div>
 
+<!-- ✅ MODALE DÉTAIL DU COURS -->
+<div
+  *ngIf="popupVisible"
+  class="fixed inset-0 z-50 bg-black bg-opacity-60 flex items-center justify-center"
+>
+  <div
+    class="bg-white w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-xl shadow-lg p-6 relative"
+  >
+    <!-- Bouton de fermeture -->
+    <button
+      (click)="fermerPopup()"
+      class="absolute top-2 right-2 text-black hover:text-red-600 text-2xl font-bold"
+    >
+      ×
+    </button>
+
+    <h2 class="text-2xl font-bold mb-4 text-center text-black">
+      {{ coursSelectionne?.titre }}
+    </h2>
+
+    <!-- Infos du cours -->
+    <div class="mb-6">
+      <p class="text-sm text-gray-700 mb-2">
+        📘 Matière : {{ coursSelectionne?.matiere }}
+      </p>
+      <p class="text-sm text-gray-700 mb-4">
+        🎓 Niveau : {{ coursSelectionne?.niveau }}
+      </p>
+
+      <!-- Image si disponible -->
+      <div *ngIf="coursSelectionne?.image" class="mb-4">
+        <img
+          [src]="'http://localhost:3000/uploads/' + coursSelectionne.image"
+          alt="Image du cours"
+          class="w-full object-contain rounded"
+        />
+      </div>
+
+      <!-- PDF si disponible -->
+      <div *ngIf="coursSelectionne?.fichierPdf" class="mb-4">
+        <iframe
+          [src]="pdfUrlSanitized"
+          class="w-full h-96"
+          frameborder="0"
+        ></iframe>
+
+        <!-- Lien de secours -->
+        <a
+          [href]="'http://localhost:3000/uploads/' + coursSelectionne.fichierPdf"
+          target="_blank"
+          class="text-blue-600 underline block text-center mt-2"
+          >📄 Ouvrir le PDF dans un nouvel onglet</a
+        >
+      </div>
+    </div>
+
+    <!-- QCM -->
+    <div *ngIf="coursSelectionne?.qcms?.length > 0" class="bg-gray-100 p-4 rounded">
+      <h3 class="text-lg font-semibold mb-3 text-black">📝 QCM</h3>
+      <div *ngFor="let q of coursSelectionne.qcms" class="mb-3">
+        <p class="font-medium text-black">{{ q.question }}</p>
+        <ul class="list-disc list-inside text-gray-800">
+          <li *ngFor="let rep of q.reponses">{{ rep }}</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Si aucun QCM -->
+    <div
+      *ngIf="!coursSelectionne?.qcms || coursSelectionne.qcms.length === 0"
+      class="text-gray-500 italic text-center"
+    >
+      Aucun QCM pour ce cours.
+    </div>
+  </div>
+</div>

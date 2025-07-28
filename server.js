@@ -20,17 +20,13 @@ mongoose.connect('mongodb://localhost:27017/unidys', {
   .then(() => console.log('✅ Connecté à MongoDB unidys'))
   .catch(err => console.error('❌ Erreur MongoDB:', err));
 
-// ========================
 // 🔹 IMPORT DES MODELS
-// ========================
-const User = require('./schema/user')
+const User = require('./schema/user');
 const Newsletter = require('./schema/newletter');
 const Avis = require('./schema/avis');
 const Cours = require('./schema/cours');
 
-// ========================
 // 🔸 MULTER PDF Upload
-// ========================
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, 'uploads/'),
   filename: (req, file, cb) => {
@@ -40,9 +36,7 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// ========================
 // 🔹 ROUTES API
-// ========================
 
 // --- Créer un utilisateur
 app.post('/api/unidys/users', async (req, res) => {
@@ -77,9 +71,7 @@ app.post('/api/unidys/users', async (req, res) => {
 
     await nouvelUtilisateur.save();
 
-    // Récupérer utilisateur complet sans password
     const utilisateurComplet = await User.findById(nouvelUtilisateur._id).select('-password');
-
     res.status(201).json(utilisateurComplet);
 
   } catch (err) {
@@ -152,8 +144,7 @@ app.post('/api/avis', async (req, res) => {
   }
 });
 
-// --- Créer un cours (avec QCM facultatif et prof optionnel)
-// Dans ta route POST /api/cours
+// --- Créer un cours (avec fichier PDF et QCM)
 app.post('/api/cours', upload.single('pdf'), async (req, res) => {
   try {
     const { titre, niveau, matiere, nomProf, lienYoutube } = req.body;
@@ -183,23 +174,20 @@ app.post('/api/cours', upload.single('pdf'), async (req, res) => {
     }
 
     if (!utilisateurId) {
-      utilisateurId = new mongoose.Types.ObjectId(); // ID bidon
+      utilisateurId = new mongoose.Types.ObjectId(); // ID bidon si non trouvé
     }
 
-    // Parse bien le JSON contenu dans req.body.qcms (string)
     let qcms = [];
     if (req.body.qcms) {
       try {
         qcms = JSON.parse(req.body.qcms);
-
-        // On filtre les QCM invalides, sécu
         if (!Array.isArray(qcms)) qcms = [];
         else {
-          qcms = qcms.filter(q => 
+          qcms = qcms.filter(q =>
             q.question && Array.isArray(q.reponses) && typeof q.bonneReponse === 'number'
           );
         }
-      } catch (err) {
+      } catch {
         return res.status(400).json({ message: 'Erreur de format des QCM.' });
       }
     }
@@ -212,11 +200,18 @@ app.post('/api/cours', upload.single('pdf'), async (req, res) => {
       lienYoutube: lienYoutube || '',
       fichierPdf: fichier.filename,
       utilisateurId,
-      qcms
+      qcms,
     });
 
     await nouveauCours.save();
-    res.status(201).json({ message: 'Cours enregistré avec succès', data: nouveauCours });
+
+    res.status(201).json({
+      message: 'Cours enregistré avec succès',
+      data: {
+        ...nouveauCours.toObject(),
+        pdf: `/uploads/${fichier.filename}` // Ajouté pour le front
+      }
+    });
 
   } catch (err) {
     console.error('Erreur cours:', err);
@@ -224,36 +219,35 @@ app.post('/api/cours', upload.single('pdf'), async (req, res) => {
   }
 });
 
-
-// --- 🔍 Obtenir les cours créés par un utilisateur (professeur)
+// --- Obtenir les cours créés par un professeur (par nom complet)
 app.get('/api/cours/prof/:nomProf', async (req, res) => {
   try {
     const { nomProf } = req.params;
-    const cours = await Cours.find({ nomProf }); // bien 'nomProf'
-    res.json(cours);
+    const cours = await Cours.find({ nomProf });
+
+    const coursAvecPdf = cours.map(c => ({
+      ...c.toObject(),
+      pdf: `/uploads/${c.fichierPdf}` // lien accessible
+    }));
+
+    res.json(coursAvecPdf);
   } catch (err) {
     console.error('Erreur récupération cours par nomProf :', err);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
 
-app.get('/api/cours/:id', async (req, res) => {
+// --- Récupérer un cours par ID
+app.get('/api/cours/prof/:nomProf', async (req, res) => {
   try {
-    const cours = await Cours.findById(req.params.id);
+    const { nomProf } = req.params;
+    const cours = await Cours.find({ nomProf: new RegExp(`^${nomProf}$`, 'i') });
     res.json(cours);
-  } catch (error) {
-    res.status(404).json({ message: 'Cours introuvable' });
+  } catch (err) {
+    console.error('Erreur récupération cours par nomProf :', err);
+    res.status(500).json({ message: 'Erreur serveur' });
   }
 });
-
-// Exemple de route pour servir un fichier PDF stocké sur le serveur
-app.get('/uploads/:filename', (req, res) => {
-  const filePath = path.join(__dirname, 'uploads', req.params.filename);
-  res.sendFile(filePath);
-});
-
-
-
 
 // ========================
 // 🔸 Lancer le serveur
