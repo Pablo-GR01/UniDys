@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { HeaderP } from "../../../../component/header-p/header-p";
-import { Entete3E } from "../../../../component-page/Prof/entete3-p/entete3-p";
-import { NiveauE } from "../../../../component-page/Prof/niveau-p/niveau-p";
-import { ApprentissageE } from "../../../../component-page/Eleve/apprentissage-e/apprentissage-e";
+import { ApprentissageE } from "../../../../component-page/Eleve/page-cours/apprentissage-e/apprentissage-e";
 import { FooterP } from "../../../../component/footer-p/footer-p";
+import { NiveauP } from '../../../../component-page/Prof/page-cours/niveau-p/niveau-p';
+import { Entete3P } from '../../../../component-page/Prof/page-apropos/entete3-p/entete3-p';
 
 @Component({
   selector: 'app-cours-p',
-  imports: [HeaderP, Entete3E, NiveauE, ApprentissageE, FooterP],
+  imports: [HeaderP, Entete3P, NiveauP, ApprentissageE, FooterP],
   templateUrl: './cours-p.html',
   styleUrl: './cours-p.css'
 })

@@ -4,64 +4,56 @@ const cors = require('cors');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const path = require('path');
-const fs = require('fs'); // Ajouté pour la gestion des fichiers
+const fs = require('fs');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 📁 Servir les fichiers PDF statiques depuis /uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// 🔌 Connexion MongoDB
 mongoose.connect('mongodb://localhost:27017/unidys', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-})
-  .then(() => console.log('✅ Connecté à MongoDB unidys'))
+}).then(() => console.log('✅ Connecté à MongoDB'))
   .catch(err => console.error('❌ Erreur MongoDB:', err));
 
-// 🔹 IMPORT DES MODELS
+// 🔽 Import des modèles
 const User = require('./schema/user');
 const Newsletter = require('./schema/newletter');
 const Avis = require('./schema/avis');
 const Cours = require('./schema/cours');
 
-// 🔸 MULTER PDF Upload
+// 📁 Configuration multer
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
-  filename: (req, file, cb) => {
-    const uniqueName = Date.now() + '-' + file.originalname;
-    cb(null, uniqueName);
-  }
+  destination: (_, __, cb) => cb(null, 'uploads/'),
+  filename: (_, file, cb) => cb(null, Date.now() + '-' + file.originalname),
 });
 const upload = multer({ storage });
 
-// 🔹 ROUTES API
+/** ========================
+ * ✅ ROUTES API
+ * ======================= */
 
-// --- Créer un utilisateur
+// 🔐 Inscription
 app.post('/api/unidys/users', async (req, res) => {
   try {
     const { nom, prenom, email, password, role, codeProf } = req.body;
 
-    if (!email || !password || !nom || !prenom) {
-      return res.status(400).json({ message: 'Nom, prénom, email et mot de passe sont obligatoires.' });
-    }
+    if (!nom || !prenom || !email || !password)
+      return res.status(400).json({ message: 'Champs requis manquants.' });
 
     const exist = await User.findOne({ email });
     if (exist) return res.status(400).json({ message: 'Email déjà utilisé' });
 
-    if (role === 'prof' && codeProf !== 'PROF2025') {
+    if (role === 'prof' && codeProf !== 'PROF2025')
       return res.status(400).json({ message: 'Code professeur invalide' });
-    }
 
-    if (role === 'admin') {
-      return res.status(403).json({ message: 'Création admin interdite via cette route' });
-    }
+    if (role === 'admin')
+      return res.status(403).json({ message: 'Création admin interdite' });
 
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    const nouvelUtilisateur = new User({
+    const user = new User({
       nom,
       prenom,
       email,
@@ -70,10 +62,9 @@ app.post('/api/unidys/users', async (req, res) => {
       codeProf: role === 'prof' ? codeProf : undefined,
     });
 
-    await nouvelUtilisateur.save();
-
-    const utilisateurComplet = await User.findById(nouvelUtilisateur._id).select('-password');
-    res.status(201).json(utilisateurComplet);
+    await user.save();
+    const utilisateurSansMdp = await User.findById(user._id).select('-password');
+    res.status(201).json(utilisateurSansMdp);
 
   } catch (err) {
     console.error(err);
@@ -81,33 +72,30 @@ app.post('/api/unidys/users', async (req, res) => {
   }
 });
 
-// --- Connexion utilisateur
+// 🔑 Connexion
 app.post('/api/unidys/login', async (req, res) => {
   try {
     const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) return res.status(401).json({ message: 'Utilisateur non trouvé' });
 
-    const utilisateur = await User.findOne({ email });
-    if (!utilisateur) return res.status(401).json({ message: 'Utilisateur non trouvé' });
-
-    const passwordOk = await bcrypt.compare(password, utilisateur.password);
-    if (!passwordOk) return res.status(401).json({ message: 'Mot de passe incorrect' });
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(401).json({ message: 'Mot de passe incorrect' });
 
     res.json({
-      _id: utilisateur._id,
-      nom: utilisateur.nom,
-      prenom: utilisateur.prenom,
-      email: utilisateur.email,
-      role: utilisateur.role,
-      initiale: utilisateur.initiale,
+      _id: user._id,
+      nom: user.nom,
+      prenom: user.prenom,
+      email: user.email,
+      role: user.role,
     });
 
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
 
-// --- Inscription newsletter
+// 📧 Newsletter
 app.post('/api/newsletter', async (req, res) => {
   try {
     const { nom = '', prenom = '', email, accepteNewsletter = 'oui' } = req.body;
@@ -119,157 +107,109 @@ app.post('/api/newsletter', async (req, res) => {
       { upsert: true, new: true }
     );
 
-    res.status(201).json({ message: 'Inscription newsletter enregistrée', data: saved });
-
+    res.status(201).json({ message: 'Inscription enregistrée', data: saved });
   } catch (err) {
-    console.error('Erreur newsletter :', err);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
 
-// --- Créer un avis
+// 📝 Ajouter un avis
 app.post('/api/avis', async (req, res) => {
   try {
     const { nom, prenom, message } = req.body;
-    if (!nom || !prenom || !message) {
-      return res.status(400).json({ message: 'Tous les champs sont requis.' });
-    }
+    if (!nom || !prenom || !message)
+      return res.status(400).json({ message: 'Tous les champs sont requis' });
 
-    const nouvelAvis = new Avis({ nom, prenom, message });
-    const result = await nouvelAvis.save();
-
-    res.status(201).json({ message: 'Avis enregistré avec succès !', data: result });
+    const avis = new Avis({ nom, prenom, message });
+    await avis.save();
+    res.status(201).json({ message: 'Avis enregistré', data: avis });
   } catch (err) {
-    console.error('Erreur enregistrement avis:', err);
-    res.status(500).json({ message: 'Erreur serveur lors de l\'enregistrement de l\'avis.' });
-  }
-});
-
-// --- Créer un cours (avec fichier PDF et QCM)
-app.post('/api/cours', upload.single('pdf'), async (req, res) => {
-  try {
-    const { titre, niveau, matiere, nomProf, lienYoutube } = req.body;
-    const fichier = req.file;
-
-    if (!titre || !niveau || !matiere || !fichier) {
-      return res.status(400).json({ message: 'Titre, niveau, matière et fichier PDF sont requis.' });
-    }
-
-    let utilisateurId = null;
-
-    if (nomProf) {
-      const parts = nomProf.trim().split(' ');
-      if (parts.length >= 2) {
-        const prenom = parts.shift();
-        const nom = parts.join(' ');
-        const utilisateur = await User.findOne({
-          nom: new RegExp(`^${nom}$`, 'i'),
-          prenom: new RegExp(`^${prenom}$`, 'i'),
-          role: 'prof',
-        });
-
-        if (utilisateur) {
-          utilisateurId = utilisateur._id;
-        }
-      }
-    }
-
-    if (!utilisateurId) {
-      utilisateurId = new mongoose.Types.ObjectId(); // ID bidon si non trouvé
-    }
-
-    let qcms = [];
-    if (req.body.qcms) {
-      try {
-        qcms = JSON.parse(req.body.qcms);
-        if (!Array.isArray(qcms)) qcms = [];
-        else {
-          qcms = qcms.filter(q =>
-            q.question && Array.isArray(q.reponses) && typeof q.bonneReponse === 'number'
-          );
-        }
-      } catch {
-        return res.status(400).json({ message: 'Erreur de format des QCM.' });
-      }
-    }
-
-    const nouveauCours = new Cours({
-      titre,
-      niveau,
-      matiere,
-      nomProf: nomProf || '',
-      lienYoutube: lienYoutube || '',
-      fichierPdf: fichier.filename,
-      utilisateurId,
-      qcms,
-    });
-
-    await nouveauCours.save();
-
-    res.status(201).json({
-      message: 'Cours enregistré avec succès',
-      data: {
-        ...nouveauCours.toObject(),
-        pdf: `/uploads/${fichier.filename}` // Ajouté pour le front
-      }
-    });
-
-  } catch (err) {
-    console.error('Erreur cours:', err);
-    res.status(500).json({ message: 'Erreur serveur lors de la création du cours.' });
-  }
-});
-
-// --- Obtenir les cours créés par un professeur (par nom complet)
-app.get('/api/cours/prof/:nomProf', async (req, res) => {
-  try {
-    const { nomProf } = req.params;
-    const cours = await Cours.find({ nomProf });
-
-    const coursAvecPdf = cours.map(c => ({
-      ...c.toObject(),
-      pdf: `/uploads/${c.fichierPdf}` // lien accessible
-    }));
-
-    res.json(coursAvecPdf);
-  } catch (err) {
-    console.error('Erreur récupération cours par nomProf :', err);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
 
-// Route pour modifier le fichier PDF d’un cours
-app.put('/api/cours/:id/fichier', upload.single('pdf'), async (req, res) => {
+// 📚 Créer un cours avec fichier PDF + QCM
+app.post('/api/cours', upload.single('pdf'), async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'Fichier PDF requis' });
+    const { titre, niveau, matiere, nomProf, lienYoutube, qcms } = req.body;
+    const fichier = req.file;
+
+    if (!titre || !niveau || !matiere || !fichier)
+      return res.status(400).json({ message: 'Champs requis manquants' });
+
+    const utilisateur = await User.findOne({
+      nom: new RegExp(nomProf?.split(' ')[1], 'i'),
+      prenom: new RegExp(nomProf?.split(' ')[0], 'i'),
+      role: 'prof'
+    });
+
+    let qcmArray = [];
+    try {
+      qcmArray = qcms ? JSON.parse(qcms) : [];
+    } catch {
+      return res.status(400).json({ message: 'Erreur de format des QCM' });
     }
 
+    const cours = new Cours({
+      titre,
+      niveau,
+      matiere,
+      nomProf,
+      lienYoutube: lienYoutube || '',
+      fichierPdf: fichier.filename,
+      utilisateurId: utilisateur?._id || new mongoose.Types.ObjectId(),
+      qcms: qcmArray,
+    });
+
+    await cours.save();
+
+    res.status(201).json({
+      message: 'Cours enregistré',
+      data: { ...cours.toObject(), pdf: `/uploads/${cours.fichierPdf}` }
+    });
+
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// 🔎 Cours par nom du prof
+app.get('/api/cours/prof/:nomProf', async (req, res) => {
+  try {
+    const cours = await Cours.find({ nomProf: req.params.nomProf });
+    res.json(cours.map(c => ({ ...c.toObject(), pdf: `/uploads/${c.fichierPdf}` })));
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
+// 📤 Modifier le PDF
+app.put('/api/cours/:id/fichier', upload.single('pdf'), async (req, res) => {
+  try {
     const cours = await Cours.findById(req.params.id);
     if (!cours) return res.status(404).json({ error: 'Cours non trouvé' });
 
-    // Supprimer l'ancien fichier si existant
     if (cours.fichierPdf) {
-      const ancienPath = path.join(__dirname, 'uploads', cours.fichierPdf);
-      if (fs.existsSync(ancienPath)) fs.unlinkSync(ancienPath);
+      const oldPath = path.join(__dirname, 'uploads', cours.fichierPdf);
+      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
     }
 
     cours.fichierPdf = req.file.filename;
     await cours.save();
-    res.json({ message: 'Fichier PDF mis à jour', cours });
+
+    res.json({ message: 'Fichier mis à jour', cours });
+
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// Route pour supprimer un cours
+// ❌ Supprimer un cours
 app.delete('/api/cours/:id', async (req, res) => {
   try {
     const cours = await Cours.findById(req.params.id);
     if (!cours) return res.status(404).json({ error: 'Cours non trouvé' });
 
-    // Supprimer fichier PDF associé
     if (cours.fichierPdf) {
       const pdfPath = path.join(__dirname, 'uploads', cours.fichierPdf);
       if (fs.existsSync(pdfPath)) fs.unlinkSync(pdfPath);
@@ -277,16 +217,12 @@ app.delete('/api/cours/:id', async (req, res) => {
 
     await cours.deleteOne();
     res.json({ message: 'Cours supprimé' });
+
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
 
-// ========================
-// 🔸 Lancer le serveur
-// ========================
+// ▶️ Démarrage du serveur
 const PORT = 3000;
-app.listen(PORT, () => {
-  console.log(`🚀 Serveur backend démarré sur http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`));
