@@ -65,25 +65,32 @@ export class Connexion implements OnInit {
   }
 
   valider(): void {
-    if (!this.formulaireValide()) {
-      alert('Veuillez remplir correctement le formulaire.');
-      return;
-    }
-
-    const { email, password } = this.connexionData;
-
-    this.http.post('http://localhost:3000/api/unidys/login', { email, password }).subscribe(
-      (user: any) => {
-        this.userService.setUser(user); // ✅ stocke l'utilisateur avec ses infos
-        this.messageBienvenue = 'Connexion réussie !';
-        this.redirectionApresConnexion = this.actif === 'prof' ? '/accueilP' : '/accueilE';
-      },
-      (err) => {
-        this.errorMessage = err.error.message || 'Erreur serveur';
-        console.error('Erreur de connexion :', err);
-      }
-    );
+  if (!this.formulaireValide()) {
+    alert('Veuillez remplir correctement le formulaire.');
+    return;
   }
+
+  const { email, password } = this.connexionData;
+
+  this.http.post('http://localhost:3000/api/unidys/login', { email, password }).subscribe(
+    (user: any) => {
+      // ➕ Ajout de sécurité : calcul des initiales si manquantes
+      if (!user.initiale && user.prenom && user.nom) {
+        user.initiale = (user.prenom[0] ?? '').toUpperCase() + (user.nom[0] ?? '').toUpperCase();
+      }
+
+      this.userService.setUser(user); // ✅ stocke l'utilisateur avec ses infos
+      this.messageBienvenue = 'Connexion réussie !';
+      this.redirectionApresConnexion = this.actif === 'prof' ? '/accueilP' : '/accueilE';
+    },
+    (err) => {
+      this.errorMessage = err.error.message || 'Erreur serveur';
+      console.error('Erreur de connexion :', err);
+    }
+  );
+}
+
+  
 
   confirmerRedirection(): void {
     if (this.redirectionApresConnexion) {

@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CoursUser } from '../model/coursUser';
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +10,23 @@ export class CoursService {
 
   constructor(private http: HttpClient) {}
 
-  getCoursParUtilisateur(utilisateurId: string): Observable<CoursUser[]> {
-    return this.http.get<CoursUser[]>(`${this.apiUrl}/utilisateur/${utilisateurId}`);
+  getCoursParNomProf(nomProf: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/prof/${encodeURIComponent(nomProf)}`);
   }
-  getCoursById(id: string) {
+
+  getCoursParUtilisateur(nomProf: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/prof/${encodeURIComponent(nomProf)}`);
+  }
+
+  getCoursById(id: string): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/cours/${id}`);
   }
 
-  
-  
+  getPdfHtmlById(id: string): Observable<string> {
+    return this.http.get(`${this.apiUrl}/pdfhtml/${id}`, { responseType: 'text' });
+  }
+
+  modifierCours(id: string, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, data);
+  }
 }

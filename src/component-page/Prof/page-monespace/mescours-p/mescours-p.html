@@ -1,224 +1,110 @@
 <div class="text-white px-6 py-8 max-w-7xl mx-auto">
-  <h2 class="text-3xl font-extrabold mb-8 text-left text-[#F5F5F5]">📚 Mes cours</h2>
+  <h2
+    class="font-bold mb-10 text-left text-white border-b-6 border-[#8002FF]
+           2xl:text-4xl 2xl:-ml-80 2xl:pb-5 2xl:pl-5 2xl:pr-5 2xl:mr-320">
+    📚 Mes cours
+  </h2>
 
-  <div *ngIf="cours.length === 0" class="text-left text-gray-400 italic text-lg">
+  <div *ngIf="cours.length === 0" class="text-left text-gray-300 italic text-lg">
     <p>Vous n'avez pas encore créé de cours.</p>
   </div>
 
-  <div class="overflow-x-auto scrollbar-thin scrollbar-thumb-purple-600 scrollbar-track-gray-800" tabindex="0">
-    <div class="flex space-x-6 py-2">
+  <!-- Wrapper qui conserve tes offsets 2XL -->
+  <div class="relative 2xl:-ml-80 2xl:mr-60">
+
+    <!-- Piste du carrousel -->
+    <div
+      #track
+      class="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 no-scrollbar"
+      aria-label="Carrousel de cours"
+      role="region">
+
+      <!-- Carte (garde ton contenu et tes couleurs) -->
       <div
-        *ngFor="let c of cours; let i = index"
-        class="flex-shrink-0 w-72 bg-gradient-to-br from-[#1A1A1A] to-[#252525] rounded-lg p-4 shadow-md cursor-pointer
-               hover:scale-105 focus:scale-105 focus:outline-none focus:ring-4 focus:ring-purple-500 transition-transform duration-300 ease-in-out flex flex-col"
+        *ngFor="let c of cours"
         tabindex="0"
         role="button"
         [attr.aria-label]="'Voir détails du cours ' + c.titre"
         (click)="ouvrirPopup(c)"
         (keydown.enter)="ouvrirPopup(c)"
         (keydown.space)="ouvrirPopup(c)"
-      >
-        <div class="flex flex-col flex-grow">
-          <div class="flex items-center gap-2 mb-2">
-            <span
-              class="bg-purple-700 text-white text-xs font-semibold px-3 py-0.5 rounded-full tracking-wide select-none"
-              >{{ c.niveau || 'Niveau inconnu' }}</span
-            >
-          </div>
-          <h3
-            class="text-lg font-semibold text-white truncate mb-1 leading-tight"
-            [title]="c.titre"
-          >
-            {{ c.titre }}
-          </h3>
-          <p class="text-gray-400 font-medium text-sm leading-snug mb-3 truncate">{{ c.matiere }}</p>
-          <img
-            [src]="getImageParMatiere(c.matiere)"
-            [alt]="'Image du cours ' + c.titre"
-            class="w-full h-36 object-cover rounded-md shadow-sm mb-4"
-            draggable="false"
-          />
-        </div>
+        class="course-card group relative bg-[#0A092B] hover:bg-[#1b1e3d] border-2 border-[#8002FF] rounded-xl shadow-lg overflow-hidden cursor-pointer transform hover:scale-[1.015] focus:scale-[1.015] transition-transform duration-200 snap-start
+        2xl:ml-20
+        ">
 
-        <div class="flex justify-between mt-auto space-x-2">
-          <button
-            type="button"
-            (click)="supprimerCours(c); $event.stopPropagation()"
-            class="bg-red-600 hover:bg-red-700 text-white text-sm px-3 py-1 rounded shadow"
-            title="Supprimer ce cours"
-          >
-            Supprimer
-          </button>
+        <!-- Image -->
+        <img
+          [src]="getImageParMatiere(c.matiere)"
+          [alt]="'Image du cours ' + c.titre"
+          class="w-full h-40 object-cover group-hover:opacity-90 transition duration-300" />
 
-          <button
-            type="button"
-            (click)="voirDetail(c); $event.stopPropagation()"
-            class="bg-green-600 hover:bg-green-700 text-white text-sm px-3 py-1 rounded shadow"
-            title="Voir détail"
-          >
-            Voir détail
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Pop-up affichage cours avec génération PDF dynamique via jsPDF -->
-<div
-  *ngIf="popupVisible && coursSelectionne"
-  class="fixed inset-0 bg-black bg-opacity-90 z-50 flex flex-col p-4"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="popupTitle"
-  style="height: 100vh; max-height: 100vh;"
->
-  <button
-    (click)="fermerPopup()"
-    aria-label="Fermer la fenêtre"
-    class="self-end mb-2 text-white text-4xl font-bold"
-  >
-    ✖
-  </button>
-
-  <h3 id="popupTitle" class="text-4xl font-bold mb-4 text-white text-center">
-    {{ coursSelectionne.titre }}
-  </h3>
-  <p class="mb-6 text-gray-300 text-xl text-center">
-    <strong>Matière :</strong> {{ coursSelectionne.matiere }}
-  </p>
-
-  <ng-container *ngIf="pdfUrlSanitized; else pasDePdf">
-    <iframe
-      [src]="pdfUrlSanitized"
-      style="border: none; width: 100%; height: 60vh;"
-      sandbox="allow-same-origin allow-scripts"
-    ></iframe>
-  </ng-container>
-
-  <ng-template #pasDePdf>
-    <p class="text-center text-gray-400 text-lg italic my-12">
-      Fichier PDF non disponible.
-    </p>
-  </ng-template>
-
-  <div
-    *ngIf="coursSelectionne.qcm"
-    class="bg-gray-900 p-4 rounded-lg text-white max-h-72 overflow-auto mt-4"
-  >
-    <h4 class="text-2xl font-semibold mb-2">QCM</h4>
-    <div *ngFor="let question of coursSelectionne.qcm.questions; let i = index" class="mb-4">
-      <p class="font-semibold mb-1">{{ i + 1 }}. {{ question.intitule }}</p>
-      <ul class="list-disc list-inside">
-        <li *ngFor="let reponse of question.reponses">{{ reponse }}</li>
-      </ul>
-    </div>
-  </div>
-</div>
-
-
-
-      <!-- <div class="text-white px-6 py-8 max-w-7xl">
-  <h2 class="text-3xl font-extrabold mb-8 text-left text-[#F5F5F5]">📚 Mes cours</h2>
-
-  <!-- Aucun cours --
-  <div *ngIf="cours.length === 0" class="text-left text-gray-400 italic text-lg">
-    <p>Vous n'avez pas encore créé de cours.</p>
-  </div>
-
-  <!-- Liste des cours --
-  <div class="flex flex-col gap-4 ">
-    <div
-      *ngFor="let c of cours"
-      tabindex="0"
-      role="button"
-      [attr.aria-label]="'Voir détails du cours ' + c.titre"
-      class="flex justify-between items-center bg-gradient-to-br from-[#1A1A1A] to-[#252525] rounded-lg p-4 shadow-md cursor-pointer 
-             hover:scale-[1.03] focus:scale-[1.03] focus:outline-none focus:ring-4 focus:ring-purple-500 transition-transform duration-200"
-      (click)="ouvrirPopup(c)"
-      (keydown.enter)="ouvrirPopup(c)"
-      (keydown.space)="ouvrirPopup(c)"
-      style="min-height: 90px;"
-    >
-      <!-- Partie texte à gauche --
-      <div class="flex flex-col justify-center max-w-[70%]">
-        <div class="flex items-center gap-2 mb-1">
-          <span
-            class="bg-purple-700 text-white text-xs font-semibold px-3 py-0.5 rounded-full tracking-wide select-none"
-          >
+        <!-- Contenu -->
+        <div class="p-5">
+          <span class="inline-block bg-[#8002FF] text-lg text-white font-semibold rounded mb-3
+                       2xl:pt-2 2xl:pb-2 2xl:pl-5 2xl:pr-5">
             {{ c.niveau || 'Niveau inconnu' }}
           </span>
+
+          <h3 class="text-2xl font-semibold text-white mb-1 truncate" title="{{ c.titre }}">
+            {{ c.titre }}
+          </h3>
+
+          <p class="text-lg text-white font-black">
+            {{ c.matiere }}
+          </p>
         </div>
-        <h3
-          class="text-lg font-semibold text-white truncate leading-tight"
-          title="{{ c.titre }}"
-        >
-          {{ c.titre }}
-        </h3>
-        <p class="text-gray-400 font-medium text-sm leading-snug">{{ c.matiere }}</p>
       </div>
-
-      <!-- Image à droite --
-      <img
-        class="w-28 h-20 object-cover rounded-md shadow-sm ml-4 flex-shrink-0"
-        [src]="getImageParMatiere(c.matiere)"
-        alt="Image du cours {{ c.titre }}"
-      />
     </div>
+
+    <!-- Boutons de navigation -->
+    <button
+      type="button"
+      class="hidden md:flex items-center justify-center absolute -left-3 top-1/2 -translate-y-1/2  rounded-full bg-[#8002FF] text-white shadow-lg hover:opacity-90 focus:outline-none focus:ring-4 focus:ring-[#8002FF]/40
+      2xl:ml-5 2xl:-mt-4 w-10 h-10
+      "
+      aria-label="Précédent"
+      (click)="scroll(track, -1)">
+      ‹
+    </button>
+
+    <button
+      type="button"
+      class="hidden md:flex items-center justify-center absolute -right-3 top-1/2 -translate-y-1/2  rounded-full bg-[#8002FF] text-white shadow-lg hover:opacity-90 focus:outline-none focus:ring-4 focus:ring-[#8002FF]/40
+      2xl:mr-123 2xl:-mt-4 w-10 h-10
+      "
+      aria-label="Suivant"
+      (click)="scroll(track, 1)">
+      ›
+    </button>
   </div>
+</div>
+
+<!-- Utilitaire pour masquer la scrollbar seulement visuelle -->
+<style>
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
 
 
 
-
-
-  <!-- Pop-up affichage cours --
-  <div
-    *ngIf="popupVisible && coursSelectionne"
-    class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-6"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="popupTitle"
-  >
-    <div
-      class="bg-white rounded-2xl p-8 max-w-3xl w-full relative shadow-2xl
-             animate-fadeIn"
-      tabindex="0"
-    >
-      <!-- Bouton fermer --
-      <button
-        (click)="fermerPopup()"
-        aria-label="Fermer la fenêtre"
-        class="absolute top-4 right-4 text-black hover:text-red-600 text-3xl font-bold
-               transition-colors focus:outline-none focus:ring-2 focus:ring-red-600 rounded"
-      >
+  <!-- Popup -->
+  <div *ngIf="popupVisible && coursSelectionne" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-6"
+       role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+    <div class="bg-white rounded-2xl p-8 max-w-3xl w-full relative shadow-2xl animate-fadeIn" tabindex="0">
+      <button (click)="fermerPopup()" aria-label="Fermer la fenêtre"
+              class="absolute top-4 right-4 text-black hover:text-red-600 text-3xl font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-red-600 rounded">
         ✖
       </button>
 
       <h3 id="popupTitle" class="text-3xl font-bold mb-6">{{ coursSelectionne.titre }}</h3>
       <p class="mb-6 text-gray-700 text-lg"><strong>Matière :</strong> {{ coursSelectionne.matiere }}</p>
 
-      <!-- Lien vers PDF --
       <div *ngIf="pdfUrlSanitized">
-        <a
-          [href]="pdfUrlSanitized"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-block px-5 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700
-                 transition-colors text-lg font-medium shadow-md"
-        >
+        <a [href]="pdfUrlSanitized" target="_blank" rel="noopener noreferrer"
+           class="inline-block px-5 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-lg font-medium shadow-md">
           📎 Ouvrir le fichier PDF dans un nouvel onglet
         </a>
       </div>
     </div>
   </div>
-</div>
 
-<style>
-  @keyframes fadeIn {
-    from {opacity: 0; transform: translateY(-15px);}
-    to {opacity: 1; transform: translateY(0);}
-  }
-  .animate-fadeIn {
-    animation: fadeIn 0.3s ease forwards;
-  }
-</style> -->

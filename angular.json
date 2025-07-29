@@ -11,99 +11,84 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/UniDys",
-            "index": "src/index.html",
-            "main": "src/main.ts",
+            "browser": "src/main.ts",
             "polyfills": [
               "zone.js"
             ],
             "tsConfig": "tsconfig.app.json",
             "assets": [
               "src/favicon.ico",
+              "src/index.php",
               "src/assets",
               {
                 "glob": "**/*",
-                "input": "node_modules/pdfjs-dist/build",
-                "output": "pdfjs-dist/build"
+                "input": "public"
               }
             ],
             "styles": [
               "src/styles.css"
-            ],
-            "scripts": []
+            ]
           },
           "configurations": {
             "production": {
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "500kB",
+                  "maximumError": "1MB"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kb",
-                  "maximumError": "8kb"
+                  "maximumWarning": "4kB",
+                  "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all",
-              "optimization": true,
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true
+              "outputHashing": "all"
             },
             "development": {
               "optimization": false,
-              "sourceMap": true,
-              "extractCss": false,
-              "namedChunks": true,
-              "aot": false,
               "extractLicenses": false,
-              "vendorChunk": true,
-              "buildOptimizer": false
+              "sourceMap": true
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "browserTarget": "UniDys:build"
-          },
+          "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "UniDys:build:production"
+              "buildTarget": "UniDys:build:production"
             },
             "development": {
-              "browserTarget": "UniDys:build:development"
+              "buildTarget": "UniDys:build:development"
             }
           },
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "UniDys:build"
-          }
+          "builder": "@angular/build:extract-i18n"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:karma",
           "options": {
             "polyfills": [
               "zone.js",
               "zone.js/testing"
             ],
             "tsConfig": "tsconfig.spec.json",
+
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/index.php",
+              "src/assets",
+              {
+                "glob": "**/*",
+                "output": "/assets/"
+              }
             ],
+
             "styles": [
               "src/styles.css"
             ]
