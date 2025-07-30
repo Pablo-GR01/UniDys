@@ -1,25 +1,18 @@
-<div class="text-white px-6 py-8 max-w-7xl mx-auto">
-  <h2
-    class="font-bold mb-10 text-left text-white border-b-6 border-[#8002FF]
+<div class="text-white px-6 py-8 max-w-7xl mx-auto" (keydown)="onKeydown($event)" tabindex="0">
+  <h2 class="font-bold mb-8 text-left text-white border-b-4 border-[#8002FF]
            2xl:text-4xl 2xl:-ml-80 2xl:pb-5 2xl:pl-5 2xl:pr-5 2xl:mr-320">
-    📚 Mes cours
+    📚 Vos Cours
   </h2>
 
-  <div *ngIf="cours.length === 0" class="text-left text-gray-300 italic text-lg">
+  <div *ngIf="cours.length === 0" class="text-left text-gray-300 italic text-lg mb-6">
     <p>Vous n'avez pas encore créé de cours.</p>
   </div>
 
-  <!-- Wrapper qui conserve tes offsets 2XL -->
-  <div class="relative 2xl:-ml-80 2xl:mr-60">
+  <div class="relative 2xl:-ml-70 2xl:mr-210 2xl:mb-10">
+    <div #track id="track"
+      class="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-4 no-scrollbar"
+      aria-label="Carrousel de cours" role="region">
 
-    <!-- Piste du carrousel -->
-    <div
-      #track
-      class="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-2 no-scrollbar"
-      aria-label="Carrousel de cours"
-      role="region">
-
-      <!-- Carte (garde ton contenu et tes couleurs) -->
       <div
         *ngFor="let c of cours"
         tabindex="0"
@@ -28,66 +21,52 @@
         (click)="ouvrirPopup(c)"
         (keydown.enter)="ouvrirPopup(c)"
         (keydown.space)="ouvrirPopup(c)"
-        class="course-card group relative bg-[#0A092B] hover:bg-[#1b1e3d] border-2 border-[#8002FF] rounded-xl shadow-lg overflow-hidden cursor-pointer transform hover:scale-[1.015] focus:scale-[1.015] transition-transform duration-200 snap-start
-        2xl:ml-20
-        ">
+        class="course-card group relative bg-[#0A092B] hover:bg-[#1b1e3d] border-2 border-[#8002FF] rounded-xl shadow-lg cursor-pointer transform transition-transform duration-200 snap-start"
+        style="flex: 0 0 42%; max-width: 42%; min-width: 48%;">
 
-        <!-- Image -->
         <img
           [src]="getImageParMatiere(c.matiere)"
           [alt]="'Image du cours ' + c.titre"
-          class="w-full h-40 object-cover group-hover:opacity-90 transition duration-300" />
+          class="w-full h-36 object-cover group-hover:opacity-90 transition duration-300 rounded-t-xl" />
 
-        <!-- Contenu -->
         <div class="p-5">
-          <span class="inline-block bg-[#8002FF] text-lg text-white font-semibold rounded mb-3
-                       2xl:pt-2 2xl:pb-2 2xl:pl-5 2xl:pr-5">
+          <span class="inline-block bg-[#8002FF] text-sm text-white font-semibold rounded mb-3 px-4 py-1.5">
             {{ c.niveau || 'Niveau inconnu' }}
           </span>
 
-          <h3 class="text-2xl font-semibold text-white mb-1 truncate" title="{{ c.titre }}">
+          <h3 class="text-xl font-semibold text-white mb-1 truncate" title="{{ c.titre }}">
             {{ c.titre }}
           </h3>
 
-          <p class="text-lg text-white font-black">
+          <p class="text-md text-white font-black">
             {{ c.matiere }}
           </p>
+
+          <button
+            (click)="ouvrirPopup(c)"
+            class="mt-2 text-sm bg-[#8002FF] text-white px-4 py-2 rounded hover:bg-[#5d02bb] transition"
+          >
+            📄 Voir le Cours
+          </button>
         </div>
       </div>
     </div>
 
-    <!-- Boutons de navigation -->
-    <button
-      type="button"
-      class="hidden md:flex items-center justify-center absolute -left-3 top-1/2 -translate-y-1/2  rounded-full bg-[#8002FF] text-white shadow-lg hover:opacity-90 focus:outline-none focus:ring-4 focus:ring-[#8002FF]/40
-      2xl:ml-5 2xl:-mt-4 w-10 h-10
-      "
-      aria-label="Précédent"
-      (click)="scroll(track, -1)">
+    <!-- Boutons navigation -->
+    <button type="button"
+      class="hidden md:flex items-center justify-center absolute -left-5 top-1/2 -translate-y-1/2 rounded-full bg-[#8002FF] text-white shadow-lg hover:opacity-95 focus:outline-none focus:ring-4 focus:ring-[#8002FF]/50 w-11 h-11 z-10 2xl:-ml-8 2xl:-mt-3"
+      aria-label="Précédent" (click)="scroll(-1)">
       ‹
     </button>
 
-    <button
-      type="button"
-      class="hidden md:flex items-center justify-center absolute -right-3 top-1/2 -translate-y-1/2  rounded-full bg-[#8002FF] text-white shadow-lg hover:opacity-90 focus:outline-none focus:ring-4 focus:ring-[#8002FF]/40
-      2xl:mr-123 2xl:-mt-4 w-10 h-10
-      "
-      aria-label="Suivant"
-      (click)="scroll(track, 1)">
+    <button type="button"
+      class="hidden md:flex items-center justify-center absolute -right-5 top-1/2 -translate-y-1/2 rounded-full bg-[#8002FF] text-white shadow-lg hover:opacity-95 focus:outline-none focus:ring-4 focus:ring-[#8002FF]/50 w-11 h-11 z-10 2xl:-mr-8 2xl:-mt-3"
+      aria-label="Suivant" (click)="scroll(1)">
       ›
     </button>
   </div>
-</div>
 
-<!-- Utilitaire pour masquer la scrollbar seulement visuelle -->
-<style>
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-</style>
-
-
-
-  <!-- Popup -->
+  <!-- Pop-up affichage PDF -->
   <div *ngIf="popupVisible && coursSelectionne" class="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-6"
        role="dialog" aria-modal="true" aria-labelledby="popupTitle">
     <div class="bg-white rounded-2xl p-8 max-w-3xl w-full relative shadow-2xl animate-fadeIn" tabindex="0">
@@ -107,4 +86,15 @@
       </div>
     </div>
   </div>
+</div>
 
+<style>
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>

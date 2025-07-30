@@ -223,20 +223,23 @@ app.post('/api/cours', upload.single('pdf'), async (req, res) => {
 app.get('/api/cours/prof/:nomProf', async (req, res) => {
   try {
     const { nomProf } = req.params;
-    console.log('Recherche cours pour nomProf:', nomProf);
-
     const regex = new RegExp(`^${nomProf}$`, 'i');
+
     const cours = await Cours.find({ nomProf: regex });
 
-    console.log(`Nombre de cours trouvés : ${cours.length}`);
+    const coursAvecPdf = cours.map(c => {
+      const obj = c.toObject();
+      obj.pdf = c.fichierPdf ? `/uploads/${c.fichierPdf}` : null;
+      return obj;
+    });
 
-    res.json(cours);
-
+    res.json(coursAvecPdf);
   } catch (err) {
     console.error('Erreur récupération cours :', err);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 });
+
 
 
 // --- Modifier le fichier PDF d’un cours

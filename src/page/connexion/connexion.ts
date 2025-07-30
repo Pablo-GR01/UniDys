@@ -21,7 +21,7 @@ import { UserService } from '../../services/user.service';
     Logo
   ],
 })
-export class Connexion implements OnInit {
+export class Connexion {
   actif: 'prof' | 'eleve' = 'eleve';
   passwordVisible = false;
   messageBienvenue: string | null = null;
@@ -40,10 +40,7 @@ export class Connexion implements OnInit {
     private userService: UserService
   ) {}
 
-  ngOnInit(): void {
-    document.body.style.overflow = 'hidden';
-  }
-
+  
   activerProf(): void {
     this.actif = 'prof';
   }
@@ -64,7 +61,7 @@ export class Connexion implements OnInit {
     return true;
   }
 
-  valider(): void {
+valider(): void {
   if (!this.formulaireValide()) {
     alert('Veuillez remplir correctement le formulaire.');
     return;
@@ -74,12 +71,18 @@ export class Connexion implements OnInit {
 
   this.http.post('http://localhost:3000/api/unidys/login', { email, password }).subscribe(
     (user: any) => {
-      // ➕ Ajout de sécurité : calcul des initiales si manquantes
       if (!user.initiale && user.prenom && user.nom) {
         user.initiale = (user.prenom[0] ?? '').toUpperCase() + (user.nom[0] ?? '').toUpperCase();
       }
 
-      this.userService.setUser(user); // ✅ stocke l'utilisateur avec ses infos
+      this.userService.setUser(user);
+
+      // 🟣 Ajout important ici : on stocke le nom du prof
+      if (this.actif === 'prof' && user.nom && user.prenom) {
+        const nomComplet = `${user.prenom} ${user.nom}`.trim();
+        localStorage.setItem('nomProf', nomComplet);
+      }
+
       this.messageBienvenue = 'Connexion réussie !';
       this.redirectionApresConnexion = this.actif === 'prof' ? '/accueilP' : '/accueilE';
     },

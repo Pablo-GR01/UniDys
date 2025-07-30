@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { CoursRefreshService } from '../../../../services/cours-refresh.service'; // adapte le chemin
+
 
 @Component({
   selector: 'app-section7-p',
@@ -28,7 +30,10 @@ export class Section7P {
     bonneReponse: number;
   }[] = [];
 
-  constructor(private http: HttpClient) {}
+ constructor(private http: HttpClient, private refreshService: CoursRefreshService) {}
+
+
+
 
   ouvrirPopupCours() {
     this.popupCoursOuvert = true;
@@ -142,6 +147,7 @@ export class Section7P {
         alert('Cours créé avec succès !');
         this.fermerPopupCours();
         this.fermerPopupQCM();
+        this.refreshService.demanderRafraichissement();
       },
       error: err => {
         console.error('Erreur lors de la création du cours', err);
