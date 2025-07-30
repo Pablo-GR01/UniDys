@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Cours } from '../model/cours';
 
 @Injectable({
   providedIn: 'root'
@@ -29,4 +30,9 @@ export class CoursService {
   modifierCours(id: string, data: any): Observable<any> {
     return this.http.put(`${this.apiUrl}/${id}`, data);
   }
+
+  getCoursParNiveauEtMatiere(niveau: string, matiere: string): Observable<Cours[]> {
+  return this.http.get<Cours[]>(`http://localhost:3000/api/cours?niveau=${niveau}&matiere=${matiere}`);
+}
+
 }

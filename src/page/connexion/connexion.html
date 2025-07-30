@@ -7,15 +7,13 @@
 <!-- Message de bienvenue avec bouton Valider -->
 <div
   *ngIf="messageBienvenue"
-  class="absolute bg-[#8002FF] flex flex-col items-center md:ml-63 md:mt-15 lg:ml-90 lg:mt-20 2xl:ml-200 2xl:mr-180 p-4 mt-4 rounded-xl text-white shadow-md text-center text-lg font-semibold animate-fade-in z-5"
+  class="absolute bg-[#8002FF] flex flex-col items-center rounded text-white shadow-md text-center text-lg font-semibold animate-fade-in z-5
+  md:ml-63 md:mt-15 
+  lg:ml-90 lg:mt-20 
+  2xl:ml-198 2xl:mr-180 2xl:pt-4 2xl:text-2xl 2xl:pl-10 2xl:pr-10
+   "
 >
   <p class="mb-4">{{ messageBienvenue }}</p>
-  <button
-    class="bg-white text-[#8002FF] font-bold px-6 py-2 rounded hover:bg-gray-200 transition"
-    (click)="confirmerRedirection()"
-  >
-    Valider
-  </button>
 </div>
 
 <!-- Fond principal -->

@@ -83,8 +83,16 @@ valider(): void {
         localStorage.setItem('nomProf', nomComplet);
       }
 
-      this.messageBienvenue = 'Connexion réussie !';
+      this.messageBienvenue = 'Bienvenue sur UniDys !';
       this.redirectionApresConnexion = this.actif === 'prof' ? '/accueilP' : '/accueilE';
+
+      // ⏳ Attendre 2 secondes puis rediriger automatiquement
+      setTimeout(() => {
+        this.router.navigate([this.redirectionApresConnexion!]);
+        this.messageBienvenue = null;
+        this.redirectionApresConnexion = null;
+      }, 2000);
+
     },
     (err) => {
       this.errorMessage = err.error.message || 'Erreur serveur';

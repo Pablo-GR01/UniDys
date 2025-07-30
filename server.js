@@ -241,6 +241,18 @@ app.get('/api/cours/prof/:nomProf', async (req, res) => {
 });
 
 
+app.get('/api/cours/eleve/:nom', async (req, res) => {
+  const { nom } = req.params;
+  const { niveau } = req.query;
+
+  try {
+    const cours = await CoursModel.find({ elevesVus: nom, niveau });
+    res.json(cours);
+  } catch (err) {
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+});
+
 
 // --- Modifier le fichier PDF d’un cours
 app.put('/api/cours/:id/fichier', upload.single('pdf'), async (req, res) => {

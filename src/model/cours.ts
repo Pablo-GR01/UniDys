@@ -4,5 +4,5 @@ export interface Cours {
   matiere: string;
   niveau: string;
   fichierPdf: string;
-  // ajoute d'autres champs si besoin
+  progression?: number; // ✅ champ ajouté pour suivi du progrès
 }
