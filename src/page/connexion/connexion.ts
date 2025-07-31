@@ -38,9 +38,9 @@ export class Connexion {
     private router: Router,
     private http: HttpClient,
     private userService: UserService
-  ) {}
+  ) { }
 
-  
+
   activerProf(): void {
     this.actif = 'prof';
   }
@@ -61,47 +61,50 @@ export class Connexion {
     return true;
   }
 
-valider(): void {
-  if (!this.formulaireValide()) {
-    alert('Veuillez remplir correctement le formulaire.');
-    return;
+  valider(): void {
+    if (!this.formulaireValide()) {
+      alert('Veuillez remplir correctement le formulaire.');
+      return;
+    }
+
+    const { email, password } = this.connexionData;
+
+    this.http.post('http://localhost:3000/api/unidys/login', { email, password }).subscribe(
+      (user: any) => {
+        if (!user.initiale && user.prenom && user.nom) {
+          user.initiale = (user.prenom[0] ?? '').toUpperCase() + (user.nom[0] ?? '').toUpperCase();
+        }
+
+        this.userService.setUser(user);
+
+        // ✅ Stocker l’email dans localStorage
+        localStorage.setItem('email', user.email);
+
+        // ✅ Stocker le nom complet du prof si actif === prof
+        if (this.actif === 'prof' && user.nom && user.prenom) {
+          const nomComplet = `${user.prenom} ${user.nom}`.trim();
+          localStorage.setItem('nomProf', nomComplet);
+        }
+
+        this.messageBienvenue = 'Bienvenue sur UniDys !';
+        this.redirectionApresConnexion = this.actif === 'prof' ? '/accueilP' : '/accueilE';
+
+        // ⏳ Attente avant redirection
+        setTimeout(() => {
+          this.router.navigate([this.redirectionApresConnexion!]);
+          this.messageBienvenue = null;
+          this.redirectionApresConnexion = null;
+        }, 2000);
+      },
+      (err) => {
+        this.errorMessage = err.error.message || 'Erreur serveur';
+        console.error('Erreur de connexion :', err);
+      }
+    );
   }
 
-  const { email, password } = this.connexionData;
 
-  this.http.post('http://localhost:3000/api/unidys/login', { email, password }).subscribe(
-    (user: any) => {
-      if (!user.initiale && user.prenom && user.nom) {
-        user.initiale = (user.prenom[0] ?? '').toUpperCase() + (user.nom[0] ?? '').toUpperCase();
-      }
 
-      this.userService.setUser(user);
-
-      // 🟣 Ajout important ici : on stocke le nom du prof
-      if (this.actif === 'prof' && user.nom && user.prenom) {
-        const nomComplet = `${user.prenom} ${user.nom}`.trim();
-        localStorage.setItem('nomProf', nomComplet);
-      }
-
-      this.messageBienvenue = 'Bienvenue sur UniDys !';
-      this.redirectionApresConnexion = this.actif === 'prof' ? '/accueilP' : '/accueilE';
-
-      // ⏳ Attendre 2 secondes puis rediriger automatiquement
-      setTimeout(() => {
-        this.router.navigate([this.redirectionApresConnexion!]);
-        this.messageBienvenue = null;
-        this.redirectionApresConnexion = null;
-      }, 2000);
-
-    },
-    (err) => {
-      this.errorMessage = err.error.message || 'Erreur serveur';
-      console.error('Erreur de connexion :', err);
-    }
-  );
-}
-
-  
 
   confirmerRedirection(): void {
     if (this.redirectionApresConnexion) {

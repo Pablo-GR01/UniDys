@@ -1,23 +1,22 @@
+// app.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-
-const inscriptionRouter = require('../page/inscription/inscription');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Connexion MongoDB
 mongoose.connect('mongodb://localhost:27017/unidys', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-})
-.then(() => console.log('✅ Connecté à MongoDB'))
-.catch(err => console.error('Erreur MongoDB:', err));
+}).then(() => {
+  console.log('✅ MongoDB connecté');
+}).catch(err => console.error('❌ Erreur MongoDB :', err));
 
-app.use(inscriptionRouter); // ajoute la route inscription
+// Route login
+const authRoutes = require('../../backend/routes/auth.routes');
+app.use('/api/unidys', authRoutes); // <-- important
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Serveur démarré sur le port ${PORT}`);
-});
+module.exports = app;
