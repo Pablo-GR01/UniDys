@@ -4,13 +4,14 @@ import { Entete3E } from "../../../../component-page/Eleve/page-apropos/entete3-
 import { EngagementE } from "../../../../component-page/Eleve/page-apropos/engagement-e/engagement-e";
 import { Entete4E } from "../../../../component-page/Eleve/page-apropos/entete4-e/entete4-e";
 import { FooterE } from "../../../../component/footer-e/footer-e";
-// import { AvisE } from "../../../../component-page/Eleve/avis-e/avis-e";
-//
+import { AvisE } from "../../../../component-page/Eleve/page-apropos/avis-e/avis-e";
+
+
 @Component({
   selector: 'app-apropos-e',
-  imports: [HeaderE, Entete3E, EngagementE, Entete4E, FooterE],
+  imports: [HeaderE, Entete3E, EngagementE, Entete4E, FooterE, AvisE],
   templateUrl: './apropos-e.html',
-  styleUrl: './apropos-e.css'
+  styleUrl: './apropos-e.css',
 })
 export class AproposE {
 

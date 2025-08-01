@@ -1,7 +1,7 @@
-<!-- <div class="max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow-md">
+<div class="max-w-4xl mx-auto p-6 bg-gray-50 rounded-lg shadow-md">
   <h2 class="text-3xl font-bold mb-6 text-center">Avis des utilisateurs</h2>
 
-  <!-- Formulaire d'ajout d'avis --
+  <!-- Formulaire d'ajout d'avis -->
   <form (submit)="soumettreAvis(); $event.preventDefault()" class="mb-8 space-y-4">
     <div>
       <label class="block mb-1 font-semibold" for="nom">Nom</label>
@@ -50,7 +50,7 @@
     </button>
   </form>
 
-  <!-- Liste des avis --
+  <!-- Liste des avis -->
   <div class="grid gap-6 sm:grid-cols-1 md:grid-cols-2">
     <div
       *ngFor="let avis of avisList"
@@ -70,4 +70,4 @@
       <p class="text-gray-700 italic">“{{ avis.message }}”</p>
     </div>
   </div>
-</div> -->
+</div>

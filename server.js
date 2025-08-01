@@ -6,6 +6,8 @@ const cors = require('cors');
 const authRoutes = require('./backend/routes/user.Routes');
 const userRoutes = require('./backend/routes/user.Routes');
 const newsletterRoutes = require('./backend/routes/newsletter.routes')
+const avisRoutes = require('./backend/routes/avis.routes');
+
 
 const app = express();
 const PORT = 3000;
@@ -24,7 +26,12 @@ mongoose.connect('mongodb://localhost:27017/unidys', {
 // Routes
 app.use('/api/unidys', authRoutes);
 app.use('/api/unidys', userRoutes);
-app.use('/api/unidys', newsletterRoutes);  // <-- Ajout ici
+app.use('/api/unidys', newsletterRoutes);
+app.use('/api/avis', avisRoutes);
+
+
+
+
 
 app.listen(PORT, () => {
   console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);

@@ -38,7 +38,10 @@ export class Inscription implements OnInit, OnDestroy {
   };
 
   passwordVisible = false;
-  messageBienvenue: string | null = null;
+
+  // ✅ Deux messages distincts
+  messageProf: string | null = null;
+  messageEleve: string | null = null;
 
   constructor(
     private http: HttpClient,
@@ -112,9 +115,14 @@ export class Inscription implements OnInit, OnDestroy {
 
     this.http.post('http://localhost:3000/api/unidys/users', payload).subscribe({
       next: (res: any) => {
-        this.messageBienvenue = `Bienvenue sur UniDys, ${this.inscriptionData.prenom} !`;
+        // ✅ Message personnalisé selon le rôle
+        if (payload.role === 'prof') {
+          this.messageProf = `Bienvenue sur UniDys !`;
+        } else if (payload.role === 'eleve') {
+          this.messageEleve = `Bienvenue sur UniDys !`;
+        }
 
-        // ✅ Stocker l'utilisateur dans le service
+        // ✅ Stocker l'utilisateur
         this.userService.setUser(res);
 
         // Réinitialiser le formulaire
@@ -128,15 +136,16 @@ export class Inscription implements OnInit, OnDestroy {
           initiale: '',
         };
 
-        // Redirection selon le rôle
+        // ✅ Redirection selon le rôle
         const redirection =
           payload.role === 'prof' ? '/accueilP' :
           payload.role === 'admin' ? '/accueilA' :
           '/accueilE';
 
+        // ✅ Attente avant redirection
         setTimeout(() => {
           this.router.navigate([redirection]);
-        }, 500);
+        }, 1500);
       },
       error: (err) => {
         console.error('Erreur lors de la création du compte', err);

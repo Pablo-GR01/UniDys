@@ -2,18 +2,30 @@
 <app-logo></app-logo>
 
 <div
-  *ngIf="messageBienvenue"
+  *ngIf="messageProf"
   class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
          flex flex-col items-center
          text-lg md:text-xl 2xl:text-2xl
          md:ml-[225px] md:mt-[120px] md:pt-[20px] md:pb-[10px] md:pl-[50px] md:pr-[50px]
          xl:ml-[480px] xl:mt-[120px] xl:pt-[20px] xl:pb-[10px] xl:pl-[50px] xl:pr-[50px]
-         2xl:ml-[780px] 2xl:mt-[95px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]"
+         2xl:ml-[780px] 2xl:-mt-[8px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]"
 >
-  <p class="mb-2">{{ messageBienvenue }}</p>
+  <p class="mb-2">{{ messageProf }}</p>
 </div>
 
-<div class="min-h-screen flex items-center justify-center px-4 -mt-20">
+<div
+  *ngIf="messageEleve"
+  class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
+         flex flex-col items-center
+         text-lg md:text-xl 2xl:text-2xl
+         md:ml-[225px] md:mt-[120px] md:pt-[20px] md:pb-[10px] md:pl-[50px] md:pr-[50px]
+         xl:ml-[480px] xl:mt-[120px] xl:pt-[20px] xl:pb-[10px] xl:pl-[50px] xl:pr-[50px]
+         2xl:ml-[780px] 2xl:mt-[15px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]"
+>
+  <p class="mb-2">{{ messageEleve }}</p>
+</div>
+
+<div class="min-h-screen flex items-center justify-center px-4 -mt-15">
   <div class="bg-[#020118] rounded-2xl p-8 pt-1 w-full max-w-md shadow-xl border-6 border-[#8002FF] relative">
 
     <!-- Inscription -->

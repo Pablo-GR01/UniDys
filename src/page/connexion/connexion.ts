@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -24,7 +24,12 @@ import { UserService } from '../../services/user.service';
 export class Connexion {
   actif: 'prof' | 'eleve' = 'eleve';
   passwordVisible = false;
-  messageBienvenue: string | null = null;
+
+  // ✅ Deux messages distincts
+  messageProf: string | null = null;
+  messageEleve: string | null = null;
+  messageAdmin: string | null = null;
+
   redirectionApresConnexion: string | null = null;
   errorMessage: string | null = null;
 
@@ -39,7 +44,6 @@ export class Connexion {
     private http: HttpClient,
     private userService: UserService
   ) { }
-
 
   activerProf(): void {
     this.actif = 'prof';
@@ -86,15 +90,32 @@ export class Connexion {
           localStorage.setItem('nomProf', nomComplet);
         }
 
-        this.messageBienvenue = 'Bienvenue sur UniDys !';
-        this.redirectionApresConnexion = this.actif === 'prof' ? '/accueilP' : '/accueilE';
+        // ✅ Message personnalisé selon le rôle
+        if (this.actif === 'prof') {
+          this.messageProf = 'Bienvenue sur UniDys !';
+        } else if (this.actif === 'eleve') {
+          this.messageEleve = 'Bienvenue sur UniDys !';
+        }else if (user.role === 'admin') {
+          this.messageAdmin = 'Bienvenue sur UniDys !';
+        }
+
+
+        // ✅ Déterminer la redirection
+        if (user.role === 'admin') {
+          this.redirectionApresConnexion = '/accueilA';
+        } else if (user.role === 'prof') {
+          this.redirectionApresConnexion = '/accueilP';
+        } else {
+          this.redirectionApresConnexion = '/accueilE';
+        }
 
         // ⏳ Attente avant redirection
         setTimeout(() => {
           this.router.navigate([this.redirectionApresConnexion!]);
-          this.messageBienvenue = null;
+          this.messageProf = null;
+          this.messageEleve = null;
           this.redirectionApresConnexion = null;
-        }, 2000);
+        }, 1500);
       },
       (err) => {
         this.errorMessage = err.error.message || 'Erreur serveur';
@@ -103,13 +124,11 @@ export class Connexion {
     );
   }
 
-
-
-
   confirmerRedirection(): void {
     if (this.redirectionApresConnexion) {
       this.router.navigate([this.redirectionApresConnexion]);
-      this.messageBienvenue = null;
+      this.messageProf = null;
+      this.messageEleve = null;
       this.redirectionApresConnexion = null;
     }
   }
