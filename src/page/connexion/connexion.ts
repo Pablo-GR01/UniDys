@@ -25,7 +25,6 @@ export class Connexion {
   actif: 'prof' | 'eleve' = 'eleve';
   passwordVisible = false;
 
-  // ✅ Deux messages distincts
   messageProf: string | null = null;
   messageEleve: string | null = null;
   messageAdmin: string | null = null;
@@ -81,26 +80,26 @@ export class Connexion {
 
         this.userService.setUser(user);
 
-        // ✅ Stocker l’email dans localStorage
+        // Stocker les infos dans localStorage ici, après réception de user
+        localStorage.setItem('prenom', user.prenom);
+        localStorage.setItem('nom', user.nom);
         localStorage.setItem('email', user.email);
 
-        // ✅ Stocker le nom complet du prof si actif === prof
         if (this.actif === 'prof' && user.nom && user.prenom) {
           const nomComplet = `${user.prenom} ${user.nom}`.trim();
           localStorage.setItem('nomProf', nomComplet);
         }
 
-        // ✅ Message personnalisé selon le rôle
+        // Messages selon rôle
         if (this.actif === 'prof') {
           this.messageProf = 'Bienvenue sur UniDys !';
         } else if (this.actif === 'eleve') {
           this.messageEleve = 'Bienvenue sur UniDys !';
-        }else if (user.role === 'admin') {
+        } else if (user.role === 'admin') {
           this.messageAdmin = 'Bienvenue sur UniDys !';
         }
 
-
-        // ✅ Déterminer la redirection
+        // Définir redirection selon rôle
         if (user.role === 'admin') {
           this.redirectionApresConnexion = '/accueilA';
         } else if (user.role === 'prof') {
@@ -109,7 +108,7 @@ export class Connexion {
           this.redirectionApresConnexion = '/accueilE';
         }
 
-        // ⏳ Attente avant redirection
+        // Redirection après 1.5s
         setTimeout(() => {
           this.router.navigate([this.redirectionApresConnexion!]);
           this.messageProf = null;

@@ -1,19 +1,25 @@
-// server.js
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
+const multer = require('multer');
+const fs = require('fs');
 
 const authRoutes = require('./backend/routes/user.Routes');
-const userRoutes = require('./backend/routes/user.Routes');
-const newsletterRoutes = require('./backend/routes/newsletter.routes')
+const newsletterRoutes = require('./backend/routes/newsletter.routes');
 const avisRoutes = require('./backend/routes/avis.routes');
-
+const coursRoutes = require('./backend/routes/cours.routes');
 
 const app = express();
 const PORT = 3000;
 
+// Middleware CORS, body parser JSON + urlencoded
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// Servir les fichiers PDF depuis /uploads (static)
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Connexion MongoDB
 mongoose.connect('mongodb://localhost:27017/unidys', {
@@ -21,13 +27,20 @@ mongoose.connect('mongodb://localhost:27017/unidys', {
   useUnifiedTopology: true,
 })
 .then(() => console.log('✅ Connexion à MongoDB réussie'))
-.catch((err) => console.error('❌ Erreur MongoDB :', err));
+.catch(err => console.error('❌ Erreur MongoDB :', err));
 
 // Routes
 app.use('/api/unidys', authRoutes);
-app.use('/api/unidys', userRoutes);
 app.use('/api/unidys', newsletterRoutes);
 app.use('/api/avis', avisRoutes);
+app.use('/api/cours', coursRoutes);
+
+// Démarrage serveur
+app.listen(PORT, () => {
+  console.log(`🚀 Serveur backend démarré sur http://localhost:${PORT}`);
+});
+
+
 
 
 

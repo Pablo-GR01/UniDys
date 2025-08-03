@@ -10,7 +10,7 @@
          text-lg md:text-xl 2xl:text-2xl
          md:ml-[225px] md:mt-[120px] md:pt-[20px] md:pb-[10px] md:pl-[50px] md:pr-[50px]
          xl:ml-[480px] xl:mt-[120px] xl:pt-[20px] xl:pb-[10px] xl:pl-[50px] xl:pr-[50px]
-         2xl:ml-[780px] 2xl:mt-[50px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]"
+         2xl:ml-[780px] 2xl:mt-[30px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]"
 >
   <p class="mb-2">{{ messageProf }}</p>
 </div>
@@ -22,7 +22,7 @@
          text-lg md:text-xl 2xl:text-2xl
          md:ml-[225px] md:mt-[120px] md:pt-[20px] md:pb-[10px] md:pl-[50px] md:pr-[50px]
          xl:ml-[480px] xl:mt-[120px] xl:pt-[20px] xl:pb-[10px] xl:pl-[50px] xl:pr-[50px]
-         2xl:ml-[780px] 2xl:mt-[95px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]"
+         2xl:ml-[780px] 2xl:mt-[69px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]"
 >
   <p class="mb-2">{{ messageEleve }}</p>
 </div>
@@ -34,7 +34,11 @@
       class="bg-[#020118] rounded-2xl p-8 w-full max-w-md shadow-xl border-6 border-[#8002FF] relative"
     >
       <!-- Titre -->
-      <h2 class="text-center text-xl font-bold text-[#8002FF] mb-6 mt-6">
+      <h2 class="text-center font-black text-[#8002FF] mb-6
+      2xl:text-4xl
+      xl:text-3xl
+      md:text-3xl
+      ">
         Connexion
       </h2>
 
@@ -143,8 +147,11 @@
         <button
           type="submit"
           [disabled]="!formulaireValide()"
-          class="bg-[#8002FF] text-white w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255] disabled:opacity-50 disabled:cursor-not-allowed"
-        >
+          class="bg-[#8002FF] text-white w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255] disabled:opacity-50 disabled:cursor-not-allowed
+          2xl:mt-5
+          xl:mt-5
+          md:mt-5
+          ">
           Valider
         </button>
       </form>

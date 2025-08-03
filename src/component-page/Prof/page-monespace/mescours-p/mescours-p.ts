@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
-import { CoursRefreshService } from '../../../../services/cours-refresh.service'; // adapte le chemin
+import { CoursRefreshService } from '../../../../services/cours-refresh.service';
 import { Cours } from '../../../../model/cours';
 
 @Component({
@@ -11,7 +11,7 @@ import { Cours } from '../../../../model/cours';
   templateUrl: './mescours-p.html',
   styleUrls: ['./mescours-p.css'],
   standalone: true,
-  imports: [CommonModule]
+  imports: [CommonModule],
 })
 export class MescoursP implements OnInit, OnDestroy {
   @ViewChild('track', { static: true }) trackRef!: ElementRef<HTMLDivElement>;
@@ -43,21 +43,22 @@ export class MescoursP implements OnInit, OnDestroy {
   }
 
   chargerCoursProf(): void {
-    const nomProf = localStorage.getItem('nomProf');
-    if (!nomProf) {
-      console.warn('Nom du professeur non trouvé dans localStorage');
+    const prenom = localStorage.getItem('prenom');
+    const nom = localStorage.getItem('nom');
+
+    if (!prenom || !nom) {
+      console.warn('Nom ou prénom du professeur manquant dans localStorage');
       this.cours = [];
       return;
     }
 
+    const nomProfComplet = `${prenom} ${nom}`;
+
     this.http
-      .get<Cours[]>(`http://localhost:3000/api/cours/prof/${encodeURIComponent(nomProf)}`)
+      .get<Cours[]>(`http://localhost:3000/api/cours/prof/${encodeURIComponent(nomProfComplet)}`)
       .subscribe({
         next: (data) => {
           this.cours = data;
-          if (data.length === 0) {
-            console.warn('Aucun cours trouvé pour ce professeur');
-          }
         },
         error: (err) => {
           console.error('Erreur lors du chargement des cours:', err);
@@ -70,8 +71,7 @@ export class MescoursP implements OnInit, OnDestroy {
     const track = this.trackRef.nativeElement;
     const card = track.querySelector('.course-card') as HTMLElement | null;
     if (!card) return;
-
-    const cardWidth = card.offsetWidth + 16; // 16px = gap-6
+    const cardWidth = card.offsetWidth + 16; // 16px gap
     track.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
   }
 
@@ -105,14 +105,11 @@ export class MescoursP implements OnInit, OnDestroy {
 
   getImageParMatiere(matiere: string): string {
     switch (matiere.toLowerCase()) {
-      case 'maths':
-        return 'assets/coursmaths.png';
-      case 'français':
-        return 'assets/coursfrançais.png';
-      case 'histoire':
-        return 'assets/courshistoire.png';
-      default:
-        return 'assets/img/default.jpg';
+      case 'maths': return 'assets/coursmaths.png';
+      case 'français': return 'assets/coursfrançais.png';
+      case 'histoire': return 'assets/courshistoire.png';
+      case 'sciences': return 'assets/sciences.png';
+      default: return 'assets/img/default.jpg';
     }
   }
 }

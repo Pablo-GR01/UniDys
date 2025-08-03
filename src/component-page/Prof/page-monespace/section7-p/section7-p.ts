@@ -2,8 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { CoursRefreshService } from '../../../../services/cours-refresh.service'; // adapte le chemin
-
+import { CoursRefreshService } from '../../../../services/cours-refresh.service';
 
 @Component({
   selector: 'app-section7-p',
@@ -30,27 +29,12 @@ export class Section7P {
     bonneReponse: number;
   }[] = [];
 
- constructor(private http: HttpClient, private refreshService: CoursRefreshService) {}
+  constructor(private http: HttpClient, private refreshService: CoursRefreshService) {}
 
-
-
-
-  ouvrirPopupCours() {
-    this.popupCoursOuvert = true;
-  }
-
-  fermerPopupCours() {
-    this.popupCoursOuvert = false;
-    this.resetForm();
-  }
-
-  ouvrirPopupQCM() {
-    this.popupQcmOuvert = true;
-  }
-
-  fermerPopupQCM() {
-    this.popupQcmOuvert = false;
-  }
+  ouvrirPopupCours() { this.popupCoursOuvert = true; }
+  fermerPopupCours() { this.popupCoursOuvert = false; this.resetForm(); }
+  ouvrirPopupQCM() { this.popupQcmOuvert = true; }
+  fermerPopupQCM() { this.popupQcmOuvert = false; }
 
   resetForm() {
     this.titreCours = '';
@@ -64,9 +48,7 @@ export class Section7P {
   }
 
   onPdfSelected(event: any) {
-    if (event.target.files && event.target.files.length > 0) {
-      this.pdfFile = event.target.files[0];
-    }
+    if (event.target.files.length > 0) this.pdfFile = event.target.files[0];
   }
 
   mettreAJourImage() {
@@ -80,11 +62,7 @@ export class Section7P {
   }
 
   ajouterQCM() {
-    this.qcms.push({
-      question: '',
-      reponses: ['', ''],
-      bonneReponse: 1 // par défaut la 1ère réponse bonne (valeur 1)
-    });
+    this.qcms.push({ question: '', reponses: ['', ''], bonneReponse: 1 });
   }
 
   ajouterReponse(index: number) {
@@ -96,50 +74,34 @@ export class Section7P {
   }
 
   validerQCM() {
-    if (this.qcms.length === 0) {
-      alert('Vous devez ajouter au moins un QCM avant de valider.');
-      return;
-    }
-
     for (const qcm of this.qcms) {
-      if (!qcm.question.trim()) {
-        alert('Chaque QCM doit avoir une question.');
-        return;
-      }
-      // tu peux aussi vérifier qu'il y a au moins 2 réponses non vides
-      if (qcm.reponses.filter(r => r.trim() !== '').length < 2) {
-        alert('Chaque QCM doit avoir au moins deux réponses non vides.');
-        return;
-      }
-      // et vérifier que bonneReponse est valide
-      if (qcm.bonneReponse < 1 || qcm.bonneReponse > qcm.reponses.length) {
-        alert('Veuillez sélectionner une bonne réponse valide.');
-        return;
-      }
+      if (!qcm.question.trim()) return alert('Chaque QCM doit avoir une question.');
+      if (qcm.reponses.filter(r => r.trim() !== '').length < 2) return alert('Min. 2 réponses requises.');
+      if (qcm.bonneReponse < 1 || qcm.bonneReponse > qcm.reponses.length) return alert('Bonne réponse invalide.');
     }
-
     this.popupQcmOuvert = false;
-    // Les qcms sont déjà modifiés dans le formulaire, rien à faire
   }
 
   validerCours() {
-    if (!this.titreCours || !this.nomProf || !this.matiere || !this.niveau || !this.pdfFile) {
-      alert('Veuillez remplir tous les champs obligatoires et sélectionner un PDF.');
+    if (!this.titreCours || !this.matiere || !this.niveau || !this.pdfFile) {
+      alert('Tous les champs obligatoires doivent être remplis.');
       return;
     }
 
+    const utilisateur = JSON.parse(localStorage.getItem('utilisateur') || '{}');
+    if (!utilisateur._id) return alert('Erreur : utilisateur non connecté.');
+
     const formData = new FormData();
+    formData.append('utilisateurId', utilisateur._id);
+    formData.append('nomProf', utilisateur.nom);
     formData.append('titre', this.titreCours);
-    formData.append('nomProf', this.nomProf);
     formData.append('niveau', this.niveau);
     formData.append('matiere', this.matiere);
     formData.append('lienYoutube', this.lienYoutube || '');
     formData.append('pdf', this.pdfFile);
 
-    // Envoi des QCM sous forme JSON stringifiée uniquement s'il y en a
-    const qcmUtiles = this.qcms.filter(q => q.question.trim() !== '');
-    if (qcmUtiles.length > 0) {
-      formData.append('qcms', JSON.stringify(qcmUtiles));
+    if (this.qcms.length > 0) {
+      formData.append('qcms', JSON.stringify(this.qcms));
     }
 
     this.http.post('http://localhost:3000/api/cours', formData).subscribe({
@@ -154,6 +116,5 @@ export class Section7P {
         alert('Erreur lors de la création du cours.');
       }
     });
-    this.http.get<any[]>(`http://localhost:3000/api/cours/prof/${encodeURIComponent(this.nomProf)}`)
   }
 }
