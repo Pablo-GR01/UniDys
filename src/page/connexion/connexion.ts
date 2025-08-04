@@ -24,6 +24,7 @@ import { UserService } from '../../services/user.service';
 export class Connexion {
   actif: 'prof' | 'eleve' = 'eleve';
   passwordVisible = false;
+  isLoading = false;
 
   messageProf: string | null = null;
   messageEleve: string | null = null;
@@ -64,64 +65,64 @@ export class Connexion {
     return true;
   }
 
-  valider(): void {
-    if (!this.formulaireValide()) {
-      alert('Veuillez remplir correctement le formulaire.');
-      return;
-    }
-
-    const { email, password } = this.connexionData;
-
-    this.http.post('http://localhost:3000/api/unidys/login', { email, password }).subscribe(
-      (user: any) => {
-        if (!user.initiale && user.prenom && user.nom) {
-          user.initiale = (user.prenom[0] ?? '').toUpperCase() + (user.nom[0] ?? '').toUpperCase();
-        }
-
-        this.userService.setUser(user);
-
-        // Stocker les infos dans localStorage ici, après réception de user
-        localStorage.setItem('prenom', user.prenom);
-        localStorage.setItem('nom', user.nom);
-        localStorage.setItem('email', user.email);
-
-        if (this.actif === 'prof' && user.nom && user.prenom) {
-          const nomComplet = `${user.prenom} ${user.nom}`.trim();
-          localStorage.setItem('nomProf', nomComplet);
-        }
-
-        // Messages selon rôle
-        if (this.actif === 'prof') {
-          this.messageProf = 'Bienvenue sur UniDys !';
-        } else if (this.actif === 'eleve') {
-          this.messageEleve = 'Bienvenue sur UniDys !';
-        } else if (user.role === 'admin') {
-          this.messageAdmin = 'Bienvenue sur UniDys !';
-        }
-
-        // Définir redirection selon rôle
-        if (user.role === 'admin') {
-          this.redirectionApresConnexion = '/accueilA';
-        } else if (user.role === 'prof') {
-          this.redirectionApresConnexion = '/accueilP';
-        } else {
-          this.redirectionApresConnexion = '/accueilE';
-        }
-
-        // Redirection après 1.5s
-        setTimeout(() => {
-          this.router.navigate([this.redirectionApresConnexion!]);
-          this.messageProf = null;
-          this.messageEleve = null;
-          this.redirectionApresConnexion = null;
-        }, 1500);
-      },
-      (err) => {
-        this.errorMessage = err.error.message || 'Erreur serveur';
-        console.error('Erreur de connexion :', err);
-      }
-    );
+ valider(): void {
+  if (!this.formulaireValide()) {
+    alert('Veuillez remplir correctement le formulaire.');
+    return;
   }
+
+  this.isLoading = true; // ← Commence le "chargement"
+
+  const { email, password } = this.connexionData;
+
+  this.http.post('http://localhost:3000/api/unidys/login', { email, password }).subscribe(
+    (user: any) => {
+      if (!user.initiale && user.prenom && user.nom) {
+        user.initiale = (user.prenom[0] ?? '').toUpperCase() + (user.nom[0] ?? '').toUpperCase();
+      }
+
+      this.userService.setUser(user);
+      localStorage.setItem('prenom', user.prenom);
+      localStorage.setItem('nom', user.nom);
+      localStorage.setItem('email', user.email);
+
+      if (this.actif === 'prof' && user.nom && user.prenom) {
+        const nomComplet = `${user.prenom} ${user.nom}`.trim();
+        localStorage.setItem('nomProf', nomComplet);
+      }
+
+      if (this.actif === 'prof') {
+        this.messageProf = 'Bienvenue sur UniDys !';
+      } else if (this.actif === 'eleve') {
+        this.messageEleve = 'Bienvenue sur UniDys !';
+      } else if (user.role === 'admin') {
+        this.messageAdmin = 'Bienvenue sur UniDys !';
+      }
+
+      if (user.role === 'admin') {
+        this.redirectionApresConnexion = '/accueilA';
+      } else if (user.role === 'prof') {
+        this.redirectionApresConnexion = '/accueilP';
+      } else {
+        this.redirectionApresConnexion = '/accueilE';
+      }
+
+      setTimeout(() => {
+        this.router.navigate([this.redirectionApresConnexion!]);
+        this.messageProf = null;
+        this.messageEleve = null;
+        this.redirectionApresConnexion = null;
+        this.isLoading = false; // ← Fin du chargement
+      }, 1500);
+    },
+    (err) => {
+      this.errorMessage = err.error.message || 'Erreur serveur';
+      this.isLoading = false; // ← Fin du chargement même en cas d'erreur
+      console.error('Erreur de connexion :', err);
+    }
+  );
+}
+
 
   confirmerRedirection(): void {
     if (this.redirectionApresConnexion) {

@@ -1,50 +1,34 @@
-<div class="z-10 border-t-5 border-[#8002FF] border-b-5
-2xl:mt-3
-md:mt-3
-xl:mt-3
-">
-    <img class="brightness-50
-    2xl:w-full 2xl:h-120 2xl:mt-0
-    xl:w-full xl:mt-0   
-    lg:h-80 lg:mt-3 lg:w-full   
-    md:h-65 md:mt-0 md:w-full" src="assets/i1.png">
+<div class="relative border-6 border-[#8002FF]">
+    <!-- Image de fond -->
+    <img src="assets/Si1.png" alt="Image de fond"
+        class="w-full h-64 sm:h-72 md:h-96 lg:h-[28rem] xl:h-[32rem] 2xl:h-[36rem] object-cover brightness-50" />
 
-    <h1 class="absolute text-white font-black
-    xl:ml-[473px] xl:-mt-[300px]
-    2xl:text-8xl 2xl:-mt-[445px] 2xl:ml-[701px]  
-    md:text-6xl md:-mt-61 md:ml-[218px]">BIENVENUE</h1>
+    <!-- Bloc de contenu centré -->
+    <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-10 lg:px-20">
+        <h2 class="text-white font-black
+  text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl
+  mb-4 drop-shadow-lg">
+            BIENVENUE
+        </h2>
 
-    <h2 class="absolute text-white font-black
-    xl:ml-[568px] xl:-mt-[215px]
-    2xl:text-5xl 2xl:-mt-[305px] 2xl:ml-[867px]   
-    md:text-4xl md:-mt-[180px] md:ml-[314px]">UNIDYS</h2>
+        <p class="text-white font-medium
+      text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl
+      max-w-4xl mb-6 px-2 sm:px-0">
+            UniDys accompagne les élèves du CP au CM2,
+            en particulier ceux ayant des troubles de
+            l’apprentissage, plus couramment appelés troubles DYS,
+            grâce à des contenus adaptés et interactifs,
+            afin que chaque enfant progresse à son rythme.
+        </p>
 
-    <p class="absolute text-white font-black text-center 
-    2xl:text-2xl 2xl:-mt-[230px] 2xl:ml-[100px] 2xl:mr-[100px]
-    xl:ml-[115px] xl:mr-[155px] xl:-mt-[150px]
-    md:text-md md:-mt-[133px] md:ml-[40px] md:mr-[40px]">UniDys accompagne les élèves du CP au CM2, en particulier 
-        ceux ayant des troubles de l’apprentissage, plus couramment 
-        appelés troubles DYS, grâce à des contenus adaptés et interactifs, 
-        afin que chaque enfant progresse à son rythme.
-    </p>
-
-    <a routerLink="/coursE" class="absolute 
-        xl:-mt-[70px] xl:ml-[500px]
-        2xl:-mt-[120px] 2xl:ml-[809px]
-        md:-mt-[55px] md:ml-[315px]
-        block
-    ">
-        <button
-            class="text-white font-black rounded-xl bg-[#8002FF] hover:bg-[#3F0255]
-                focus:outline-none transition duration-300 ease-in-out hover:shadow-lg
-                md:text-xl lg:text-2xl 2xl:text-3xl
-                md:px-10 md:py-2 lg:px-20 lg:py-2 2xl:px-20 2xl:py-2
-                xl:ml-5
-                "
-        >
-            Cours
-        </button>
-    </a>
-
-
+        <a routerLink="/monespaceE">
+            <button class="text-white font-black rounded-xl bg-[#8002FF] hover:bg-[#3F0255]
+        focus:outline-none transition duration-300 ease-in-out hover:shadow-lg
+        text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl
+        px-6 sm:px-8 md:px-10 lg:px-12 xl:px-16 2xl:px-20
+        py-2">
+                Cours
+            </button>
+        </a>
+    </div>
 </div>

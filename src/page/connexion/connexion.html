@@ -3,36 +3,28 @@
 <app-logo></app-logo>
 
 <!-- Message de bienvenue avec bouton Valider -->
-<div
-  *ngIf="messageProf"
-  class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
+<div *ngIf="messageProf" class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
          flex flex-col items-center
          text-lg md:text-xl 2xl:text-2xl
          md:ml-[225px] md:mt-[120px] md:pt-[20px] md:pb-[10px] md:pl-[50px] md:pr-[50px]
          xl:ml-[480px] xl:mt-[120px] xl:pt-[20px] xl:pb-[10px] xl:pl-[50px] xl:pr-[50px]
-         2xl:ml-[780px] 2xl:mt-[30px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]"
->
+         2xl:ml-[780px] 2xl:mt-[30px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]">
   <p class="mb-2">{{ messageProf }}</p>
 </div>
 
-<div
-  *ngIf="messageEleve"
-  class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
+<div *ngIf="messageEleve" class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
          flex flex-col items-center
          text-lg md:text-xl 2xl:text-2xl
          md:ml-[225px] md:mt-[120px] md:pt-[20px] md:pb-[10px] md:pl-[50px] md:pr-[50px]
          xl:ml-[480px] xl:mt-[120px] xl:pt-[20px] xl:pb-[10px] xl:pl-[50px] xl:pr-[50px]
-         2xl:ml-[780px] 2xl:mt-[69px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]"
->
+         2xl:ml-[780px] 2xl:mt-[69px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]">
   <p class="mb-2">{{ messageEleve }}</p>
 </div>
 
 <!-- Fond principal -->
 <div class="bg-[#020118]">
   <div class="min-h-screen flex items-center justify-center px-4 -mt-20">
-    <div
-      class="bg-[#020118] rounded-2xl p-8 w-full max-w-md shadow-xl border-6 border-[#8002FF] relative"
-    >
+    <div class="bg-[#020118] rounded-2xl p-8 w-full max-w-md shadow-xl border-6 border-[#8002FF] relative">
       <!-- Titre -->
       <h2 class="text-center font-black text-[#8002FF] mb-6
       2xl:text-4xl
@@ -44,26 +36,16 @@
 
       <!-- Choix du rôle -->
       <div class="flex justify-center gap-4 mb-4">
-        <button
-          (click)="activerProf()"
-          [ngClass]="{
+        <button (click)="activerProf()" [ngClass]="{
             'bg-[#8002FF]': actif === 'prof',
             'bg-transparent': actif !== 'prof'
-          }"
-          class="text-white px-4 py-1 rounded-full font-semibold border border-white"
-          type="button"
-        >
+          }" class="text-white px-4 py-1 rounded-full font-semibold border border-white" type="button">
           Prof
         </button>
-        <button
-          (click)="activerEleve()"
-          [ngClass]="{
+        <button (click)="activerEleve()" [ngClass]="{
             'bg-[#8002FF]': actif === 'eleve',
             'bg-transparent': actif !== 'eleve'
-          }"
-          class="text-white px-4 py-1 rounded-full font-semibold border border-white"
-          type="button"
-        >
+          }" class="text-white px-4 py-1 rounded-full font-semibold border border-white" type="button">
           Élève
         </button>
       </div>
@@ -75,21 +57,10 @@
           <label class="text-white text-sm" for="email">Adresse mail</label>
           <div class="flex items-center bg-[#0A092B] border-2 border-[#8002FF] px-3 py-2 rounded mt-1">
             <i class="fa-solid fa-envelope text-white mr-2"></i>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              class="bg-transparent outline-none text-white w-full"
-              placeholder="Adresse mail"
-              required
-              [(ngModel)]="connexionData.email"
-              #email="ngModel"
-            />
+            <input type="email" id="email" name="email" class="bg-transparent outline-none text-white w-full"
+              placeholder="Adresse mail" required [(ngModel)]="connexionData.email" #email="ngModel" />
           </div>
-          <div
-            class="text-red-500 text-xs mt-1"
-            *ngIf="email.invalid && email.touched"
-          >
+          <div class="text-red-500 text-xs mt-1" *ngIf="email.invalid && email.touched">
             Email invalide.
           </div>
         </div>
@@ -97,35 +68,17 @@
         <!-- Mot de passe -->
         <div class="mb-4">
           <label class="text-white text-sm" for="password">Mot de passe</label>
-          <div
-            class="flex items-center bg-[#0A092B] border-2 border-[#8002FF] px-3 py-2 rounded-md mt-1 relative"
-          >
+          <div class="flex items-center bg-[#0A092B] border-2 border-[#8002FF] px-3 py-2 rounded-md mt-1 relative">
             <i class="fa-solid fa-lock text-white mr-2"></i>
-            <input
-              [type]="passwordVisible ? 'text' : 'password'"
-              id="password"
-              name="password"
-              class="bg-transparent outline-none text-white w-full pr-10"
-              placeholder="Mot de passe"
-              required
-              minlength="6"
-              [(ngModel)]="connexionData.password"
-              #password="ngModel"
-            />
-            <button
-              type="button"
-              class="absolute right-3 text-white"
-              (click)="togglePasswordVisibility()"
-              aria-label="Afficher / masquer mot de passe"
-              tabindex="-1"
-            >
+            <input [type]="passwordVisible ? 'text' : 'password'" id="password" name="password"
+              class="bg-transparent outline-none text-white w-full pr-10" placeholder="Mot de passe" required
+              minlength="6" [(ngModel)]="connexionData.password" #password="ngModel" />
+            <button type="button" class="absolute right-3 text-white" (click)="togglePasswordVisibility()"
+              aria-label="Afficher / masquer mot de passe" tabindex="-1">
               <i class="fa" [ngClass]="passwordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
             </button>
           </div>
-          <div
-            class="text-red-500 text-xs mt-1"
-            *ngIf="password.invalid && password.touched"
-          >
+          <div class="text-red-500 text-xs mt-1" *ngIf="password.invalid && password.touched">
             Le mot de passe doit contenir au moins 6 caractères.
           </div>
         </div>
@@ -133,36 +86,34 @@
         <!-- Code prof si nécessaire -->
         <div *ngIf="actif === 'prof'" class="mb-4">
           <label class="text-white text-sm" for="codeProf">Code</label>
-          <input
-            type="text"
-            id="codeProf"
-            name="codeProf"
+          <input type="text" id="codeProf" name="codeProf"
             class="w-full mt-1 px-3 py-2 bg-[#0A092B] border-2 border-[#8002FF] text-white rounded-md outline-none"
-            placeholder="Code professeur"
-            [(ngModel)]="connexionData.codeProf"
-          />
+            placeholder="Code professeur" [(ngModel)]="connexionData.codeProf" />
         </div>
 
+        
         <!-- Bouton de validation -->
-        <button
-          type="submit"
-          [disabled]="!formulaireValide()"
-          class="bg-[#8002FF] text-white w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255] disabled:opacity-50 disabled:cursor-not-allowed
-          2xl:mt-5
-          xl:mt-5
-          md:mt-5
-          ">
-          Valider
+        <button (click)="valider()" [disabled]="!formulaireValide() || isLoading" class="flex items-center justify-center gap-2 bg-[#8002FF] text-white font-semibold rounded hover:bg-[#6900d8] disabled:opacity-50 transition-all duration-300
+         2xl:py-2 2xl:px-40 min-w-[250px] w-full">
+          <svg *ngIf="isLoading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+            </path>
+          </svg>
+          <span class="inline-block">
+            {{ isLoading ? 'Connexion...' : 'Valider' }}
+          </span>
         </button>
+
+
+
       </form>
 
       <!-- Lien inscription -->
       <p class="text-center text-sm text-gray-300 mt-6">
         Vous n'avez pas encore de compte ?
-        <a
-          routerLink="/inscription"
-          class="text-[#8002FF] font-semibold hover:underline transition duration-200"
-        >
+        <a routerLink="/inscription" class="text-[#8002FF] font-semibold hover:underline transition duration-200">
           Créer un compte
         </a>
       </p>

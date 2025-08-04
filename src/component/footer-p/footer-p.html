@@ -1,73 +1,81 @@
-<footer class="bg-[#020118] text-white px-6 py-10 md:px-20">
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-10 items-start">
+<app-icon></app-icon>
 
-    <!-- Colonne 1 -->
-    <div class="relative">
-      <div class="flex items-center gap-2 mb-4">
-        <img src="assets/LOGO.png" alt="Logo UniDys" class="absolute 2xl:w-32 md:w-26 md:-ml-17" />
+<footer class="bg-[#020118] text-white border-t-4 border-[#8002FF] pt-8 pb-5">
+  <div class="container mx-auto px-4 sm:px-6 md:px-8 lg:px-10 xl:px-12 2xl:px-16">
+    <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 items-start">
+
+      <!-- Colonne 1 -->
+      <div>
+        <img src="assets/LOGO.png" alt="Logo UniDys"
+          class="w-20 sm:w-24 md:w-28 lg:w-32 xl:w-36 2xl:w-40 mb-4" />
+        <p class="font-bold text-white text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
+          Plateforme éducative adaptée<br />pour les personnes DYS
+        </p>
       </div>
-      <p class="2xl:text-xl md:text-md md:-ml-16 md:mt-10 font-bold text-gray-300">
-        Plateforme éducative adaptée<br />
-        pour les personnes DYS
-      </p>
-    </div>
 
-    <!-- Colonne 2 -->
-    <div class="space-y-2 2xl:ml-63 md:ml-15">
-      <h3 class="font-bold mb-2 text-xl">Navigation</h3>
-      <ul class="text-sm text-gray-300 space-y-1">
-        <li><a routerLink="/accueil" class="hover:text-white">Accueil</a></li>
-        <li><a routerLink="/coursE" class="hover:text-white">Cours</a></li>
-        <li><a routerLink="/apropos" class="hover:text-white">À propos</a></li>
-      </ul>
-    </div>
+      <!-- Colonne 2 -->
+      <div>
+        <h3 class="font-bold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-2">Navigation</h3>
+        <ul class="space-y-2 text-sm sm:text-base md:text-lg">
+          <li>
+            <a routerLink="/accueilP" class="text-white font-bold hover:text-[#8002FF] transition">Accueil</a>
+          </li>
+          <li>
+            <a routerLink="/coursP" class="text-white font-bold hover:text-[#8002FF] transition">Cours</a>
+          </li>
+          <li>
+            <a routerLink="/aproposP" class="text-white font-bold hover:text-[#8002FF] transition">À propos</a>
+          </li>
+        </ul>
+      </div>
 
-    <!-- Colonne 3 -->
-    <div class="space-y-3 2xl:ml-70 md:ml-15">
-      <h3 class="font-bold text-xl">Newsletter</h3>
-      <p class="text-sm text-gray-300">
-        Restez informé de nos<br />dernières actualités
-      </p>
+      <!-- Colonne 3 -->
+      <div>
+        <h3 class="font-bold text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl mb-2">Newsletter</h3>
+        <p class="text-white font-medium text-sm sm:text-base md:text-lg xl:text-xl mb-3">
+          Restez informé de nos dernières actualités
+        </p>
 
-      <div class="flex items-center gap-2">
-        <button (click)="enregistrerEmail()" [disabled]="inscrit()"
-          class="bg-[#8002FF] hover:bg-[#3F0255] text-white px-4 py-2 rounded-2xl disabled:opacity-50"
-          aria-label="Envoyer">
-          <ng-container *ngIf="!inscrit(); else dejaInscrit">
-            <div class="flex items-center gap-2">
-              <i class="fas fa-arrow-right"></i>
-              <span>Rejoindre la newsletter</span>
-            </div>
-          </ng-container>
-          <ng-template #dejaInscrit>
-            <span class="flex items-center gap-2 text-green-400">
-              <i class="fas fa-check-circle"></i>
-              Vous êtes déjà inscrit
-            </span>
-          </ng-template>
-        </button>
-
+        <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
+          <button (click)="enregistrerEmail()" [disabled]="inscrit()"
+            class="bg-[#8002FF] hover:bg-[#3F0255] text-white rounded hover:scale-105 hover:shadow-white transition-transform duration-300
+            px-3 sm:px-4 md:px-5 py-2 text-xs sm:text-sm md:text-base lg:text-lg"
+            aria-label="Envoyer">
+            <ng-container *ngIf="!inscrit(); else dejaInscrit">
+              <div class="flex items-center gap-2">
+                <i class="fas fa-arrow-right"></i>
+                <span class="font-black">Rejoindre la newsletter</span>
+              </div>
+            </ng-container>
+            <ng-template #dejaInscrit>
+              <span class="flex items-center gap-2 text-green-400">
+                <i class="fas fa-check-circle"></i>
+                Vous êtes déjà inscrit
+              </span>
+            </ng-template>
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
-  <hr class="my-6 border-white" />
+    <hr class="my-6 border-white" />
 
-  <div class="flex flex-col md:flex-row justify-between items-center text-xs text-white">
-    <p class="text-sm">©2025 UniDys. Tous droits réservés</p>
-    <div class="flex gap-5 mt-4 md:mt-0">
-      <a href="#" aria-label="Instagram" class="hover:text-[#8002FF]">
-        <i class="fab fa-instagram text-xl"></i>
-      </a>
-      <a href="#" aria-label="Facebook" class="hover:text-[#8002FF]">
-        <i class="fab fa-facebook text-xl"></i>
-      </a>
-      <a href="#" aria-label="LinkedIn" class="hover:text-[#8002FF]">
-        <i class="fab fa-linkedin text-xl"></i>
-      </a>
-      <a href="#" aria-label="Twitter" class="hover:text-[#8002FF]">
-        <i class="fab fa-twitter text-xl"></i>
-      </a>
+    <div class="flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
+      <p class="font-black text-center sm:text-left mb-4 sm:mb-0">©2025 UniDys. Tous droits réservés</p>
+      <div class="flex gap-4">
+        <a href="#" aria-label="Instagram" class="hover:text-[#8002FF]">
+          <i class="fab fa-instagram text-lg sm:text-xl md:text-2xl"></i>
+        </a>
+        <a href="#" aria-label="Facebook" class="hover:text-[#8002FF]">
+          <i class="fab fa-facebook text-lg sm:text-xl md:text-2xl"></i>
+        </a>
+        <a href="#" aria-label="LinkedIn" class="hover:text-[#8002FF]">
+          <i class="fab fa-linkedin text-lg sm:text-xl md:text-2xl"></i>
+        </a>
+        <a href="#" aria-label="Twitter" class="hover:text-[#8002FF]">
+          <i class="fab fa-twitter text-lg sm:text-xl md:text-2xl"></i>
+        </a>
+      </div>
     </div>
   </div>
 </footer>

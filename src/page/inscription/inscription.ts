@@ -145,7 +145,7 @@ export class Inscription implements OnInit, OnDestroy {
         // ✅ Attente avant redirection
         setTimeout(() => {
           this.router.navigate([redirection]);
-        }, 15999900);
+        }, 1500);
       },
       error: (err) => {
         console.error('Erreur lors de la création du compte', err);

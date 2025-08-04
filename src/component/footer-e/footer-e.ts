@@ -2,13 +2,16 @@
 import { Component, inject, signal } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { Icon } from '../icon/icon';
 
 @Component({
   selector: 'app-footer-e',
   templateUrl: './footer-e.html',
   styleUrls: ['./footer-e.css'],
   standalone: true,
-  imports: [CommonModule, HttpClientModule],
+  imports: [CommonModule, HttpClientModule,RouterLink,FormsModule,Icon],
 })
 export class FooterE {
   private http = inject(HttpClient);
