@@ -36,9 +36,10 @@
                      'line-through text-red-400': resultat !== null && !questionEstJuste(i) && estCoche(i,j) && !isBonneReponse(question, j),
                      'text-white': !(questionEstJuste(i) && isBonneReponse(question, j)) && !(resultat !== null && !questionEstJuste(i) && estCoche(i,j) && !isBonneReponse(question, j))
                    }">
-              <input type="checkbox" class="mr-2 rounded focus:ring-2 focus:ring-[#8002FF]" [checked]="estCoche(i, j)"
-                (change)="toggleReponse(i, j, $event.target.checked)" [name]="'question-'+i"
+              <input type="checkbox" class="mr-2 rounded focus:ring-2 focus:ring-[#8002FF]"
+                name="question-{{i}}-reponse-{{j}}" [(ngModel)]="reponsesChoisies[i][j]"
                 [disabled]="resultat !== null" />
+
               <span>{{ reponse }}</span>
             </label>
           </li>
