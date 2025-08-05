@@ -3,6 +3,8 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const pdfParse = require('pdf-parse');
+
 const Cours = require('../../schema/cours');
 const User = require('../../schema/user');
 
@@ -69,7 +71,7 @@ router.post('/', upload.single('pdf'), async (req, res) => {
 router.get('/prof/:nomProf', async (req, res) => {
   try {
     const { nomProf } = req.params;
-    const regex = new RegExp(`^${nomProf}$`, 'i'); // insensible à la casse
+    const regex = new RegExp(`^${nomProf}$`, 'i');
 
     const coursProf = await Cours.find({ nomProf: regex });
 
@@ -86,14 +88,14 @@ router.get('/prof/:nomProf', async (req, res) => {
   }
 });
 
-// PUT /api/cours/:id — modifier titre et fichier PDF
+// PUT modifier titre et fichier PDF
 router.put('/:id', upload.single('fichierPdf'), async (req, res) => {
   try {
     const { titre } = req.body;
     const nouveauFichier = req.file;
 
     const cours = await Cours.findById(req.params.id);
-    if (!cours) return res.status(404).json({ message: 'Cours non trouv\u00e9.' });
+    if (!cours) return res.status(404).json({ message: 'Cours non trouvé.' });
 
     if (titre) cours.titre = titre;
 
@@ -108,7 +110,7 @@ router.put('/:id', upload.single('fichierPdf'), async (req, res) => {
     await cours.save();
 
     res.json({
-      message: 'Cours modifi\u00e9 avec succ\u00e8s.',
+      message: 'Cours modifié avec succès.',
       cours: {
         ...cours.toObject(),
         pdfUrl: cours.fichierPdf ? `/uploads/${cours.fichierPdf}` : null,
@@ -138,6 +140,34 @@ router.delete('/:id', async (req, res) => {
   } catch (err) {
     console.error('Erreur suppression cours:', err);
     res.status(500).json({ message: 'Erreur serveur lors de la suppression du cours.' });
+  }
+});
+
+// GET cours complet (HTML extrait du PDF + QCM)
+router.get('/complet/:id', async (req, res) => {
+  try {
+    const cours = await Cours.findById(req.params.id);
+    if (!cours) return res.status(404).json({ message: 'Cours non trouvé' });
+
+    const pdfPath = path.join(__dirname, '../../uploads', cours.fichierPdf);
+    if (!fs.existsSync(pdfPath)) return res.status(404).json({ message: 'Fichier PDF non trouvé' });
+
+    const dataBuffer = fs.readFileSync(pdfPath);
+    const data = await pdfParse(dataBuffer);
+
+    // Simple conversion en paragraphes HTML
+    const htmlSimple = data.text
+      .split('\n')
+      .map(line => `<p>${line.trim()}</p>`)
+      .join('');
+
+    res.json({
+      html: htmlSimple,
+      qcm: cours.qcms || []
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur lors de la récupération du cours complet' });
   }
 });
 

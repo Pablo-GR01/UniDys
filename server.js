@@ -2,8 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-const multer = require('multer');
-const fs = require('fs');
 
 const authRoutes = require('./backend/routes/user.Routes');
 const newsletterRoutes = require('./backend/routes/newsletter.routes');
@@ -11,16 +9,15 @@ const avisRoutes = require('./backend/routes/avis.routes');
 const coursRoutes = require('./backend/routes/cours.routes');
 const coursHtmlRoute = require('./backend/routes/cours-html.route');
 
-
 const app = express();
 const PORT = 3000;
 
-// Middleware CORS, body parser JSON + urlencoded
+// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir les fichiers PDF depuis /uploads (static)
+// Fichiers statiques
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Connexion MongoDB
@@ -36,25 +33,12 @@ app.use('/api/unidys', authRoutes);
 app.use('/api/unidys', newsletterRoutes);
 app.use('/api/avis', avisRoutes);
 app.use('/api/cours', coursRoutes);
-app.use(coursHtmlRoute);
-
-
+app.use('/api/cours/html', coursHtmlRoute); // si besoin
 
 // Démarrage serveur
 app.listen(PORT, () => {
   console.log(`🚀 Serveur backend démarré sur http://localhost:${PORT}`);
 });
-
-
-
-
-
-
-
-app.listen(PORT, () => {
-  console.log(`🚀 Serveur lancé sur http://localhost:${PORT}`);
-});
-
 
 
 

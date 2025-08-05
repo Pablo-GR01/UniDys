@@ -1,11 +1,10 @@
 const express = require('express');
+const router = express.Router();
 const fs = require('fs');
 const pdfParse = require('pdf-parse');
-const Cours = require('../../schema/cours'); // ajuste le chemin si besoin
+const Cours = require('../../schema/cours');
 
-const router = express.Router();
-
-router.get('/api/cours/html/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
   const idCours = req.params.id;
 
   try {
@@ -18,7 +17,6 @@ router.get('/api/cours/html/:id', async (req, res) => {
     const dataBuffer = fs.readFileSync(pdfPath);
     const data = await pdfParse(dataBuffer);
 
-    // Conversion simple : chaque ligne devient un paragraphe
     const htmlSimple = data.text
       .split('\n')
       .map(line => `<p>${line.trim()}</p>`)
