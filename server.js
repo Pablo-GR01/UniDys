@@ -11,6 +11,7 @@ const avisRoutes = require('./backend/routes/avis.routes');
 const coursRoutes = require('./backend/routes/cours.routes');
 const coursHtmlRoute = require('./backend/routes/cours-html.route');
 
+
 const app = express();
 const PORT = 3000;
 
@@ -36,6 +37,8 @@ app.use('/api/unidys', newsletterRoutes);
 app.use('/api/avis', avisRoutes);
 app.use('/api/cours', coursRoutes);
 app.use(coursHtmlRoute);
+
+
 
 // Démarrage serveur
 app.listen(PORT, () => {

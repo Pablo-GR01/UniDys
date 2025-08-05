@@ -12,6 +12,7 @@ import { CoursP } from '../page/page-user/prof/cours-p/cours-p';
 import { MonespaceP } from '../page/page-user/prof/monespace-p/monespace-p';
 import { ClasseCP } from '../page/page-user/eleve/classe-cp/classe-cp';
 import { InformationE } from '../page/page-user/eleve/information-e/information-e';
+import { CoursDetailP } from '../component-page/Prof/page-monespace/cours-detail-p/cours-detail-p';
 
 
 export const routes: Routes = [
@@ -30,6 +31,7 @@ export const routes: Routes = [
   {path: 'aproposP', component: AproposP},
   {path: 'coursP', component: CoursP},
   {path: 'monespaceP', component: MonespaceP},
+  {path: 'coursdetail/:id', component: CoursDetailP},
 
 
   // route page eleve

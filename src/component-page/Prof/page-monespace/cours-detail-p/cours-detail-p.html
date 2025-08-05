@@ -1,7 +1,32 @@
+<app-header-p></app-header-p>
+
 <div class="max-w-4xl mx-auto p-6 bg-[#0A092B] text-white rounded-lg shadow-lg mt-8">
-  <h2 class="text-3xl mb-6 text-center">Détail du cours</h2>
-  <div *ngIf="contenuHtml; else loading" [innerHTML]="contenuHtml" class="prose prose-invert"></div>
+  <h2 class="text-4xl font-bold mb-8 text-center text-[#8002FF]">📘 Détail du cours</h2>
+
+  <!-- Contenu du cours -->
+  <div *ngIf="contenuHtml; else loading"
+       [innerHTML]="contenuHtml"
+       class="prose prose-invert max-w-none 
+              [&_img]:mx-auto [&_img]:my-4 [&_img]:rounded-lg [&_img]:shadow-md
+              [&_p]:text-justify [&_h1]:text-2xl [&_h2]:text-xl [&_ul]:list-disc [&_ul]:pl-6">
+  </div>
+
+  <!-- Message de chargement -->
   <ng-template #loading>
-    <p class="text-center">Chargement du contenu...</p>
+    <p class="text-center text-lg italic mt-8">Chargement du contenu...</p>
   </ng-template>
+
+  <!-- Bloc QCM s’il y en a un -->
+  <div *ngIf="qcm && qcm.length > 0" class="mt-12 p-6 bg-[#1C1B3A] rounded-lg shadow-xl border border-[#8002FF]">
+    <h3 class="text-2xl font-semibold text-center mb-4 text-[#00FFC2]">📝 QCM associé</h3>
+    
+    <div *ngFor="let question of qcm; let i = index" class="mb-6">
+      <p class="font-medium mb-2">🔹 Question {{ i + 1 }} : {{ question.intitule }}</p>
+      <ul class="list-disc list-inside space-y-1 ml-4">
+        <li *ngFor="let reponse of question.reponses">
+          {{ reponse }}
+        </li>
+      </ul>
+    </div>
+  </div>
 </div>

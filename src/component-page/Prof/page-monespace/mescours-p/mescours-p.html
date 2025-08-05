@@ -22,25 +22,31 @@
 
       <!-- Actions -->
       <div class="mt-4 flex flex-wrap gap-2 justify-center text-white">
+        
         <button *ngIf="cours.lienYoutube" (click)="ouvrirLienYoutube(cours.lienYoutube)"
           class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
           <i class="fas fa-headphones"></i>
         </button>
 
-        <button (click)="goToCoursDetail(cours._id)" class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
+        <a [routerLink]="['/coursdetail', cours._id]"
+          class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm text-white inline-flex items-center justify-center">
           <i class="fas fa-eye"></i>
-        </button>
+        </a>
 
-        <a *ngIf="cours.fichierPdf" [href]="getPdfUrl(cours.fichierPdf)" download
+
+        <button *ngIf="cours.fichierPdf" (click)="telechargerFichier(cours.fichierPdf)"
           class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
           <i class="fas fa-download"></i>
-        </a>
+        </button>
+
         <button (click)="ouvrirPopupEdition(cours)" class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
           <i class="fas fa-pen"></i>
         </button>
+
         <button (click)="supprimerCours(cours)" class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
           <i class="fas fa-trash-alt"></i>
         </button>
+
       </div>
     </div>
   </div>

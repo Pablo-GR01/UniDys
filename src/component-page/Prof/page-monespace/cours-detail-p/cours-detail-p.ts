@@ -3,13 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { HeaderP } from "../../../../component/header-p/header-p";
 
 @Component({
   selector: 'app-cours-detail-p',
   templateUrl: './cours-detail-p.html',
   styleUrls: ['./cours-detail-p.css'],
   standalone: true,
-  imports:[CommonModule]
+  imports: [CommonModule,HeaderP],
 })
 export class CoursDetailP implements OnInit {
   contenuHtml: SafeHtml | null = null;
@@ -21,19 +22,18 @@ export class CoursDetailP implements OnInit {
     private sanitizer: DomSanitizer
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.idCours = this.route.snapshot.paramMap.get('id');
     if (this.idCours) {
-      // Appel backend pour récupérer le contenu HTML converti
-      this.http.get(`/api/cours/html/${this.idCours}`, { responseType: 'text' }).subscribe({
-        next: (html) => {
-          // Sécuriser l'HTML avant affichage
-          this.contenuHtml = this.sanitizer.bypassSecurityTrustHtml(html);
-        },
-        error: (err) => {
-          console.error('Erreur chargement HTML cours', err);
-        }
-      });
+      this.http.get(`http://localhost:3000/api/cours/html/${this.idCours}`, { responseType: 'text' })
+        .subscribe({
+          next: (html) => {
+            this.contenuHtml = this.sanitizer.bypassSecurityTrustHtml(html);
+          },
+          error: (err) => {
+            console.error('Erreur lors du chargement du contenu HTML', err);
+          }
+        });
     }
   }
 }

@@ -6,14 +6,14 @@ import { Subscription } from 'rxjs';
 import { CoursRefreshService } from '../../../../services/cours-refresh.service';
 import { Cours } from '../../../../model/cours';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-mescours-p',
   templateUrl: './mescours-p.html',
   styleUrls: ['./mescours-p.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterModule,RouterLink],  // Ajout RouterModule ici
 })
 export class MescoursP implements OnInit, OnDestroy {
   @ViewChild('track', { static: false }) track!: ElementRef<HTMLDivElement>;
@@ -128,24 +128,24 @@ export class MescoursP implements OnInit, OnDestroy {
   }
 
   validerModificationCours(): void {
-  const formData = new FormData();
-  formData.append('titre', this.coursAModifier.titre);
-  if (this.fichierPdfModifie) {
-    formData.append('fichierPdf', this.fichierPdfModifie);
-  }
+    const formData = new FormData();
+    formData.append('titre', this.coursAModifier.titre);
+    if (this.fichierPdfModifie) {
+      formData.append('fichierPdf', this.fichierPdfModifie);
+    }
 
-  this.http
-    .put(`http://localhost:3000/api/cours/${this.coursAModifier._id}`, formData)
-    .subscribe({
-      next: () => {
-        this.fermerPopupEdition();
-        this.chargerCoursProf(); // recharge les données
-      },
-      error: (err) => {
-        console.error('Erreur lors de la modification du cours:', err);
-      }
-    });
-}
+    this.http
+      .put(`http://localhost:3000/api/cours/${this.coursAModifier._id}`, formData)
+      .subscribe({
+        next: () => {
+          this.fermerPopupEdition();
+          this.chargerCoursProf(); // recharge les données
+        },
+        error: (err) => {
+          console.error('Erreur lors de la modification du cours:', err);
+        }
+      });
+  }
 
   getImageParMatiere(matiere: string): string {
     switch (matiere.toLowerCase()) {
@@ -180,16 +180,27 @@ export class MescoursP implements OnInit, OnDestroy {
         });
     }
   }
-ouvrirLienYoutube(lien: string | null | undefined): void {
-  if (lien) {
-    window.open(lien, '_blank');
-  } else {
-    console.warn("Lien YouTube non disponible.");
+
+  ouvrirLienYoutube(lien: string | null | undefined): void {
+    if (lien) {
+      window.open(lien, '_blank');
+    } else {
+      console.warn("Lien YouTube non disponible.");
+    }
   }
+
+  goToCoursDetail(id: string): void {
+    this.router.navigate(['/coursdetail', id]);
+  }
+
+  telechargerFichier(nomFichier: string): void {
+  const url = `http://localhost:3000/uploads/${encodeURIComponent(nomFichier)}`;
+  const lien = document.createElement('a');
+  lien.href = url;
+  lien.download = nomFichier;
+  document.body.appendChild(lien);
+  lien.click();
+  document.body.removeChild(lien);
 }
 
-
-goToCoursDetail(id: string) {
-  this.router.navigate(['/cours-detail', id]);
-}
 }
