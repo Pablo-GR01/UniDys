@@ -1,86 +1,95 @@
-<div class="max-w-5xl mx-auto p-4 text-gray-900 font-sans">
-  <h2 class="text-3xl font-bold mb-6">Mes Cours</h2>
+<!-- mescours-p.html complet et corrigé -->
+<div class="max-w-7xl mx-auto p-4 text-gray-100 font-sans">
+  <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-white">Mes Cours</h2>
 
-  <div class="flex justify-center mb-4 space-x-4">
-    <button
-      (click)="scroll(-1)"
-      aria-label="Défiler à gauche"
-      class="px-4 py-2 bg-purple-700 text-white rounded hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
-    >
-      ‹
-    </button>
-    <button
-      (click)="scroll(1)"
-      aria-label="Défiler à droite"
-      class="px-4 py-2 bg-purple-700 text-white rounded hover:bg-purple-800 focus:outline-none focus:ring-2 focus:ring-purple-500"
-    >
-      ›
-    </button>
+  <!-- Boutons de défilement -->
+  <div class="flex justify-center mb-6 gap-4">
+    <button (click)="scroll(-1)"
+      class="w-10 h-10 text-xl bg-[#8002FF] rounded-full text-white hover:bg-[#3F0255] transition">‹</button>
+    <button (click)="scroll(1)"
+      class="w-10 h-10 text-xl bg-[#8002FF] rounded-full text-white hover:bg-[#3F0255] transition">›</button>
   </div>
 
-  <div
-    #track
-    class="flex gap-4 overflow-x-auto pb-4 focus:outline-none"
-    tabindex="0"
-    (keydown)="onKeydown($event)"
-  >
-    <div
-      *ngFor="let cours of cours"
-      class="course-card flex-shrink-0 w-56 bg-white rounded-lg shadow-md cursor-pointer hover:shadow-lg transition-shadow p-4"
-      (click)="ouvrirPopup(cours)"
-      tabindex="0"
-    >
-      <img
-        [src]="getImageParMatiere(cours.matiere)"
-        alt="{{ cours.matiere }}"
-        class="w-full h-32 object-cover rounded-md mb-3"
-      />
-      <h3 class="text-xl font-semibold mb-1">{{ cours.titre }}</h3>
-      <p class="text-gray-600"><span class="font-semibold">Matière :</span> {{ cours.matiere }}</p>
-      <p class="text-gray-600"><span class="font-semibold">Niveau :</span> {{ cours.niveau }}</p>
+  <!-- Liste des cours -->
+  <div #track class="flex gap-6 pb-6 px-2 overflow-hidden">
+    <div *ngFor="let cours of cours"
+      class="min-w-[240px] max-w-[250px] bg-[#0A092B] text-white rounded-xl shadow-md hover:shadow-xl transition-shadow cursor-pointer p-4 flex-shrink-0 border-2 border-[#8002FF]">
+      <img [src]="getImageParMatiere(cours.matiere)" alt="{{ cours.matiere }}"
+        class="w-full h-32 object-cover rounded-lg mb-3" />
+      <h3 class="text-lg font-bold mb-1 truncate">{{ cours.titre }}</h3>
+      <p class="text-sm text-white"><span class="font-semibold">Matière :</span> {{ cours.matiere }}</p>
+      <p class="text-sm text-white"><span class="font-semibold">Niveau :</span> {{ cours.niveau }}</p>
+
+      <!-- Actions -->
+      <div class="mt-4 flex flex-wrap gap-2 justify-center text-white">
+        <button *ngIf="cours.lienYoutube" (click)="ouvrirLienYoutube(cours.lienYoutube)"
+          class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
+          <i class="fas fa-headphones"></i>
+        </button>
+
+        <button (click)="goToCoursDetail(cours._id)" class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
+          <i class="fas fa-eye"></i>
+        </button>
+
+        <a *ngIf="cours.fichierPdf" [href]="getPdfUrl(cours.fichierPdf)" download
+          class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
+          <i class="fas fa-download"></i>
+        </a>
+        <button (click)="ouvrirPopupEdition(cours)" class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
+          <i class="fas fa-pen"></i>
+        </button>
+        <button (click)="supprimerCours(cours)" class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
+          <i class="fas fa-trash-alt"></i>
+        </button>
+      </div>
     </div>
   </div>
 
-  <!-- Popup -->
-  <div
-    *ngIf="popupVisible"
-    class="fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50"
-    (click)="fermerPopup()"
-  >
+  <!-- POPUP PDF -->
+  <div *ngIf="popupVisible" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+    (click)="fermerPopup()">
     <div
-      class="bg-white rounded-lg max-w-4xl w-full max-h-[90vh] p-6 relative overflow-auto"
-      (click)="$event.stopPropagation()"
-    >
-      <button
-        class="absolute top-4 right-4 text-gray-700 hover:text-gray-900 text-2xl font-bold"
-        (click)="fermerPopup()"
-        aria-label="Fermer la fenêtre"
-      >
-        ×
-      </button>
-
+      class="relative bg-[#020118] text-white rounded-2xl shadow-xl max-w-4xl w-full max-h-[90vh] p-6 overflow-auto border-6 border-[#8002FF]"
+      (click)="$event.stopPropagation()">
+      <button class="absolute top-4 right-4 text-white hover:text-red-600 text-3xl font-bold"
+        (click)="fermerPopup()">&times;</button>
       <h3 class="text-2xl font-bold mb-4">{{ coursSelectionne?.titre }}</h3>
+      <iframe *ngIf="pdfUrlSanitized" [src]="pdfUrlSanitized" class="w-full h-[60vh] border rounded-lg"></iframe>
+      <p *ngIf="coursSelectionne?.lienYoutube" class="mt-4 text-center">
+        <a *ngIf="coursSelectionne?.lienYoutube" [href]="coursSelectionne?.lienYoutube" target="_blank"
+          rel="noopener noreferrer" class="inline-block">
+          <button
+            class="bg-[#8002FF] hover:bg-[#3F0255] text-white pt-2 pb-2 pl-5 pr-5 rounded text-sm flex items-center gap-2">
+            <i class="fa-solid fa-video"></i>
+            Voir la vidéo YouTube associée
+          </button>
+        </a>
 
-      <iframe
-        *ngIf="pdfUrlSanitized"
-        [src]="pdfUrlSanitized"
-        class="w-full h-[600px] border rounded-md"
-      ></iframe>
+      </p>
+    </div>
+  </div>
 
-      <ng-container *ngIf="coursSelectionne as cs">
-        <p *ngIf="cs.lienYoutube && cs.lienYoutube.trim() !== ''" class="mt-4">
-          <a
-            [href]="cs.lienYoutube"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-purple-700 hover:underline"
-          >
-            Lien Youtube
-          </a>
-        </p>
-      </ng-container>
-      
-      
+  <!-- POPUP MODIFICATION -->
+  <div *ngIf="popupEditionVisible" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+    (click)="fermerPopupEdition()">
+    <div
+      class="relative bg-[#020118] text-white rounded-2xl shadow-xl max-w-3xl w-full max-h-[90vh] p-6 overflow-auto border-6 border-[#8002FF]"
+      (click)="$event.stopPropagation()">
+      <button class="absolute top-4 right-4 text-gray-500 hover:text-red-500 text-3xl font-bold"
+        (click)="fermerPopupEdition()">&times;</button>
+      <h3 class="text-2xl font-bold mb-6 text-center">Modifier le cours</h3>
+
+      <input [(ngModel)]="coursAModifier.titre" type="text" placeholder="Nouveau titre"
+        class="w-full border-2 border-[#8002FF] rounded-lg px-4 py-2 mb-4" />
+      <label class="block font-semibold mb-2">Nouveau fichier PDF :</label>
+      <input type="file" (change)="onFileSelected($event)"
+        class="w-full border-2 border-[#8002FF] rounded-lg px-4 py-2 mb-4" />
+      <p *ngIf="fichierPdfModifie" class="text-sm text-gray-600">📄 {{ fichierPdfModifie?.name }}</p>
+
+      <div class="flex justify-end gap-3 mt-6">
+        <button (click)="validerModificationCours()"
+          class="px-4 py-2 bg-[#8002FF] hover:bg-[#3F0255] text-white rounded">Valider</button>
+      </div>
     </div>
   </div>
 </div>

@@ -5,20 +5,25 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
 import { CoursRefreshService } from '../../../../services/cours-refresh.service';
 import { Cours } from '../../../../model/cours';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-mescours-p',
   templateUrl: './mescours-p.html',
   styleUrls: ['./mescours-p.css'],
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
 })
 export class MescoursP implements OnInit, OnDestroy {
-  @ViewChild('track', { static: true }) trackRef!: ElementRef<HTMLDivElement>;
+  @ViewChild('track', { static: false }) track!: ElementRef<HTMLDivElement>;
 
   cours: Cours[] = [];
   coursSelectionne: Cours | null = null;
   popupVisible = false;
+  popupEditionVisible = false;
+  coursAModifier: Cours = {} as Cours;
+  fichierPdfModifie: File | null = null;
   pdfUrlSanitized: SafeResourceUrl | null = null;
 
   private refreshSub!: Subscription;
@@ -26,7 +31,8 @@ export class MescoursP implements OnInit, OnDestroy {
   constructor(
     private http: HttpClient,
     private sanitizer: DomSanitizer,
-    private refreshService: CoursRefreshService
+    private refreshService: CoursRefreshService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -63,16 +69,15 @@ export class MescoursP implements OnInit, OnDestroy {
         error: (err) => {
           console.error('Erreur lors du chargement des cours:', err);
           this.cours = [];
-        }
+        },
       });
   }
 
   scroll(direction: number): void {
-    const track = this.trackRef.nativeElement;
-    const card = track.querySelector('.course-card') as HTMLElement | null;
-    if (!card) return;
-    const cardWidth = card.offsetWidth + 16; // 16px gap
-    track.scrollBy({ left: direction * cardWidth, behavior: 'smooth' });
+    if (!this.track?.nativeElement) return;
+    const element = this.track.nativeElement;
+    const scrollAmount = 300;
+    element.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
   }
 
   onKeydown(event: KeyboardEvent): void {
@@ -103,13 +108,88 @@ export class MescoursP implements OnInit, OnDestroy {
     this.pdfUrlSanitized = null;
   }
 
-  getImageParMatiere(matiere: string): string {
-    switch (matiere.toLowerCase()) {
-      case 'maths': return 'assets/coursmaths.png';
-      case 'français': return 'assets/coursfrançais.png';
-      case 'histoire': return 'assets/courshistoire.png';
-      case 'sciences': return 'assets/sciences.png';
-      default: return 'assets/img/default.jpg';
+  ouvrirPopupEdition(cours: Cours): void {
+    this.coursAModifier = { ...cours };
+    this.popupEditionVisible = true;
+    this.fichierPdfModifie = null;
+  }
+
+  fermerPopupEdition(): void {
+    this.popupEditionVisible = false;
+    this.coursAModifier = {} as Cours;
+    this.fichierPdfModifie = null;
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.fichierPdfModifie = input.files[0];
     }
   }
+
+  validerModificationCours(): void {
+  const formData = new FormData();
+  formData.append('titre', this.coursAModifier.titre);
+  if (this.fichierPdfModifie) {
+    formData.append('fichierPdf', this.fichierPdfModifie);
+  }
+
+  this.http
+    .put(`http://localhost:3000/api/cours/${this.coursAModifier._id}`, formData)
+    .subscribe({
+      next: () => {
+        this.fermerPopupEdition();
+        this.chargerCoursProf(); // recharge les données
+      },
+      error: (err) => {
+        console.error('Erreur lors de la modification du cours:', err);
+      }
+    });
+}
+
+  getImageParMatiere(matiere: string): string {
+    switch (matiere.toLowerCase()) {
+      case 'maths':
+        return 'assets/coursmaths.png';
+      case 'français':
+        return 'assets/coursfrançais.png';
+      case 'histoire':
+        return 'assets/courshistoire.png';
+      case 'sciences':
+        return 'assets/sciences.png';
+      default:
+        return 'assets/img/default.jpg';
+    }
+  }
+
+  getPdfUrl(fileName: string | undefined | null): string {
+    return fileName ? `http://localhost:3000/uploads/${fileName}` : '';
+  }
+
+  supprimerCours(cours: Cours): void {
+    if (confirm(`Supprimer le cours "${cours.titre}" ?`)) {
+      this.http
+        .delete(`http://localhost:3000/api/cours/${cours._id}`)
+        .subscribe({
+          next: () => {
+            this.chargerCoursProf();
+          },
+          error: (err) => {
+            console.error('Erreur lors de la suppression du cours :', err);
+          },
+        });
+    }
+  }
+ouvrirLienYoutube(lien: string | null | undefined): void {
+  if (lien) {
+    window.open(lien, '_blank');
+  } else {
+    console.warn("Lien YouTube non disponible.");
+  }
+}
+
+
+goToCoursDetail(id: string) {
+  this.router.navigate(['/cours-detail', id]);
+}
 }

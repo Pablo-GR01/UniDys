@@ -40,6 +40,7 @@
     "ng2-pdf-viewer": "^10.4.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
+    "pdf-parse": "^1.1.1",
     "pdf2html": "^4.4.0",
     "pdfjs-dist": "^5.4.54",
     "postcss": "^8.5.6",

@@ -86,30 +86,38 @@ router.get('/prof/:nomProf', async (req, res) => {
   }
 });
 
-// PUT modifier PDF d'un cours (avec suppression ancien fichier)
-router.put('/:id/fichier', upload.single('pdf'), async (req, res) => {
+// PUT /api/cours/:id — modifier titre et fichier PDF
+router.put('/:id', upload.single('fichierPdf'), async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).json({ message: 'Fichier PDF requis.' });
-    }
+    const { titre } = req.body;
+    const nouveauFichier = req.file;
 
     const cours = await Cours.findById(req.params.id);
-    if (!cours) return res.status(404).json({ message: 'Cours non trouvé.' });
+    if (!cours) return res.status(404).json({ message: 'Cours non trouv\u00e9.' });
 
-    // Supprimer ancien PDF s'il existe
-    if (cours.fichierPdf) {
-      const ancienPath = path.join(__dirname, '../../uploads', cours.fichierPdf);
-      if (fs.existsSync(ancienPath)) fs.unlinkSync(ancienPath);
+    if (titre) cours.titre = titre;
+
+    if (nouveauFichier) {
+      if (cours.fichierPdf) {
+        const ancienPath = path.join(__dirname, '../../uploads', cours.fichierPdf);
+        if (fs.existsSync(ancienPath)) fs.unlinkSync(ancienPath);
+      }
+      cours.fichierPdf = nouveauFichier.filename;
     }
 
-    cours.fichierPdf = req.file.filename;
     await cours.save();
 
-    res.json({ message: 'Fichier PDF mis à jour', cours });
+    res.json({
+      message: 'Cours modifi\u00e9 avec succ\u00e8s.',
+      cours: {
+        ...cours.toObject(),
+        pdfUrl: cours.fichierPdf ? `/uploads/${cours.fichierPdf}` : null,
+      }
+    });
 
   } catch (err) {
-    console.error('Erreur modification fichier PDF:', err);
-    res.status(500).json({ message: 'Erreur serveur lors de la modification du fichier PDF.' });
+    console.error('Erreur modification cours:', err);
+    res.status(500).json({ message: 'Erreur serveur lors de la modification du cours.' });
   }
 });
 

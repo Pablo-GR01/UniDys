@@ -1,48 +1,42 @@
-<div class="bg-[#000000a4]
-2xl:pt-10 2xl:pb-20
-xl:pt-10 xl:pb-20
-">
-  <h1 class="text-white text-3xl font-extrabold text-center mb-10
-  2xl:ml-3
-  ">Niveaux Scolaires</h1>
+<div class="bg-[#000000a4] py-10 xl:py-20">
+  <h1 class="text-white text-3xl font-extrabold text-center mb-10">Niveaux Scolaires</h1>
 
-  <!-- Grille de cartes -->
-  <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6
-  xl:ml-20 xl:mr-20
-  2xl:ml-80
-  ">
+  <!-- Grille responsive -->
+  <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
     
-    <!-- Carte -->
-    <a routerLink="/classCP"><div class="bg-[#0A092B] p-6 cursor-pointer rounded-2xl flex flex-col items-center text-center text-white shadow-lg hover:shadow-white border-6 border-[#8002FF]">
-      <img src="assets/icon-school.png" alt="CP" class="w-16 h-16 mb-4">
-      <h2 class="text-xl font-bold">CP - Cours Préparatoire</h2>
-      <p class="text-lg font-medium">6 - 7 ans</p>
-    </div></a>
+    <!-- Carte CP -->
+    <a routerLink="/classCP" class="block">
+      <div class="bg-[#0A092B] p-6 rounded-2xl flex flex-col items-center text-center text-white shadow-lg hover:shadow-white border-4 border-[#8002FF] transition hover:scale-105 duration-200">
+        <img src="assets/icon-school.png" alt="CP" class="w-16 h-16 mb-4">
+        <h2 class="text-xl font-bold">CP - Cours Préparatoire</h2>
+        <p class="text-lg font-medium">6 - 7 ans</p>
+      </div>
+    </a>
 
-    <!-- Carte -->
-    <div class="bg-[#0A092B] p-6 rounded-2xl flex flex-col cursor-pointer items-center text-center text-white shadow-lg hover:shadow-white border-6 border-[#8002FF]">
-      <img src="assets/icon-school.png" alt="CP" class="w-16 h-16 mb-4">
+    <!-- Carte CE1 -->
+    <div class="bg-[#0A092B] p-6 rounded-2xl flex flex-col items-center text-center text-white shadow-lg hover:shadow-white border-4 border-[#8002FF] transition hover:scale-105 duration-200 cursor-pointer">
+      <img src="assets/icon-school.png" alt="CE1" class="w-16 h-16 mb-4">
       <h2 class="text-xl font-bold">CE1 - Cours Élémentaire 1</h2>
       <p class="text-lg font-medium">7 - 8 ans</p>
     </div>
 
-    <!-- Carte -->
-    <div class="bg-[#0A092B] p-6 rounded-2xl flex flex-col cursor-pointer items-center text-center text-white shadow-lg hover:shadow-white border-6 border-[#8002FF]">
-      <img src="assets/icon-school.png" alt="CP" class="w-16 h-16 mb-4">
+    <!-- Carte CE2 -->
+    <div class="bg-[#0A092B] p-6 rounded-2xl flex flex-col items-center text-center text-white shadow-lg hover:shadow-white border-4 border-[#8002FF] transition hover:scale-105 duration-200 cursor-pointer">
+      <img src="assets/icon-school.png" alt="CE2" class="w-16 h-16 mb-4">
       <h2 class="text-xl font-bold">CE2 - Cours Élémentaire 2</h2>
       <p class="text-lg font-medium">8 - 9 ans</p>
     </div>
-    
-    <!-- Carte -->
-    <div class="bg-[#0A092B] p-6 rounded-2xl flex flex-col cursor-pointer items-center text-center text-white 2xl:ml-50 2xl:-mr-50 lg:ml-50 lg:-mr-50 shadow-lg hover:shadow-white border-6 border-[#8002FF]">
-      <img src="assets/icon-school.png" alt="CP" class="w-16 h-16 mb-4">
+
+    <!-- Carte CM1 -->
+    <div class="bg-[#0A092B] p-6 rounded-2xl flex flex-col items-center text-center text-white shadow-lg hover:shadow-white border-4 border-[#8002FF] transition hover:scale-105 duration-200 cursor-pointer">
+      <img src="assets/icon-school.png" alt="CM1" class="w-16 h-16 mb-4">
       <h2 class="text-xl font-bold">CM1 - Cours Moyen 1</h2>
       <p class="text-lg font-medium">9 - 10 ans</p>
     </div>
 
-    <!-- Carte -->
-    <div class="bg-[#0A092B] p-6 rounded-2xl  flex flex-col cursor-pointer items-center text-center text-white 2xl:ml-50 2xl:-mr-50 lg:ml-50 lg:-mr-50 shadow-lg hover:shadow-white border-6 border-[#8002FF]">
-      <img src="assets/icon-school.png" alt="CP" class="w-16 h-16 mb-4">
+    <!-- Carte CM2 -->
+    <div class="bg-[#0A092B] p-6 rounded-2xl flex flex-col items-center text-center text-white shadow-lg hover:shadow-white border-4 border-[#8002FF] transition hover:scale-105 duration-200 cursor-pointer">
+      <img src="assets/icon-school.png" alt="CM2" class="w-16 h-16 mb-4">
       <h2 class="text-xl font-bold">CM2 - Cours Moyen 2</h2>
       <p class="text-lg font-medium">10 - 11 ans</p>
     </div>

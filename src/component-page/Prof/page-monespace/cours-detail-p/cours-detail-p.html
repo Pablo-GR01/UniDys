@@ -1,0 +1,7 @@
+<div class="max-w-4xl mx-auto p-6 bg-[#0A092B] text-white rounded-lg shadow-lg mt-8">
+  <h2 class="text-3xl mb-6 text-center">Détail du cours</h2>
+  <div *ngIf="contenuHtml; else loading" [innerHTML]="contenuHtml" class="prose prose-invert"></div>
+  <ng-template #loading>
+    <p class="text-center">Chargement du contenu...</p>
+  </ng-template>
+</div>
