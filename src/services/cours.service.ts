@@ -9,7 +9,7 @@ import { Cours } from '../model/cours';
 export class CoursService {
   private apiUrl = 'http://localhost:3000/api/cours';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getCoursParNomProf(nomProf: string): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/prof/${encodeURIComponent(nomProf)}`);
@@ -32,7 +32,12 @@ export class CoursService {
   }
 
   getCoursParNiveauEtMatiere(niveau: string, matiere: string): Observable<Cours[]> {
-  return this.http.get<Cours[]>(`http://localhost:3000/api/cours?niveau=${niveau}&matiere=${matiere}`);
-}
+    return this.http.get<Cours[]>(`http://localhost:3000/api/cours?niveau=${niveau}&matiere=${matiere}`);
+  }
+
+  getCoursCP(): Observable<Cours[]> {
+    return this.http.get<Cours[]>(`${this.apiUrl}/cours/niveau/CP`);
+  }
+
 
 }

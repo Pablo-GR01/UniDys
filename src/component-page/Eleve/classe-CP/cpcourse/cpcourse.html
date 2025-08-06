@@ -1,0 +1,35 @@
+<div class="mt-5 mb-10 flex flex-wrap justify-center gap-4">
+  <button *ngFor="let matiere of ['Vue d\'ensemble', 'Français', 'Maths', 'Histoire']"
+          (click)="changerMatiere(matiere)"
+          class="bg-[#8002FF] text-white text-lg font-bold py-2 px-6 rounded-lg shadow-md hover:bg-[#3F0255] transition-all"
+          [ngClass]="{ 'ring-4 ring-[#00FFC2]': matiereSelectionnee === matiere }">
+    {{ matiere }}
+  </button>
+</div>
+
+<div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 px-6">
+  <div *ngFor="let cours of coursFiltres"
+       (click)="voirDetailsCours(cours._id)"
+       class="bg-[#0A092B] text-white rounded-lg shadow-lg p-4 hover:scale-105 hover:shadow-xl cursor-pointer transition-all">
+
+    <h2 class="text-xl font-bold mb-2">{{ cours.titre }}</h2>
+    <p class="mb-4 text-sm text-[#00FFC2] font-semibold">{{ cours.matiere }}</p>
+
+    <div class="flex gap-4">
+      <!-- Icône pour regarder la vidéo -->
+      <a *ngIf="cours.lienYoutube" [href]="cours.lienYoutube" target="_blank" (click)="$event.stopPropagation()">
+        🎥
+      </a>
+
+      <!-- Icône pour voir le cours PDF -->
+      <a [href]="'/assets/pdf/' + cours.fichierPdf" target="_blank" (click)="$event.stopPropagation()">
+        📄
+      </a>
+
+      <!-- Icône pour télécharger -->
+      <a [href]="'/assets/pdf/' + cours.fichierPdf" download (click)="$event.stopPropagation()">
+        ⬇️
+      </a>
+    </div>
+  </div>
+</div>

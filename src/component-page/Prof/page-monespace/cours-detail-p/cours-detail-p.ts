@@ -7,7 +7,7 @@ import { HeaderP } from "../../../../component/header-p/header-p";
 import { FormsModule } from '@angular/forms';
 
 interface QcmQuestion {
-  intitule: string;
+  question: string;
   reponses: string[];
   bonnesReponses: number[]; // index des bonnes réponses
 }

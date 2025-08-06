@@ -50,6 +50,42 @@ exports.creerCours = async (req, res) => {
   }
 };
 
+exports.modifierCours = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const cours = await Cours.findById(id);
+    if (!cours) return res.status(404).json({ message: 'Cours non trouvé.' });
+
+    if (req.body.titre !== undefined) {
+      cours.titre = req.body.titre;
+    }
+
+    if (req.body.lienYoutube !== undefined) {
+      cours.lienYoutube = req.body.lienYoutube;
+    }
+
+    if (req.file) {
+      // Suppression ancienne PDF si besoin (optionnel)
+      const ancienFichier = cours.fichierPdf;
+      if (ancienFichier) {
+        const cheminAncienFichier = path.join(__dirname, '../../uploads', ancienFichier);
+        if (fs.existsSync(cheminAncienFichier)) {
+          fs.unlinkSync(cheminAncienFichier);
+        }
+      }
+      cours.fichierPdf = req.file.filename;
+    }
+
+    await cours.save();
+
+    res.json({ message: 'Cours modifié avec succès.', cours });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur.' });
+  }
+};
+
+
 
 // Autres méthodes : listerCoursParProf, supprimerCours, modifierPdfCours ...
 

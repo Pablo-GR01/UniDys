@@ -16,6 +16,11 @@ import { Icon } from '../../../../component/icon/icon';
   imports: [CommonModule, FormsModule, HttpClientModule, Icon]
 })
 export class Section5P {
+  //Erreur
+  messageErreurPdf = '';
+
+
+
   // Avis
   popupOuvert = false;
   prenom: string = '';
@@ -110,9 +115,21 @@ export class Section5P {
     this.pdfFile = undefined!;
   }
 
-  onPdfSelected(event: any) {
-    if (event.target.files.length > 0) this.pdfFile = event.target.files[0];
+onPdfSelected(event: any) {
+  const fichier = event.target.files[0];
+
+  if (fichier) {
+    if (fichier.type !== 'application/pdf') {
+      this.messageErreurPdf = 'Seuls les fichiers PDF sont autorisés.';
+      this.pdfFile = undefined!;
+      event.target.value = ''; // Vide le champ de fichier
+    } else {
+      this.messageErreurPdf = '';
+      this.pdfFile = fichier;
+    }
   }
+}
+
 
   mettreAJourImage() {
     const images: any = {
