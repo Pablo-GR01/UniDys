@@ -1,13 +1,17 @@
 <!-- mescours-p.html complet et corrigé -->
 <div class="max-w-7xl mx-auto p-4 text-gray-100 font-sans">
-  <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-white">Mes Cours</h2>
+  <h2 class="text-3xl md:text-4xl font-bold mb-6 text-center text-white border-b-6 border-[#8002FF] ml-120 mr-120 pb-5 mt-5">Vos Cours</h2>
 
   <!-- Boutons de défilement -->
   <div class="flex justify-center mb-6 gap-4">
     <button (click)="scroll(-1)"
-      class="w-10 h-10 text-xl bg-[#8002FF] rounded-full text-white hover:bg-[#3F0255] transition">‹</button>
+      class="w-10 h-10 text-xl bg-[#8002FF] rounded-full text-white hover:bg-[#3F0255] transition flex items-center justify-center">
+      <i class="fas fa-chevron-left"></i>
+    </button>
     <button (click)="scroll(1)"
-      class="w-10 h-10 text-xl bg-[#8002FF] rounded-full text-white hover:bg-[#3F0255] transition">›</button>
+      class="w-10 h-10 text-xl bg-[#8002FF] rounded-full text-white hover:bg-[#3F0255] transition flex items-center justify-center">
+      <i class="fas fa-chevron-right"></i>
+    </button>
   </div>
 
   <!-- Liste des cours -->
