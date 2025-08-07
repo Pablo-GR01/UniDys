@@ -35,8 +35,8 @@ export class CoursService {
     return this.http.get<Cours[]>(`http://localhost:3000/api/cours?niveau=${niveau}&matiere=${matiere}`);
   }
 
-  getCoursCP(): Observable<Cours[]> {
-    return this.http.get<Cours[]>(`${this.apiUrl}/cours/niveau/CP`);
+  getCours(): Observable<Cours[]> {
+    return this.http.get<Cours[]>(this.apiUrl);
   }
 
 

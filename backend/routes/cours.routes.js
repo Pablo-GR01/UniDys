@@ -171,4 +171,16 @@ router.get('/complet/:id', async (req, res) => {
   }
 });
 
+
+
+// Cette route doit être là pour répondre à GET /api/cours
+router.get('/', async (req, res) => {
+  try {
+    const cours = await Cours.find();
+    res.json(cours);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

@@ -6,6 +6,7 @@ export interface Cours {
   nomProf: string;
   fichierPdf: string;
   lienYoutube?: string;
+  imageUrl: string;
   pdfUrl?: string;
   qcms?: {
     question: string;

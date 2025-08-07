@@ -71,7 +71,7 @@ export class Connexion {
     return;
   }
 
-  this.isLoading = true; // ← Commence le "chargement"
+  this.isLoading = true;
 
   const { email, password } = this.connexionData;
 
