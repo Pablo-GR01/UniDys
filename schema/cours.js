@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 const qcmSchema = new mongoose.Schema({
   question: { type: String, required: true },
   reponses: { type: [String], required: true },
-  bonneReponse: { type: Number, required: true }
+  bonneReponse: { type: Number, required: true },
+  xp: { type: Number, required: true }
 });
 
 const coursSchema = new mongoose.Schema({

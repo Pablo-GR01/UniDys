@@ -25,7 +25,7 @@
 
     <!-- Laisser un avis -->
     <button (click)="ouvrirPopup()"
-      class="flex items-center gap-2  border-4 border-[#8002FF] hover:bg-[#8002FF] text-white px-4 py-2 rounded transition duration-300 text-sm sm:text-base">
+      class="flex items-center gap-2 border-4 border-[#8002FF] hover:bg-[#8002FF] text-white px-4 py-2 rounded transition duration-300 text-sm sm:text-base">
       <i class="fas fa-plus"></i> Laisser un avis
     </button>
   </div>
@@ -44,7 +44,7 @@
 
     <!-- Logo -->
     <div class="flex items-center justify-center md:w-1/2">
-      <img src="/assets/LOGO.png" alt="Logo UniDys" class="max-w-[200px] h-auto">
+      <img src="/assets/LOGO.png" alt="Logo UniDys" class="max-w-[200px] h-auto" />
     </div>
 
     <!-- Formulaire -->
@@ -90,7 +90,6 @@
           class="text-white hover:text-red-600 text-3xl leading-none">&times;</button>
       </div>
 
-
       <!-- Image matière -->
       <div *ngIf="imageMatiere" class="mb-4">
         <img [src]="imageMatiere" alt="Image matière" class="w-16 h-16 object-cover rounded" />
@@ -112,7 +111,8 @@
           <option class="text-black" value="CM2">CM2</option>
         </select>
 
-        <select [(ngModel)]="matiere" (change)="mettreAJourImage()" class="border-2 border-[#8002FF] rounded px-2 py-2">
+        <select [(ngModel)]="matiere" (change)="mettreAJourImage()"
+          class="border-2 border-[#8002FF] rounded px-2 py-2 text-white">
           <option value="" disabled selected>Matière</option>
           <option class="text-black">Français</option>
           <option class="text-black">Maths</option>
@@ -156,31 +156,65 @@
     </div>
 
     <div *ngFor="let qcm of qcms; let i = index" class="border rounded p-4 mb-4">
-      <input [(ngModel)]="qcm.question" placeholder="Question"
+
+      <!-- Question -->
+      <input [(ngModel)]="qcm.question" placeholder="Votre Question"
         class="w-full text-lg border-b-2 border-[#8002FF] px-2 py-2 mb-4" />
 
-      <div *ngFor="let rep of qcm.reponses; let j = index" class="mb-2">
+
+      <!-- Liste des Réponses avec bouton supprimer -->
+      <div *ngFor="let rep of qcm.reponses; let j = index; trackBy: trackByIndex" class="mb-2 flex items-center gap-2">
         <input [(ngModel)]="qcm.reponses[j]" placeholder="Réponse {{ j + 1 }}"
           class="w-full border-2 border-[#8002FF] rounded px-2 py-2" />
+
+        <button type="button" (click)="supprimerReponse(i, j)" class="text-sm text-red-500 hover:text-red-700"
+          [attr.aria-label]="'Supprimer la réponse ' + (j + 1)">
+          <i class="fas fa-minus"></i>
+        </button>
       </div>
 
-      <button (click)="ajouterReponse(i)" class="text-sm text-green-400 mt-2"><i class="fas fa-plus"></i> Ajouter
-        réponse</button>
+      <!-- Ajouter des Réponses -->
+      <button (click)="ajouterReponse(i)" class="text-sm text-green-400 mt-2">
+        <i class="fas fa-plus"></i> Ajouter réponse
+      </button>
 
-      <label class="block mt-4 text-sm">Bonne réponse :
+      <!-- Bonne réponse -->
+      <label class="block mt-4 text-sm text-white">Bonne réponse :
         <select [(ngModel)]="qcm.bonneReponse"
           class="ml-2 border border-[#8002FF] px-2 py-1 rounded bg-transparent text-white">
-          <option *ngFor="let rep of qcm.reponses; let j = index" [value]="j + 1">
+          <option *ngFor="let rep of qcm.reponses; let j = index" [value]="j" class="text-black font-black">
             Réponse {{ j + 1 }}
           </option>
         </select>
       </label>
 
+      <!-- XP à attribuer -->
+      <label class="block mt-4 text-sm">XP à attribuer :</label>
+      <div class="flex items-center space-x-4 mt-1">
+        <!-- Bouton - -->
+        <button type="button" class="pt-1 pl-2 pb-1 pr-2 bg-[#8002FF] text-white rounded-2xl hover:bg-[#3F0255]"
+          (click)="decrementXp(qcm)">
+          <i class="fas fa-minus"></i>
+        </button>
+
+        <!-- Affichage XP (lecture seule) -->
+        <span class="text-xl font-bold">{{ qcm.xp }}</span>
+
+        <!-- Bouton + -->
+        <button type="button" class="pt-1 pl-2 pb-1 pr-2 bg-[#8002FF] text-white rounded-2xl hover:bg-[#3F0255]"
+          (click)="incrementXp(qcm)">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
+
       <button (click)="supprimerQCM(i)"
         class="bg-[#8002FF] hover:bg-[#3F0255] mt-4 px-4 py-2 rounded text-white">Supprimer cette question</button>
     </div>
-    <button (click)="ajouterQCM()" class="bg-[#8002FF] hover:bg-[#3F0255] px-4 py-2 rounded mb-4 mr-10">+ Ajouter un
-      QCM</button>
+
+    <!-- Boutons bas de popup -->
+    <button (click)="ajouterQCM()" class="bg-[#8002FF] hover:bg-[#3F0255] px-4 py-2 rounded mb-4 mr-10">
+      + Ajouter un QCM
+    </button>
     <button (click)="validerQCM()" class="bg-green-600 hover:bg-green-800 px-6 py-2 rounded">Valider les QCM</button>
   </div>
 </div>

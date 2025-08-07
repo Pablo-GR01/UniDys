@@ -1,69 +1,74 @@
-<!-- Barre de recherche + filtres -->
-<div class="mt-10 mx-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-[#0A092B] border-2 border-[#8002FF] rounded px-4 py-3 w-full max-w-6xl mx-auto">
-  <!-- Recherche -->
-  <div class="flex items-center gap-2 w-full md:w-auto">
-    <i class="fa-solid fa-magnifying-glass text-white"></i>
-    <input 
-      type="text" 
-      [(ngModel)]="recherche"
-      (ngModelChange)="filtrerCours()"
-      placeholder="Recherche la matière" 
-      class="bg-transparent text-white focus:outline-none w-full"
-    >
-  </div>
+<div class="bg-[#0A092B] pt-2">
+  <!-- Barre de recherche + filtres -->
+  <div
+    class="mt-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-[#0A092B] border-2 border-[#8002FF] rounded px-4 py-3 w-full max-w-6xl mx-auto">
+    <!-- Recherche -->
+    <div class="flex items-center gap-2 w-full md:w-auto">
+      <i class="fa-solid fa-magnifying-glass text-white"></i>
+      <input type="text" [(ngModel)]="recherche" (ngModelChange)="filtrerCours()" placeholder="Recherche la matière"
+        class="bg-transparent text-white focus:outline-none w-full">
+    </div>
 
-  <!-- Filtres par niveau -->
-  <div class="flex flex-wrap gap-2 justify-start md:justify-center w-full md:w-auto">
-    <button (click)="filtrerParNiveau('CP')" class="bg-[#8002FF] text-white px-3 py-1 rounded hover:bg-purple-700">CP</button>
-    <button (click)="filtrerParNiveau('CE1')" class="bg-[#8002FF] text-white px-3 py-1 rounded hover:bg-purple-700">CE1</button>
-    <button (click)="filtrerParNiveau('CE2')" class="bg-[#8002FF] text-white px-3 py-1 rounded hover:bg-purple-700">CE2</button>
-    <button (click)="filtrerParNiveau('CM1')" class="bg-[#8002FF] text-white px-3 py-1 rounded hover:bg-purple-700">CM1</button>
-    <button (click)="filtrerParNiveau('CM2')" class="bg-[#8002FF] text-white px-3 py-1 rounded hover:bg-purple-700">CM2</button>
-    <button (click)="reinitialiserFiltre()" class="bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-700">Tous</button>
-  </div>
-</div>
-
-<!-- Liste des cours ou message vide -->
-<div #track class="flex flex-wrap justify-center gap-6 mt-10 px-4 w-full max-w-7xl mx-auto pb-20">
-  
-  <!-- Si aucun cours -->
-  <div *ngIf="coursFiltres.length === 0" class="w-full text-center text-white text-lg font-semibold">
-    Aucun cours disponible pour ce niveau.
-  </div>
-
-  <!-- Cartes de cours -->
-  <div *ngFor="let cours of coursFiltres"
-    class="w-full sm:w-[47%] md:w-[30%] lg:w-[23%] bg-[#0A092B] text-white rounded-xl shadow-md hover:shadow-xl transition-shadow cursor-pointer p-4 border-2 border-[#8002FF]">
-    
-    <img [src]="getImageParMatiere(cours.matiere)" alt="{{ cours.matiere }}"
-      class="w-full h-32 object-cover rounded-lg mb-3 border-2 border-[#8002FF]" />
-
-    <h3 class="text-lg font-bold mb-1 truncate">{{ cours.titre }}</h3>
-    <p class="text-sm"><span class="font-semibold">Matière :</span> {{ cours.matiere }}</p>
-    <p class="text-sm"><span class="font-semibold">Niveau :</span> {{ cours.niveau }}</p>
-    <p class="text-sm">
-      <span class="font-semibold">QCM :</span>
-      <span [ngClass]="(cours.qcms?.length ?? 0) > 0 ? 'text-green-400' : 'text-red-400'">
-        {{ (cours.qcms?.length ?? 0) > 0 ? 'Oui' : 'Non' }}
-      </span>
-    </p>
-
-    <div class="mt-4 flex flex-wrap gap-2 justify-center">
-      <!-- voir vidéo -->
-      <button *ngIf="cours.lienYoutube" (click)="ouvrirLienYoutube(cours.lienYoutube)"
-        class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
-        <i class="fa-solid fa-play"></i>
-      </button>
-      <!-- voir cours -->
-      <a [routerLink]="['/coursdetail', cours._id]"
-        class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm flex items-center justify-center">
-        <i class="fas fa-eye"></i>
-      </a>
-      <!-- téléchager cours -->
-      <button *ngIf="cours.fichierPdf" (click)="telechargerFichier(cours.fichierPdf)"
-        class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
-        <i class="fas fa-download"></i>
-      </button>
+    <!-- Filtres par niveau -->
+    <div class="flex flex-wrap gap-2 justify-start md:justify-center w-full md:w-auto">
+      <button (click)="filtrerParNiveau('CP')"
+        class="bg-[#8002FF] text-white px-3 py-1 rounded hover:bg-purple-700">CP</button>
+      <button (click)="filtrerParNiveau('CE1')"
+        class="bg-[#8002FF] text-white px-3 py-1 rounded hover:bg-purple-700">CE1</button>
+      <button (click)="filtrerParNiveau('CE2')"
+        class="bg-[#8002FF] text-white px-3 py-1 rounded hover:bg-purple-700">CE2</button>
+      <button (click)="filtrerParNiveau('CM1')"
+        class="bg-[#8002FF] text-white px-3 py-1 rounded hover:bg-purple-700">CM1</button>
+      <button (click)="filtrerParNiveau('CM2')"
+        class="bg-[#8002FF] text-white px-3 py-1 rounded hover:bg-purple-700">CM2</button>
+      <button (click)="reinitialiserFiltre()"
+        class="bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-700">Tous</button>
     </div>
   </div>
+
+  <!-- Liste des cours ou message vide -->
+  <div #track class="flex flex-wrap justify-center gap-6 mt-10 px-4 w-full max-w-7xl mx-auto pb-20">
+
+    <!-- Si aucun cours -->
+    <div *ngIf="coursFiltres.length === 0" class="w-full text-center text-white text-lg font-semibold">
+      Aucun cours disponible pour ce niveau.
+    </div>
+
+    <!-- Cartes de cours -->
+    <div *ngFor="let cours of coursFiltres"
+      class="w-full sm:w-[47%] md:w-[30%] lg:w-[23%] bg-[#0A092B] text-white rounded-xl shadow-md hover:shadow-xl transition-shadow cursor-pointer p-4 border-2 border-[#8002FF]">
+
+      <img [src]="getImageParMatiere(cours.matiere)" alt="{{ cours.matiere }}"
+        class="w-full h-32 object-cover rounded-lg mb-3 border-2 border-[#8002FF]" />
+
+      <h3 class="text-lg font-bold mb-1 truncate">{{ cours.titre }}</h3>
+      <p class="text-sm"><span class="font-semibold">Matière :</span> {{ cours.matiere }}</p>
+      <p class="text-sm"><span class="font-semibold">Niveau :</span> {{ cours.niveau }}</p>
+      <p class="text-sm">
+        <span class="font-semibold">QCM :</span>
+        <span [ngClass]="(cours.qcms?.length ?? 0) > 0 ? 'text-green-400' : 'text-red-400'">
+          {{ (cours.qcms?.length ?? 0) > 0 ? 'Oui' : 'Non' }}
+        </span>
+      </p>
+
+      <div class="mt-4 flex flex-wrap gap-2 justify-center">
+        <!-- voir vidéo -->
+        <button *ngIf="cours.lienYoutube" (click)="ouvrirLienYoutube(cours.lienYoutube)"
+          class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
+          <i class="fa-solid fa-play"></i>
+        </button>
+        <!-- voir cours -->
+        <a [routerLink]="['/coursdetailE', cours._id]"
+          class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm flex items-center justify-center">
+          <i class="fas fa-eye"></i>
+        </a>
+        <!-- téléchager cours -->
+        <button *ngIf="cours.fichierPdf" (click)="telechargerFichier(cours.fichierPdf)"
+          class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
+          <i class="fas fa-download"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>

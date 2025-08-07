@@ -4,11 +4,12 @@ import { EnteteE } from '../../../../component-page/Eleve/classe-CP/entete-e/ent
 import { CPCOURSE } from "../../../../component-page/Eleve/classe-CP/cpcourse/cpcourse";
 import { ContactE } from "../../../../component/contact-e/contact-e";
 import { FooterE } from "../../../../component/footer-e/footer-e";
+import { ApprentissageE } from "../../../../component-page/Eleve/classe-CP/apprentissage-e/apprentissage-e";
 
 
 @Component({
   selector: 'app-classe-cp',
-  imports: [HeaderE, EnteteE, CPCOURSE, ContactE, FooterE],
+  imports: [HeaderE, EnteteE, CPCOURSE, ContactE, FooterE, ApprentissageE ,],
   templateUrl: './classe-cp.html',
   styleUrl: './classe-cp.css'
 })

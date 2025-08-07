@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -15,7 +15,7 @@ import { Icon } from '../../../../component/icon/icon';
   standalone: true,
   imports: [CommonModule, FormsModule, HttpClientModule, Icon]
 })
-export class Section5P {
+export class Section5P implements OnInit {
   //Erreur
   messageErreurPdf = '';
 
@@ -42,13 +42,14 @@ export class Section5P {
     question: string;
     reponses: string[];
     bonneReponse: number;
+    xp: number,
   }[] = [];
 
   constructor(
     public userService: UserService,
     private http: HttpClient,
     private refreshService: CoursRefreshService
-  ) {}
+  ) { }
 
   // ----- GESTION AVIS -----
   ouvrirPopup() {
@@ -61,6 +62,17 @@ export class Section5P {
     this.nom = '';
     this.avisMessage = '';
   }
+
+  ngOnInit(): void {
+  this.qcms = [
+    {
+      question: '',
+      reponses: ['', ''], // Deux réponses par défaut
+      bonneReponse: 0,
+      xp: 10
+    },
+  ];
+}
 
   validerAvis() {
     if (!this.prenom.trim() || !this.nom.trim() || !this.avisMessage.trim()) {
@@ -115,20 +127,20 @@ export class Section5P {
     this.pdfFile = undefined!;
   }
 
-onPdfSelected(event: any) {
-  const fichier = event.target.files[0];
+  onPdfSelected(event: any) {
+    const fichier = event.target.files[0];
 
-  if (fichier) {
-    if (fichier.type !== 'application/pdf') {
-      this.messageErreurPdf = 'Seuls les fichiers PDF sont autorisés.';
-      this.pdfFile = undefined!;
-      event.target.value = ''; // Vide le champ de fichier
-    } else {
-      this.messageErreurPdf = '';
-      this.pdfFile = fichier;
+    if (fichier) {
+      if (fichier.type !== 'application/pdf') {
+        this.messageErreurPdf = 'Seuls les fichiers PDF sont autorisés.';
+        this.pdfFile = undefined!;
+        event.target.value = ''; // Vide le champ de fichier
+      } else {
+        this.messageErreurPdf = '';
+        this.pdfFile = fichier;
+      }
     }
   }
-}
 
 
   mettreAJourImage() {
@@ -142,7 +154,12 @@ onPdfSelected(event: any) {
   }
 
   ajouterQCM() {
-    this.qcms.push({ question: '', reponses: ['', ''], bonneReponse: 1 });
+    this.qcms.push({
+      question: '',
+      reponses: [''],
+      bonneReponse: 0,
+      xp: 10 // valeur par défaut
+    });
   }
 
   ajouterReponse(index: number) {
@@ -197,4 +214,28 @@ onPdfSelected(event: any) {
       }
     });
   }
+
+  decrementXp(qcm: any) {
+    qcm.xp = Math.max(0, qcm.xp - 1);
+  }
+
+  incrementXp(qcm: any) {
+    qcm.xp += 1;
+  }
+
+  trackByIndex(index: number, item: any): number {
+  return index;
+}
+
+supprimerReponse(indexQcm: number, indexReponse: number) {
+  const reponses = this.qcms[indexQcm].reponses;
+  if (reponses.length > 2) {  // Optionnel : empêcher de supprimer si 1 seule réponse restante
+    reponses.splice(indexReponse, 1);
+  }
+}
+
+changerReponse(i: number, j: number, nouvelleValeur: string): void {
+  this.qcms[i].reponses[j] = nouvelleValeur;
+}
+
 }

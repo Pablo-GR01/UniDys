@@ -1,3 +1,10 @@
+export interface QCM {
+  question: string;
+  reponses: string[];
+  bonneReponse: number;
+  xp: number;
+}
+
 export interface Cours {
   _id: string;
   titre: string;
@@ -8,9 +15,5 @@ export interface Cours {
   lienYoutube?: string;
   imageUrl: string;
   pdfUrl?: string;
-  qcms?: {
-    question: string;
-    reponses: string[];
-    bonneReponse: number;
-  }[];
+  qcms?: QCM[];
 }

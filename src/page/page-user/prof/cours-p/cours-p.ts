@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { HeaderP } from "../../../../component/header-p/header-p";
-import { ApprentissageE } from "../../../../component-page/Eleve/page-cours/apprentissage-e/apprentissage-e";
+import { ApprentissageE } from "../../../../component-page/Eleve/classe-CP/apprentissage-e/apprentissage-e";
 import { FooterP } from "../../../../component/footer-p/footer-p";
 import { NiveauP } from '../../../../component-page/Prof/page-cours/niveau-p/niveau-p';
 
