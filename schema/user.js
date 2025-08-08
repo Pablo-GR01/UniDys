@@ -8,6 +8,7 @@ const utilisateurSchema = new mongoose.Schema({
   role: { type: String, enum: ['prof', 'eleve', 'admin'], default: 'eleve' },
   codeProf: String,
   initiale: String,
+  xp: { type: Number, default: 0 },
 });
 
 utilisateurSchema.pre('save', function (next) {

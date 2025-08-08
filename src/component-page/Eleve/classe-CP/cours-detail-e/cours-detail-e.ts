@@ -6,10 +6,11 @@ import { CommonModule } from '@angular/common';
 import { HeaderP } from '../../../../component/header-p/header-p';
 import { FormsModule } from '@angular/forms';
 
+
 interface QcmQuestion {
   question: string;
   reponses: string[];
-  bonnesReponses: number[];
+  bonneReponse: number;   // <-- correspond au champ backend
   xp: number;
 }
 
@@ -24,20 +25,18 @@ export class CoursdetailE implements OnInit {
   contenuHtml: SafeHtml | null = null;
   qcm: QcmQuestion[] = [];
   idCours: string | null = null;
-
-  /* QCM à choix UNIQUE : on mémorise l’index de la réponse choisie */
   reponsesUtilisateur: (number | null)[] = [];
 
   resultat: number | null = null;
   message = '';
   xp = 0;
   loading = true;
-  showPopup = false;  // booléen correctement initialisé
+  showPopup = false;
 
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
   ) {}
 
   ngOnInit(): void {
@@ -49,11 +48,10 @@ export class CoursdetailE implements OnInit {
           `http://localhost:3000/api/cours/complet/${this.idCours}`
         )
         .subscribe({
-          next: (data) => {
-            this.contenuHtml = this.sanitizer.bypassSecurityTrustHtml(data.html);
-            this.qcm = data.qcm || [];
-            // Initialisation : aucune réponse choisie au départ
-            this.reponsesUtilisateur = this.qcm.map(() => null);
+          next: ({ html, qcm = [] }) => {
+            this.contenuHtml = this.sanitizer.bypassSecurityTrustHtml(html);
+            this.qcm = qcm;
+            this.reponsesUtilisateur = qcm.map(() => null);
 
             this.resultat = null;
             this.message = '';
@@ -69,56 +67,49 @@ export class CoursdetailE implements OnInit {
     }
   }
 
-  estCoche(indexQuestion: number, indexReponse: number): boolean {
-    return this.reponsesUtilisateur[indexQuestion] === indexReponse;
+  estCoche(indexQ: number, indexR: number): boolean {
+    return this.reponsesUtilisateur[indexQ] === indexR;
   }
 
   validerQCM(): void {
-    for (let i = 0; i < this.qcm.length; i++) {
-      if (this.reponsesUtilisateur[i] === null) {
-        alert(`Réponds à la question ${i + 1}`);
-        return;
-      }
+  for (let i = 0; i < this.qcm.length; i++) {
+    if (this.reponsesUtilisateur[i] === null) {
+      alert(`Réponds à la question ${i + 1}`);
+      return;
     }
-
-    let score = 0;
-    let xpTotal = 0;
-
-    for (let i = 0; i < this.qcm.length; i++) {
-      const bonnes = this.qcm[i].bonnesReponses ?? [];
-      const choisie = this.reponsesUtilisateur[i];
-
-      if (bonnes.length === 1 && bonnes[0] === choisie) {
-        score++;
-        xpTotal += this.qcm[i].xp || 0;
-      }
-    }
-
-    this.resultat = score;
-    this.xp = xpTotal;
-
-    if (score === this.qcm.length) {
-      this.message = '🎉 Bravo ! Toutes les réponses sont correctes.';
-    } else if (score === 0) {
-      this.message = '❌ Perdu ! Aucune bonne réponse.';
-    } else {
-      this.message = '👍 Bien essayé, mais tu peux faire mieux !';
-    }
-
-    this.showPopup = true;
   }
 
-  questionEstJuste(indexQuestion: number): boolean {
-    const question = this.qcm[indexQuestion];
-    if (!question || !question.bonnesReponses) return false;
+  let score = 0;
+  let xpTotal = 0;
 
-    const bonnes = question.bonnesReponses;
-    const choisie = this.reponsesUtilisateur[indexQuestion];
-    return bonnes.length === 1 && bonnes[0] === choisie;
+  this.qcm.forEach((q, i) => {
+    if (this.reponsesUtilisateur[i] === q.bonneReponse) {
+      score++;
+      xpTotal += q.xp || 0;
+    }
+  });
+
+  this.resultat = score;
+  this.xp = xpTotal;
+
+  if (score === this.qcm.length) {
+    this.message = '🎉 Bravo ! Toutes les réponses sont correctes.';
+  } else if (score === 0) {
+    this.message = '❌ Perdu ! Aucune bonne réponse.';
+  } else {
+    this.message = '👍 Bien essayé, mais tu peux faire mieux !';
   }
 
-  isBonneReponse(question: QcmQuestion, indexReponse: number): boolean {
-    return question.bonnesReponses?.includes(indexReponse) ?? false;
+  this.showPopup = true; // ← affiche la popup
+}
+
+  questionEstJuste(indexQ: number): boolean {
+    if (this.resultat === null) return false;
+    return this.reponsesUtilisateur[indexQ] === this.qcm[indexQ]?.bonneReponse;
+  }
+
+  isBonneReponse(question: QcmQuestion, indexR: number): boolean {
+    return indexR === question.bonneReponse;
   }
 
   get xptotal(): number {
