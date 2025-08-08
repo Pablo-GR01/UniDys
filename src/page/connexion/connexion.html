@@ -3,14 +3,16 @@
 <app-icon></app-icon>
 
 <!-- Message de bienvenue avec bouton Valider -->
-<div *ngIf="message" class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
-         flex flex-col items-center
-         text-lg md:text-xl 2xl:text-2xl
-         md:ml-[225px] md:mt-[120px] md:pt-[20px] md:pb-[10px] md:pl-[50px] md:pr-[50px]
-         xl:ml-[480px] xl:mt-[120px] xl:pt-[20px] xl:pb-[10px] xl:pl-[50px] xl:pr-[50px]
-         2xl:ml-[780px] 2xl:mt-[30px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]">
+@if (message) {
+<div class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
+           flex flex-col items-center
+           text-lg md:text-xl 2xl:text-2xl
+           md:ml-[225px] md:mt-[120px] md:pt-[20px] md:pb-[10px] md:pl-[50px] md:pr-[50px]
+           xl:ml-[480px] xl:mt-[120px] xl:pt-[20px] xl:pb-[10px] xl:pl-[50px] xl:pr-[50px]
+           2xl:ml-[780px] 2xl:mt-[30px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]">
   <p class="mb-2">{{ message }}</p>
 </div>
+}
 
 <!-- Fond principal -->
 <div class="bg-[#020118]">
@@ -35,9 +37,11 @@
             <input type="email" id="email" name="email" class="bg-transparent outline-none text-white w-full"
               placeholder="Adresse mail" required [(ngModel)]="connexionData.email" #email="ngModel" />
           </div>
-          <div class="text-red-500 text-xs mt-1" *ngIf="email.invalid && email.touched">
+          @if (email.invalid && email.touched) {
+          <div class="text-red-500 text-xs mt-1">
             Email invalide.
           </div>
+          }
         </div>
 
         <!-- Mot de passe -->
@@ -53,27 +57,30 @@
               <i class="fa" [ngClass]="passwordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
             </button>
           </div>
-          <div class="text-red-500 text-xs mt-1" *ngIf="password.invalid && password.touched">
+
+          @if (password.invalid && password.touched) {
+          <div class="text-red-500 text-xs mt-1">
             Le mot de passe doit contenir au moins 6 caractères.
           </div>
+          }
         </div>
 
         <!-- Bouton de validation -->
         <button (click)="valider()" [disabled]="!formulaireValide() || isLoading" class="flex items-center justify-center gap-2 bg-[#8002FF] text-white font-semibold rounded hover:bg-[#6900d8] disabled:opacity-50 transition-all duration-300
          2xl:py-2 2xl:px-40 min-w-[250px] w-full">
-          <svg *ngIf="isLoading" class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+          @if (isLoading) {
+          <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
             viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
             </path>
           </svg>
+          }
+
           <span class="inline-block">
             {{ isLoading ? 'Connexion...' : 'Valider' }}
           </span>
         </button>
-
-
-
       </form>
 
       <!-- Lien inscription -->

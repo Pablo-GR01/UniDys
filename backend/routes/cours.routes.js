@@ -41,6 +41,9 @@ router.post('/', upload.single('pdf'), async (req, res) => {
       }
     }
 
+    // Calculer la somme des XP pour xpTotal
+    const xpTotal = qcms.reduce((total, qcm) => total + (qcm.xp || 0), 0);
+
     const nomProfComplet = `${user.prenom} ${user.nom}`.trim();
 
     const nouveauCours = new Cours({
@@ -52,6 +55,7 @@ router.post('/', upload.single('pdf'), async (req, res) => {
       fichierPdf: fichier.filename,
       utilisateurId,
       qcms,
+      xpTotal,  // <-- ici on stocke la somme des XP
     });
 
     await nouveauCours.save();
@@ -91,13 +95,26 @@ router.get('/prof/:nomProf', async (req, res) => {
 // PUT modifier titre et fichier PDF
 router.put('/:id', upload.single('fichierPdf'), async (req, res) => {
   try {
-    const { titre } = req.body;
+    const { titre, qcms } = req.body;  // récupère qcms aussi pour mise à jour xpTotal
     const nouveauFichier = req.file;
 
     const cours = await Cours.findById(req.params.id);
     if (!cours) return res.status(404).json({ message: 'Cours non trouvé.' });
 
     if (titre) cours.titre = titre;
+
+    // Si qcms envoyé, on le parse, on met à jour et on recalcule xpTotal
+    if (qcms) {
+      let qcmsParsed = [];
+      try {
+        qcmsParsed = JSON.parse(qcms);
+        if (!Array.isArray(qcmsParsed)) qcmsParsed = [];
+      } catch {
+        return res.status(400).json({ message: 'Format QCM invalide.' });
+      }
+      cours.qcms = qcmsParsed;
+      cours.xpTotal = qcmsParsed.reduce((total, qcm) => total + (qcm.xp || 0), 0);
+    }
 
     if (nouveauFichier) {
       if (cours.fichierPdf) {
@@ -171,9 +188,7 @@ router.get('/complet/:id', async (req, res) => {
   }
 });
 
-
-
-// Cette route doit être là pour répondre à GET /api/cours
+// GET tous les cours
 router.get('/', async (req, res) => {
   try {
     const cours = await Cours.find();

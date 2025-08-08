@@ -16,10 +16,8 @@ import { Icon } from '../../../../component/icon/icon';
   imports: [CommonModule, FormsModule, HttpClientModule, Icon]
 })
 export class Section5P implements OnInit {
-  //Erreur
+  // Erreur PDF
   messageErreurPdf = '';
-
-
 
   // Avis
   popupOuvert = false;
@@ -42,16 +40,27 @@ export class Section5P implements OnInit {
     question: string;
     reponses: string[];
     bonneReponse: number;
-    xp: number,
+    xp: number;
   }[] = [];
 
   constructor(
     public userService: UserService,
     private http: HttpClient,
     private refreshService: CoursRefreshService
-  ) { }
+  ) {}
 
-  // ----- GESTION AVIS -----
+  ngOnInit(): void {
+    this.qcms = [
+      {
+        question: '',
+        reponses: ['', ''], // Deux réponses par défaut
+        bonneReponse: 0,
+        xp: 10
+      },
+    ];
+  }
+
+  // ----- Gestion Avis -----
   ouvrirPopup() {
     this.popupOuvert = true;
   }
@@ -62,17 +71,6 @@ export class Section5P implements OnInit {
     this.nom = '';
     this.avisMessage = '';
   }
-
-  ngOnInit(): void {
-  this.qcms = [
-    {
-      question: '',
-      reponses: ['', ''], // Deux réponses par défaut
-      bonneReponse: 0,
-      xp: 10
-    },
-  ];
-}
 
   validerAvis() {
     if (!this.prenom.trim() || !this.nom.trim() || !this.avisMessage.trim()) {
@@ -104,13 +102,13 @@ export class Section5P implements OnInit {
           return throwError(() => err);
         })
       )
-      .subscribe((res: any) => {
+      .subscribe(() => {
         alert('Merci pour ton avis !');
         this.fermerPopup();
       });
   }
 
-  // ----- GESTION COURS -----
+  // ----- Gestion Cours -----
   ouvrirPopupCours() { this.popupCoursOuvert = true; }
   fermerPopupCours() { this.popupCoursOuvert = false; this.resetForm(); }
   ouvrirPopupQCM() { this.popupQcmOuvert = true; }
@@ -142,7 +140,6 @@ export class Section5P implements OnInit {
     }
   }
 
-
   mettreAJourImage() {
     const images: any = {
       'Français': 'assets/coursfrançais.png',
@@ -172,9 +169,18 @@ export class Section5P implements OnInit {
 
   validerQCM() {
     for (const qcm of this.qcms) {
-      if (!qcm.question.trim()) return alert('Chaque QCM doit avoir une question.');
-      if (qcm.reponses.filter(r => r.trim() !== '').length < 2) return alert('Min. 2 réponses requises.');
-      if (qcm.bonneReponse < 1 || qcm.bonneReponse > qcm.reponses.length) return alert('Bonne réponse invalide.');
+      if (!qcm.question.trim()) {
+        alert('Chaque QCM doit avoir une question.');
+        return;
+      }
+      if (qcm.reponses.filter(r => r.trim() !== '').length < 2) {
+        alert('Min. 2 réponses requises.');
+        return;
+      }
+      if (qcm.bonneReponse < 0 || qcm.bonneReponse >= qcm.reponses.length) {
+        alert('Bonne réponse invalide.');
+        return;
+      }
     }
     this.popupQcmOuvert = false;
   }
@@ -186,7 +192,10 @@ export class Section5P implements OnInit {
     }
 
     const utilisateur = JSON.parse(localStorage.getItem('utilisateur') || '{}');
-    if (!utilisateur._id) return alert('Erreur : utilisateur non connecté.');
+    if (!utilisateur._id) {
+      alert('Erreur : utilisateur non connecté.');
+      return;
+    }
 
     const formData = new FormData();
     formData.append('utilisateurId', utilisateur._id);
@@ -215,27 +224,48 @@ export class Section5P implements OnInit {
     });
   }
 
-  decrementXp(qcm: any) {
-    qcm.xp = Math.max(0, qcm.xp - 1);
+  incrementXp(qcm: any) {
+    if (typeof qcm.xp !== 'number' || isNaN(qcm.xp)) {
+      qcm.xp = 0;
+    }
+    qcm.xp++;
   }
 
-  incrementXp(qcm: any) {
-    qcm.xp += 1;
+  decrementXp(qcm: any) {
+    if (typeof qcm.xp !== 'number' || isNaN(qcm.xp)) {
+      qcm.xp = 0;
+    }
+    if (qcm.xp > 0) {
+      qcm.xp--;
+    }
+  }
+
+  validerXp(qcm: any, nouvelleValeur?: any) {
+    let xpVal = typeof nouvelleValeur === 'number' ? nouvelleValeur : qcm.xp;
+    if (typeof xpVal !== 'number' || isNaN(xpVal) || xpVal < 0) {
+      qcm.xp = 0;
+    } else {
+      qcm.xp = Math.floor(xpVal);
+    }
   }
 
   trackByIndex(index: number, item: any): number {
-  return index;
-}
-
-supprimerReponse(indexQcm: number, indexReponse: number) {
-  const reponses = this.qcms[indexQcm].reponses;
-  if (reponses.length > 2) {  // Optionnel : empêcher de supprimer si 1 seule réponse restante
-    reponses.splice(indexReponse, 1);
+    return index;
   }
-}
 
-changerReponse(i: number, j: number, nouvelleValeur: string): void {
-  this.qcms[i].reponses[j] = nouvelleValeur;
-}
+  supprimerReponse(indexQcm: number, indexReponse: number) {
+    const reponses = this.qcms[indexQcm].reponses;
+    if (reponses.length > 2) {  // Empêche la suppression si moins de 2 réponses restantes
+      reponses.splice(indexReponse, 1);
+    }
+  }
+
+  changerReponse(i: number, j: number, nouvelleValeur: string): void {
+    this.qcms[i].reponses[j] = nouvelleValeur;
+  }
+
+  get xpTotal(): number {
+    return this.qcms.reduce((total, qcm) => total + (qcm.xp || 0), 0);
+  }
 
 }

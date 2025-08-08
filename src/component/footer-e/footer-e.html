@@ -6,8 +6,7 @@
 
       <!-- Colonne 1 -->
       <div>
-        <img src="assets/LOGO.png" alt="Logo UniDys"
-          class="w-20 sm:w-24 md:w-28 lg:w-32 xl:w-36 2xl:w-40 mb-4" />
+        <img src="assets/LOGO.png" alt="Logo UniDys" class="w-20 sm:w-24 md:w-28 lg:w-32 xl:w-36 2xl:w-40 mb-4" />
         <p class="font-bold text-white text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl">
           Plateforme éducative adaptée<br />pour les personnes DYS
         </p>
@@ -37,22 +36,21 @@
         </p>
 
         <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
-          <button (click)="enregistrerEmail()" [disabled]="inscrit()"
-            class="bg-[#8002FF] hover:bg-[#3F0255] text-white rounded hover:scale-105 hover:shadow-white transition-transform duration-300
-            px-3 sm:px-4 md:px-5 py-2 text-xs sm:text-sm md:text-base lg:text-lg"
-            aria-label="Envoyer">
-            <ng-container *ngIf="!inscrit(); else dejaInscrit">
-              <div class="flex items-center gap-2">
-                <i class="fas fa-arrow-right"></i>
-                <span class="font-black">Rejoindre la newsletter</span>
-              </div>
-            </ng-container>
-            <ng-template #dejaInscrit>
-              <span class="flex items-center gap-2 text-green-400">
-                <i class="fas fa-check-circle"></i>
-                Vous êtes déjà inscrit
-              </span>
-            </ng-template>
+          <button (click)="enregistrerEmail()" [disabled]="inscrit()" class="bg-[#8002FF] hover:bg-[#3F0255] text-white rounded hover:scale-105 hover:shadow-white transition-transform duration-300
+    px-3 sm:px-4 md:px-5 py-2 text-xs sm:text-sm md:text-base lg:text-lg" [class.opacity-50]="inscrit()"
+            [class.cursor-not-allowed]="inscrit()" aria-label="Envoyer">
+
+            @if (!inscrit()) {
+            <div class="flex items-center gap-2">
+              <i class="fas fa-arrow-right"></i>
+              <span class="font-black">Rejoindre la newsletter</span>
+            </div>
+            } @else {
+            <span class="flex items-center gap-2 text-green-400">
+              <i class="fas fa-check-circle"></i>
+              Vous êtes déjà inscrit
+            </span>
+            }
           </button>
         </div>
       </div>
@@ -60,7 +58,8 @@
 
     <hr class="my-6 border-white" />
 
-    <div class="flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
+    <div
+      class="flex flex-col sm:flex-row justify-between items-center text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
       <p class="font-black text-center sm:text-left mb-4 sm:mb-0">©2025 UniDys. Tous droits réservés</p>
       <div class="flex gap-4">
         <a href="#" aria-label="Instagram" class="hover:text-[#8002FF]">

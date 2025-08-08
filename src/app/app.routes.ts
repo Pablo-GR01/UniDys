@@ -12,7 +12,7 @@ import { MonespaceP } from '../page/page-user/prof/monespace-p/monespace-p';
 import { ClasseCP } from '../page/page-user/eleve/classe-cp/classe-cp';
 import { InformationE } from '../page/page-user/eleve/information-e/information-e';
 import { CoursDetailP } from '../component-page/Prof/page-monespace/cours-detail-p/cours-detail-p';
-import { CoursdetailE } from '../component-page/Eleve/page-monespace/cours-detail-e/cours-detail-e';
+import { CoursdetailE } from '../component-page/Eleve/classe-CP/cours-detail-e/cours-detail-e';
 
 
 export const routes: Routes = [

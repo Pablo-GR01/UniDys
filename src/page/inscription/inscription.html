@@ -1,29 +1,32 @@
 <app-icon></app-icon>
 <app-logo></app-logo>
 
-<div
-  *ngIf="messageProf"
-  class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
+
+
+@if(messageProf){
+<div class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
          flex flex-col items-center
          text-lg md:text-xl 2xl:text-2xl
          md:ml-[225px] md:mt-[120px] md:pt-[20px] md:pb-[10px] md:pl-[50px] md:pr-[50px]
          xl:ml-[480px] xl:mt-[120px] xl:pt-[20px] xl:pb-[10px] xl:pl-[50px] xl:pr-[50px]
-         2xl:ml-[780px] 2xl:-mt-[20px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]"
->
+         2xl:ml-[780px] 2xl:-mt-[20px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]">
   <p class="mb-2">{{ messageProf }}</p>
 </div>
+}
 
-<div
-  *ngIf="messageEleve"
-  class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
+
+@if(messageEleve){
+<div class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
          flex flex-col items-center
          text-lg md:text-xl 2xl:text-2xl
          md:ml-[225px] md:mt-[120px] md:pt-[20px] md:pb-[10px] md:pl-[50px] md:pr-[50px]
          xl:ml-[480px] xl:mt-[120px] xl:pt-[20px] xl:pb-[10px] xl:pl-[50px] xl:pr-[50px]
-         2xl:ml-[780px] 2xl:mt-[22px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]"
->
+         2xl:ml-[780px] 2xl:-mt-[20px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]">
   <p class="mb-2">{{ messageEleve }}</p>
 </div>
+}
+
+
 
 <div class="min-h-screen flex items-center justify-center px-4 -mt-15">
   <div class="bg-[#020118] rounded-2xl p-8 pt-1 w-full max-w-md shadow-xl border-6 border-[#8002FF] relative">
@@ -37,24 +40,16 @@
 
     <!-- Choix profil -->
     <div class="flex justify-center gap-4 mb-4">
-      <button
-        (click)="activerProf()"
-        [ngClass]="{
+      <button (click)="activerProf()" [ngClass]="{
           'bg-[#8002FF]': actif === 'prof',
           'bg-transparent': actif !== 'prof'
-        }"
-        class="text-white px-4 py-1 rounded-full font-semibold border border-white"
-      >
+        }" class="text-white px-4 py-1 rounded-full font-semibold border border-white">
         Prof
       </button>
-      <button
-        (click)="activerEleve()"
-        [ngClass]="{
+      <button (click)="activerEleve()" [ngClass]="{
           'bg-[#8002FF]': actif === 'eleve',
           'bg-transparent': actif !== 'eleve'
-        }"
-        class="text-white px-4 py-1 rounded-full font-semibold border border-white"
-      >
+        }" class="text-white px-4 py-1 rounded-full font-semibold border border-white">
         Élève
       </button>
     </div>
@@ -65,27 +60,17 @@
       <!-- Nom -->
       <div class="mb-4">
         <label class="text-white text-sm">Nom</label>
-        <input
-          type="text"
-          [(ngModel)]="inscriptionData.nom"
-          name="nom"
+        <input type="text" [(ngModel)]="inscriptionData.nom" name="nom"
           class="w-full mt-1 px-3 py-2 bg-[#0A092B] border-2 border-[#8002FF] text-white rounded-md outline-none"
-          placeholder="Votre nom"
-          required
-        />
+          placeholder="Votre nom" required />
       </div>
 
       <!-- Prénom -->
       <div class="mb-4">
         <label class="text-white text-sm">Prénom</label>
-        <input
-          type="text"
-          [(ngModel)]="inscriptionData.prenom"
-          name="prenom"
+        <input type="text" [(ngModel)]="inscriptionData.prenom" name="prenom"
           class="w-full mt-1 px-3 py-2 bg-[#0A092B] border-2 border-[#8002FF] text-white rounded-md outline-none"
-          placeholder="Votre prénom"
-          required
-        />
+          placeholder="Votre prénom" required />
       </div>
 
       <!-- Mail -->
@@ -93,14 +78,8 @@
         <label class="text-white text-sm">Adresse mail</label>
         <div class="flex items-center bg-[#0A092B] border-2 border-[#8002FF] px-3 py-2 rounded-md mt-1">
           <i class="fa-solid fa-envelope text-white mr-2"></i>
-          <input
-            type="email"
-            [(ngModel)]="inscriptionData.email"
-            name="email"
-            class="bg-transparent outline-none text-white w-full"
-            placeholder="Adresse mail"
-            required
-          />
+          <input type="email" [(ngModel)]="inscriptionData.email" name="email"
+            class="bg-transparent outline-none text-white w-full" placeholder="Adresse mail" required />
         </div>
       </div>
 
@@ -109,45 +88,30 @@
         <label class="text-white text-sm">Mot de passe</label>
         <div class="flex items-center bg-[#0A092B] border-2 border-[#8002FF] px-3 py-2 rounded-md mt-1 relative">
           <i class="fa-solid fa-lock text-white mr-2"></i>
-          <input
-            [type]="passwordVisible ? 'text' : 'password'"
-            [(ngModel)]="inscriptionData.password"
-            name="password"
-            class="bg-transparent outline-none text-white w-full pr-10"
-            placeholder="Mot de passe"
-            required
-          />
-          <button
-            type="button"
-            class="absolute right-3 text-white"
-            (click)="togglePasswordVisibility()"
-            aria-label="Afficher / masquer mot de passe"
-            tabindex="-1"
-          >
+          <input [type]="passwordVisible ? 'text' : 'password'" [(ngModel)]="inscriptionData.password" name="password"
+            class="bg-transparent outline-none text-white w-full pr-10" placeholder="Mot de passe" required />
+          <button type="button" class="absolute right-3 text-white" (click)="togglePasswordVisibility()"
+            aria-label="Afficher / masquer mot de passe" tabindex="-1">
             <i class="fa" [ngClass]="passwordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
           </button>
         </div>
       </div>
 
       <!-- Code (prof uniquement) -->
-      <div *ngIf="actif === 'prof'" class="mb-4">
+
+      @if(actif === 'prof'){
+      <div class="mb-4">
         <label class="text-white text-sm">Code professeur</label>
-        <input
-          type="password"
-          [(ngModel)]="inscriptionData.codeProf"
-          name="codeProf"
+        <input type="password" [(ngModel)]="inscriptionData.codeProf" name="codeProf"
           class="w-full mt-1 px-3 py-2 bg-[#0A092B] border-2 border-[#8002FF] text-white rounded-md outline-none"
-          placeholder="Code professeur"
-          required
-        />
+          placeholder="Code professeur" required />
       </div>
+      }
+
 
       <!-- Valider -->
-      <button
-        type="submit"
-        [disabled]="!formulaireValide()"
-        class="bg-[#8002FF] text-white w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255] disabled:opacity-50 disabled:cursor-not-allowed"
-      >
+      <button type="submit" [disabled]="!formulaireValide()"
+        class="bg-[#8002FF] text-white w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255] disabled:opacity-50 disabled:cursor-not-allowed">
         Valider
       </button>
     </form>
@@ -155,10 +119,7 @@
     <!-- Lien vers connexion -->
     <p class="text-center text-sm text-gray-300 mt-6">
       Vous avez déjà un compte ?
-      <a
-        routerLink="/connexion"
-        class="text-[#8002FF] font-semibold hover:underline transition duration-200"
-      >
+      <a routerLink="/connexion" class="text-[#8002FF] font-semibold hover:underline transition duration-200">
         Se connecter
       </a>
     </p>

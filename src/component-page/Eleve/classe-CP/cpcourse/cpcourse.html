@@ -30,12 +30,16 @@
   <div #track class="flex flex-wrap justify-center gap-6 mt-10 px-4 w-full max-w-7xl mx-auto pb-20">
 
     <!-- Si aucun cours -->
-    <div *ngIf="coursFiltres.length === 0" class="w-full text-center text-white text-lg font-semibold">
+    @if(coursFiltres.length === 0){
+    <div class="w-full text-center text-white text-lg font-semibold">
       Aucun cours disponible pour ce niveau.
     </div>
+    }
+
 
     <!-- Cartes de cours -->
-    <div *ngFor="let cours of coursFiltres"
+    @for (cours of coursFiltres; track cours._id) {
+    <div
       class="w-full sm:w-[47%] md:w-[30%] lg:w-[23%] bg-[#0A092B] text-white rounded-xl shadow-md hover:shadow-xl transition-shadow cursor-pointer p-4 border-2 border-[#8002FF]">
 
       <img [src]="getImageParMatiere(cours.matiere)" alt="{{ cours.matiere }}"
@@ -53,22 +57,29 @@
 
       <div class="mt-4 flex flex-wrap gap-2 justify-center">
         <!-- voir vidéo -->
-        <button *ngIf="cours.lienYoutube" (click)="ouvrirLienYoutube(cours.lienYoutube)"
+        @if (cours.lienYoutube) {
+        <button (click)="ouvrirLienYoutube(cours.lienYoutube)"
           class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
           <i class="fa-solid fa-play"></i>
         </button>
+        }
+
         <!-- voir cours -->
         <a [routerLink]="['/coursdetailE', cours._id]"
           class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm flex items-center justify-center">
           <i class="fas fa-eye"></i>
         </a>
-        <!-- téléchager cours -->
-        <button *ngIf="cours.fichierPdf" (click)="telechargerFichier(cours.fichierPdf)"
+
+        <!-- télécharger cours -->
+        @if (cours.fichierPdf) {
+        <button (click)="telechargerFichier(cours.fichierPdf)"
           class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
           <i class="fas fa-download"></i>
         </button>
+        }
       </div>
     </div>
+    }
   </div>
 
 </div>
