@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { EnteteP } from '../../page-accueil/entete-p/entete-p';
 
-import { Entete2P } from './entete2-p';
-
-describe('Entete2E', () => {
-  let component: Entete2P;
-  let fixture: ComponentFixture<Entete2P>;
+describe('EnteteE', () => {
+  let component: EnteteP;
+  let fixture: ComponentFixture<EnteteP>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Entete2P]
+      imports: [EnteteP]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Entete2P);
+    fixture = TestBed.createComponent(EnteteP);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

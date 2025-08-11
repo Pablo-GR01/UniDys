@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 @Component({
-  selector: 'app-niveau-p',
+  selector: 'app-entete-p',
   imports: [RouterLink],
-  templateUrl: './niveau-p.html',
-  styleUrl: './niveau-p.css'
+  templateUrl: './entete-p.html',
+  styleUrl: './entete-p.css'
 })
-export class NiveauP {
+export class EnteteP {
 
 }

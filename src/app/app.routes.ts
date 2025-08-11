@@ -7,12 +7,13 @@ import { AccueilE } from '../page/page-user/eleve/accueil-e/accueil-e';
 import { AproposE } from '../page/page-user/eleve/apropos-e/apropos-e';
 import { MonEspaceE } from '../page/page-user/eleve/monespace-e/monespace-e';
 import { AproposP } from '../page/page-user/prof/apropos-p/apropos-p';
-import { CoursP } from '../page/page-user/prof/cours-p/cours-p';
 import { MonespaceP } from '../page/page-user/prof/monespace-p/monespace-p';
-import { ClasseCP } from '../page/page-user/eleve/classe-cp/classe-cp';
 import { InformationE } from '../page/page-user/eleve/information-e/information-e';
 import { CoursDetailP } from '../component-page/Prof/page-monespace/cours-detail-p/cours-detail-p';
-import { CoursdetailE } from '../component-page/Eleve/classe-CP/cours-detail-e/cours-detail-e';
+import { CoursdetailE } from '../component-page/Eleve/page-cour/cours-detail-e/cours-detail-e';
+import { ClasseCPP } from '../page/page-user/prof/classe-cp/classe-cp';
+import { ClasseCPE } from '../page/page-user/eleve/classe-cp/classe-cp';
+
 
 
 export const routes: Routes = [
@@ -29,18 +30,18 @@ export const routes: Routes = [
   // route page prof
   {path: 'accueilP', component: AccueilP},
   {path: 'aproposP', component: AproposP},
-  {path: 'coursP', component: CoursP},
   {path: 'monespaceP', component: MonespaceP},
   {path: 'coursdetail/:id', component: CoursDetailP},
+  {path: 'coursP', component: ClasseCPP},
 
 
   // route page eleve
   {path: 'accueilE', component: AccueilE},
   {path: 'aproposE', component: AproposE},
   {path: 'monespaceE', component: MonEspaceE},
-  {path: 'classCP', component: ClasseCP},
+
   {path: 'InfoE', component: InformationE},
-  {path: 'coursE', component: ClasseCP},
+  {path: 'coursE', component: ClasseCPE},
   {path: 'coursdetailE/:id',component: CoursdetailE}
 
 ];
