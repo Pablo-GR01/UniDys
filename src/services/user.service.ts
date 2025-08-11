@@ -48,7 +48,5 @@ export class UserService {
   getNomComplet(): string {
     return this.utilisateur ? `${this.utilisateur.prenom} ${this.utilisateur.nom}` : 'Invité';
   }
-  getCurrentUser(): Observable<User> {
-    return this.http.get<User>('/api/user/me');
-  }
+  
 }

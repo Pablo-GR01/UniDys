@@ -13,8 +13,6 @@ export class LevelE implements OnInit {
   constructor(private userService: UserService) {}
 
   ngOnInit() {
-    this.userService.getCurrentUser().subscribe(user => {
-      this.xp = user.xp;
-    });
+    
   }
 }
