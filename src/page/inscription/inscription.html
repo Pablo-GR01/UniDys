@@ -1,28 +1,25 @@
 <app-icon></app-icon>
-<app-logo></app-logo>
 
 
-
-@if(messageProf){
-<div class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
-         flex flex-col items-center
-         text-lg md:text-xl 2xl:text-2xl
-         md:ml-[225px] md:mt-[120px] md:pt-[20px] md:pb-[10px] md:pl-[50px] md:pr-[50px]
-         xl:ml-[480px] xl:mt-[120px] xl:pt-[20px] xl:pb-[10px] xl:pl-[50px] xl:pr-[50px]
-         2xl:ml-[780px] 2xl:-mt-[20px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]">
-  <p class="mb-2">{{ messageProf }}</p>
+<!-- Logo à gauche -->
+<div class="flex-shrink-0 2xl:ml-1 mt-3">
+  <a routerLink="/accueil">
+    <img src="assets/LOGO.png" alt="Logo UniDys"
+      class="hover:scale-105 transition-transform duration-300
+      w-30 sm:w-34 xl:w-38 2xl:w-42"/>
+  </a>
 </div>
-}
 
 
-@if(messageEleve){
+
+@if(message){
 <div class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
          flex flex-col items-center
          text-lg md:text-xl 2xl:text-2xl
          md:ml-[225px] md:mt-[120px] md:pt-[20px] md:pb-[10px] md:pl-[50px] md:pr-[50px]
          xl:ml-[480px] xl:mt-[120px] xl:pt-[20px] xl:pb-[10px] xl:pl-[50px] xl:pr-[50px]
          2xl:ml-[780px] 2xl:-mt-[20px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]">
-  <p class="mb-2">{{ messageEleve }}</p>
+  <p class="mb-2">{{ message }}</p>
 </div>
 }
 

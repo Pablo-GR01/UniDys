@@ -40,8 +40,8 @@ export class Inscription implements OnInit, OnDestroy {
   passwordVisible = false;
 
   // ✅ Deux messages distincts
-  messageProf: string | null = null;
-  messageEleve: string | null = null;
+  message: string | null = null;
+
 
   constructor(
     private http: HttpClient,
@@ -117,9 +117,9 @@ export class Inscription implements OnInit, OnDestroy {
       next: (res: any) => {
         // ✅ Message personnalisé selon le rôle
         if (payload.role === 'prof') {
-          this.messageProf = `Bienvenue sur UniDys !`;
+          this.message= `Bienvenue sur UniDys !`;
         } else if (payload.role === 'eleve') {
-          this.messageEleve = `Bienvenue sur UniDys !`;
+          this.message = `Bienvenue sur UniDys !`;
         }
 
         // ✅ Stocker l'utilisateur

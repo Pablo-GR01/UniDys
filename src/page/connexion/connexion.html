@@ -1,6 +1,14 @@
 <!-- Logo et icône -->
-<app-logo></app-logo>
 <app-icon></app-icon>
+
+<!-- Logo à gauche -->
+<div class="flex-shrink-0 2xl:ml-1 mt-3">
+  <a routerLink="/accueil">
+    <img src="assets/LOGO.png" alt="Logo UniDys"
+      class="hover:scale-105 transition-transform duration-300
+      w-30 sm:w-34 xl:w-38 2xl:w-42"/>
+  </a>
+</div>
 
 <!-- Message de bienvenue avec bouton Valider -->
 @if (message) {
@@ -23,6 +31,8 @@
       2xl:text-4xl
       xl:text-3xl
       md:text-3xl
+      sm:text-2xl
+      text-xl
       ">
         Connexion
       </h2>
