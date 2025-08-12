@@ -65,10 +65,16 @@ export class Connexion {
           user.initiale = (user.prenom[0] ?? '').toUpperCase() + (user.nom[0] ?? '').toUpperCase();
         }
 
+        // On stocke l'utilisateur dans le service
         this.userService.setUser(user);
+
+        // On enregistre en localStorage
         localStorage.setItem('prenom', user.prenom);
         localStorage.setItem('nom', user.nom);
         localStorage.setItem('email', user.email);
+
+        // ➕ Stockage des XP (si fournis par le backend, sinon 0)
+        localStorage.setItem('xp', user.xp?.toString() ?? '0');
 
         this.message = 'Bienvenue sur UniDys !';
 

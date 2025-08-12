@@ -4,13 +4,14 @@ import { UserService } from '../../../../services/user.service';
 import { Entete5E } from '../../../../component-page/Eleve/page-monespace/entete5-e/entete5-e';
 import { HeaderE } from '../../../../component/header-e/header-e';
 import { Section5E } from '../../../../component-page/Eleve/page-monespace/section5-e/section5-e';
-// import { LevelE } from "../../../../component-page/Eleve/page-monespace/level-e/level-e";
+import { LevelE } from '../../../../component-page/Eleve/page-monespace/level-e/level-e';
+
 
 
 
 @Component({
   selector: 'app-monespace-e',
-  imports: [CommonModule, Entete5E, HeaderE, Section5E],
+  imports: [CommonModule, Entete5E, HeaderE, Section5E,LevelE],
   templateUrl: './monespace-e.html',
   styleUrls: ['./monespace-e.css']
 })

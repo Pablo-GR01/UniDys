@@ -48,5 +48,9 @@ export class UserService {
   getNomComplet(): string {
     return this.utilisateur ? `${this.utilisateur.prenom} ${this.utilisateur.nom}` : 'Invité';
   }
+
+  
+  
+  
   
 }

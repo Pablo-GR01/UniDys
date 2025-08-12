@@ -1,3 +1,56 @@
-<div>
-    
-</div>
+<div class="mt-90 min-h-[220px] pb-10 px-6 z-20 flex flex-col items-center justify-center rounded-md shadow-lg max-w-md mx-auto">
+
+    <!-- Affichage pendant le chargement -->
+    <ng-container *ngIf="!isLoading; else loadingTemplate">
+  
+      <!-- Affichage si utilisateur connecté -->
+      <div *ngIf="user; else noUserTemplate" class="level-container w-full bg-gray-900 p-6 rounded-lg shadow-inner">
+  
+        <h2 class="xp-text text-white text-3xl font-semibold mb-4 text-center z-10">
+          XP : {{ user?.xp }}
+        </h2>
+  
+        <p class="palier-text text-white mb-4 text-lg text-center">
+          Palier actuel : <strong>{{ palier }}</strong>
+        </p>
+  
+        <!-- Barre de progression -->
+        <div
+          class="xp-bar-container bg-gray-700 rounded-full h-6 overflow-hidden mb-3 w-full"
+          aria-label="Progression XP"
+          role="progressbar"
+          [attr.aria-valuenow]="progression"
+          aria-valuemin="0"
+          aria-valuemax="100"
+        >
+          <div
+            class="xp-bar bg-red-600 h-6 transition-all duration-500 ease-in-out"
+            [style.width.%]="progression"
+          ></div>
+        </div>
+  
+        <p class="next-level text-white text-sm text-center">
+          Prochain palier dans <strong>{{ xpRestant }}</strong> XP
+        </p>
+  
+      </div>
+  
+    </ng-container>
+  
+    <!-- Template affiché quand chargement -->
+    <ng-template #loadingTemplate>
+      <p class="text-white text-center">Chargement des données...</p>
+    </ng-template>
+  
+    <!-- Template affiché quand aucun utilisateur -->
+    <ng-template #noUserTemplate>
+      <p class="text-white text-center">Aucun utilisateur connecté.</p>
+    </ng-template>
+  
+    <!-- Affichage message erreur -->
+    <div *ngIf="errorMessage" class="text-red-500 mt-4 text-center font-semibold">
+      {{ errorMessage }}
+    </div>
+  
+  </div>
+  
