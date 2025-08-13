@@ -10,28 +10,35 @@ interface User {
   nom?: string;
 }
 
+interface QcmResult {
+  xpGagne: number;
+  date: string; // ou timestamp
+}
+
 @Component({
   selector: 'app-level-e',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './level-e.html',
-  styleUrls: ['./level-e.css'],
-  imports:[CommonModule]
+  styleUrls: ['./level-e.css']
 })
 export class LevelE implements OnInit, OnDestroy {
   user: User | null = null;
   palier: string = 'Débutant';
   progression: number = 0;
   xpRestant: number = 0;
+  level: number = 1;
   isLoading = true;
   errorMessage: string | null = null;
-
   private subscription: Subscription | null = null;
+
+  derniersXp: QcmResult[] = [];
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     const email = localStorage.getItem('email');
     if (email) {
-      // Timer qui déclenche toutes les 30 secondes
       this.subscription = timer(0, 30000).pipe(
         switchMap(() => this.getUserByEmail(email))
       ).subscribe({
@@ -39,16 +46,16 @@ export class LevelE implements OnInit, OnDestroy {
           if (user) {
             this.user = user;
             this.mettreAJourPalier();
+            this.getDerniersXp(email);
             this.errorMessage = null;
           } else {
             this.errorMessage = 'Utilisateur introuvable.';
           }
           this.isLoading = false;
         },
-        error: (err) => {
+        error: () => {
           this.errorMessage = 'Erreur lors de la récupération des données utilisateur.';
           this.isLoading = false;
-          console.error(err);
         }
       });
     } else {
@@ -63,25 +70,32 @@ export class LevelE implements OnInit, OnDestroy {
 
   private getUserByEmail(email: string): Observable<User | null> {
     const url = `http://localhost:3000/api/unidys/users/${email}`;
-    return this.http.get<User>(url).pipe(
-      catchError((err) => {
-        console.error('Erreur API:', err);
-        return of(null);
-      })
-    );
+    return this.http.get<User>(url).pipe(catchError(() => of(null)));
+  }
+
+  private getDerniersXp(email: string): void {
+    const url = `http://localhost:3000/api/unidys/qcmresults/${email}`;
+    this.http.get<QcmResult[]>(url).pipe(
+      catchError(() => of([]))
+    ).subscribe(results => {
+      this.derniersXp = results
+        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 5);
+    });
   }
 
   private mettreAJourPalier(): void {
     if (!this.user || this.user.xp == null) {
       this.palier = 'Débutant';
+      this.level = 1;
       this.progression = 0;
       this.xpRestant = 100;
       return;
     }
 
     const xp = this.user.xp;
-
     let xpMax = 100;
+
     if (xp < 100) {
       this.palier = 'Débutant';
       xpMax = 100;
@@ -99,6 +113,8 @@ export class LevelE implements OnInit, OnDestroy {
     const xpMin = this.getXpMinForCurrentLevel(xp);
     this.progression = ((xp - xpMin) / (xpMax - xpMin)) * 100;
     this.xpRestant = xpMax - xp;
+
+    this.level = Math.floor(xp / 100) + 1;
   }
 
   private getXpMinForCurrentLevel(xp: number): number {
@@ -106,5 +122,15 @@ export class LevelE implements OnInit, OnDestroy {
     if (xp < 300) return 100;
     if (xp < 600) return 300;
     return 600;
+  }
+
+  getImageForPalier(): string {
+    switch (this.palier) {
+      case 'Débutant': return 'assets/paliers/debutant.png';
+      case 'Intermédiaire': return 'assets/paliers/intermediaire.png';
+      case 'Avancé': return 'assets/paliers/avance.png';
+      case 'Expert': return 'assets/paliers/expert.png';
+      default: return 'assets/paliers/debutant.png';
+    }
   }
 }
