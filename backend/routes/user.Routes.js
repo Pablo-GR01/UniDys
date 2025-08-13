@@ -11,4 +11,6 @@ router.post('/login', authController.login);
 router.get('/users/:email', userController.getUserByEmail);
 router.delete('/users/:id', userController.deleteUserById);
 
+router.post('/users/:id/ajouterXP', userController.addXP);
+
 module.exports = router;

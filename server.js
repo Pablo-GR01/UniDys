@@ -3,11 +3,15 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
 
+// Routes existantes
 const authRoutes = require('./backend/routes/user.Routes');
 const newsletterRoutes = require('./backend/routes/newsletter.routes');
 const avisRoutes = require('./backend/routes/avis.routes');
 const coursRoutes = require('./backend/routes/cours.routes');
 const coursHtmlRoute = require('./backend/routes/cours-html.route');
+
+// Nouvelle route QCM
+const qcmRoutes = require('./backend/routes/qcm.routes');
 
 const app = express();
 const PORT = 3000;
@@ -33,13 +37,15 @@ app.use('/api/unidys', authRoutes);
 app.use('/api/unidys', newsletterRoutes);
 app.use('/api/avis', avisRoutes);
 app.use('/api/cours', coursRoutes);
-app.use('/api/cours/html', coursHtmlRoute); // si besoin
+app.use('/api/cours/html', coursHtmlRoute);
+
+// Routes QCM (gestion des résultats)
+app.use('/api/qcm', qcmRoutes);
 
 // Démarrage serveur
 app.listen(PORT, () => {
   console.log(`🚀 Serveur backend démarré sur http://localhost:${PORT}`);
 });
-
 
 
 // const express = require('express');

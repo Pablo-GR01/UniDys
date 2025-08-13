@@ -1,10 +1,8 @@
-// controllers/userController.js
-const User = require('../../schema/user'); // Assure-toi que le chemin est correct
+const User = require('../../schema/user');
 
+// Enregistrer un utilisateur
 exports.registerUser = async (req, res) => {
   try {
-    // Ici tu peux avoir une logique de création avec validation etc.
-    // Par exemple :
     const { email, prenom, nom, xp } = req.body;
     if (!email) {
       return res.status(400).json({ message: 'Email requis' });
@@ -25,10 +23,11 @@ exports.registerUser = async (req, res) => {
   }
 };
 
+// Obtenir un utilisateur par email
 exports.getUserByEmail = async (req, res) => {
   const email = req.params.email;
   try {
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).json({ message: 'Utilisateur non trouvé' });
     }
@@ -39,6 +38,7 @@ exports.getUserByEmail = async (req, res) => {
   }
 };
 
+// Supprimer un utilisateur
 exports.deleteUserById = async (req, res) => {
   try {
     const id = req.params.id;
@@ -52,3 +52,23 @@ exports.deleteUserById = async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur', error: err.message });
   }
 };
+
+// Ajouter de l'XP à un utilisateur
+exports.addXP = async (req, res) => {
+  try {
+    const { xp } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    user.xp = (user.xp || 0) + xp;
+    await user.save();
+
+    res.json({ message: 'XP ajouté', xpTotal: user.xp });
+  } catch (err) {
+    console.error('Erreur serveur:', err);
+    res.status(500).json({ message: 'Erreur serveur', error: err.message });
+  }
+};
+

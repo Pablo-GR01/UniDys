@@ -1,4 +1,3 @@
-<!-- ✅ Version réparée sans rien casser -->
 <app-header-e></app-header-e>
 
 <div class="max-w-5xl mx-auto p-6 bg-[#0A092B] text-white rounded-2xl shadow-2xl mt-8 border border-[#8002FF]">
@@ -7,26 +6,26 @@
   </h2>
 
   <!-- Contenu HTML du cours -->
-  @if (contenuHtml) {
-  <section [innerHTML]="contenuHtml" class="prose prose-invert max-w-none leading-relaxed
-                    [&_img]:mx-auto [&_img]:my-4 [&_img]:rounded-xl [&_img]:shadow-md
-                    [&_p]:text-justify [&_h1]:text-3xl [&_h2]:text-2xl [&_ul]:list-disc [&_ul]:pl-6"
-    aria-label="Contenu du cours"></section>
-  } @else if (loading) {
-  <div class="flex justify-center items-center p-8">
+  <section *ngIf="contenuHtml"
+           [innerHTML]="contenuHtml"
+           class="prose prose-invert max-w-none leading-relaxed
+                  [&_img]:mx-auto [&_img]:my-4 [&_img]:rounded-xl [&_img]:shadow-md
+                  [&_p]:text-justify [&_h1]:text-3xl [&_h2]:text-2xl [&_ul]:list-disc [&_ul]:pl-6"
+           aria-label="Contenu du cours">
+  </section>
+
+  <div *ngIf="loading" class="flex justify-center items-center p-8">
     <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
     <span class="ml-3 text-white">Chargement du contenu...</span>
   </div>
-  } @else {
-  <div class="text-center p-8 text-gray-400">
+
+  <div *ngIf="!loading && !contenuHtml" class="text-center p-8 text-gray-400">
     Aucun contenu disponible
   </div>
-  }
 
   <!-- Section QCM -->
-  @if ((qcm?.length ?? 0) > 0) {
-  <section class="mt-12 p-6 bg-[#1C1B3A] rounded-xl shadow-xl border border-[#8002FF] transition-all duration-300"
-    aria-label="Questionnaire à choix multiple">
+  <section *ngIf="qcm.length > 0" class="mt-12 p-6 bg-[#1C1B3A] rounded-xl shadow-xl border border-[#8002FF] transition-all duration-300"
+           aria-label="Questionnaire à choix multiple">
 
     <div class="flex justify-between items-center mb-4">
       <h3 class="text-xl font-semibold text-[#FFD700]">📝 QCM associé</h3>
@@ -36,13 +35,13 @@
     </div>
 
     <form (ngSubmit)="validerQCM()" #qcmForm="ngForm" novalidate class="space-y-6">
-
-      @for (question of qcm; track questionIndex; let questionIndex = $index) {
-      <fieldset [ngClass]="{
-              'bg-green-900/20 border-l-4 border-green-500 shadow-md': resultat !== null && questionEstJuste(questionIndex),
-              'bg-red-900/20 border-l-4 border-red-500 shadow-md': resultat !== null && !questionEstJuste(questionIndex),
-              'bg-[#0A092B] border border-[#8002FF]/40': resultat === null
-            }" class="rounded-xl p-6 transition-all duration-300 hover:scale-[1.01]">
+      <fieldset *ngFor="let question of qcm; let questionIndex = index"
+                [ngClass]="{
+                  'bg-green-900/20 border-l-4 border-green-500 shadow-md': resultat !== null && questionEstJuste(questionIndex),
+                  'bg-red-900/20 border-l-4 border-red-500 shadow-md': resultat !== null && !questionEstJuste(questionIndex),
+                  'bg-[#0A092B] border border-[#8002FF]/40': resultat === null
+                }"
+                class="rounded-xl p-6 transition-all duration-300 hover:scale-[1.01] relative">
 
         <legend class="text-lg font-bold text-white mb-4 flex justify-between items-center">
           <div class="flex items-center gap-2">
@@ -51,55 +50,50 @@
             </span>
             <span class="text-[#00FFC2]">{{ question.question || 'Question sans titre' }}</span>
           </div>
-          <!-- XP au coin droit -->
-          <span class="absolute text-[#FFD410] font-semibold text-2xl whitespace-nowrap ml-214 -mr-190 rotate-30">
+          <span class="absolute text-[#FFD410] font-semibold text-2xl whitespace-nowrap"
+                style="right: 1rem; top: 0.5rem;">
             {{ question.xp || 0 }} XP
           </span>
         </legend>
+
         <ul class="space-y-3">
-          @for (reponse of question.reponses; track reponseIndex; let reponseIndex = $index) {
-          <li>
+          <li *ngFor="let reponse of question.reponses; let reponseIndex = index">
             <label class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer"
-              [ngClass]="{
-                           'bg-green-400/80 text-green-900 font-semibold':
-                             resultat !== null && isBonneReponse(question, reponseIndex),
-                           'bg-red-400/80 text-red-900 line-through':
-                             resultat !== null && !questionEstJuste(questionIndex) && estCoche(questionIndex, reponseIndex) && !isBonneReponse(question, reponseIndex),
-                           'bg-white/10 text-white hover:bg-white/20':
-                             !(resultat !== null && isBonneReponse(question, reponseIndex)) && !(resultat !== null && !questionEstJuste(questionIndex) && estCoche(questionIndex, reponseIndex) && !isBonneReponse(question, reponseIndex))
-                         }">
-              <input type="radio" name="qcm_{{ questionIndex }}" [value]="reponseIndex"
-                [(ngModel)]="reponsesUtilisateur[questionIndex]" [disabled]="resultat !== null" />
+                   [ngClass]="{
+                     'bg-green-400/80 text-green-900 font-semibold': resultat !== null && isBonneReponse(question, reponseIndex),
+                     'bg-red-400/80 text-red-900 line-through': resultat !== null && !questionEstJuste(questionIndex) && estCoche(questionIndex, reponseIndex) && !isBonneReponse(question, reponseIndex),
+                     'bg-white/10 text-white hover:bg-white/20': !(resultat !== null && isBonneReponse(question, reponseIndex)) && !(resultat !== null && !questionEstJuste(questionIndex) && estCoche(questionIndex, reponseIndex) && !isBonneReponse(question, reponseIndex))
+                   }">
+              <input type="radio"
+                     name="qcm_{{ questionIndex }}"
+                     [value]="reponseIndex"
+                     [(ngModel)]="reponsesUtilisateur[questionIndex]"
+                     [disabled]="resultat !== null" />
               <span>{{ reponse }}</span>
             </label>
           </li>
-          }
         </ul>
-      </fieldset>
-      }
 
-      <!-- Unique bouton : « Valider » ou « Voir résultats » -->
-      @if (resultat === null) {
-      <button type="submit"
-        class="px-8 py-3 bg-[#8002FF] text-white font-semibold rounded-full shadow-lg hover:bg-[#5d02b4] active:scale-95 transition duration-200">
+      </fieldset>
+
+      <button *ngIf="resultat === null" type="submit"
+              class="px-8 py-3 bg-[#8002FF] text-white font-semibold rounded-full shadow-lg hover:bg-[#5d02b4] active:scale-95 transition duration-200">
         Valider mes réponses
       </button>
-      } @else {
-      <button type="button" (click)="showPopup = true"
-        class="px-8 py-3 bg-[#FFD700] text-[#0A092B] font-semibold rounded-full shadow-lg hover:bg-[#FFC400] active:scale-95 transition duration-200">
+
+      <button *ngIf="resultat !== null" type="button" (click)="showPopup = true"
+              class="px-8 py-3 bg-[#FFD700] text-[#0A092B] font-semibold rounded-full shadow-lg hover:bg-[#FFC400] active:scale-95 transition duration-200">
         Voir mes résultats
       </button>
-      }
     </form>
-
   </section>
-  }
 
-  <!-- Popup superposée -->
-  @if (showPopup && resultat !== null) {
-  <div class="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+  <!-- Popup résultats -->
+  <div *ngIf="showPopup && resultat !== null"
+       class="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
     <div class="bg-[#0A092B] p-6 rounded-xl border border-[#8002FF] max-w-md text-center text-white shadow-lg">
-      <p class="text-2xl font-bold mb-4" [ngClass]="{
+      <p class="text-2xl font-bold mb-4"
+         [ngClass]="{
            'text-green-400': resultat === (qcm?.length ?? 0),
            'text-yellow-400': resultat > 0 && resultat < (qcm?.length ?? 0),
            'text-red-400': resultat === 0
@@ -107,18 +101,15 @@
         {{ message }}
       </p>
       <p class="text-[#00FFC2] text-lg">
-        Résultat :
-        <strong>{{ resultat }} / {{ qcm?.length }}</strong>
-        bonne{{ resultat > 1 ? 's' : '' }} réponse{{ resultat > 1 ? 's' : '' }}.
+        Résultat : <strong>{{ resultat }} / {{ qcm?.length }}</strong> bonne{{ resultat > 1 ? 's' : '' }} réponse{{ resultat > 1 ? 's' : '' }}.
       </p>
       <p class="text-[#FFD700] text-lg mt-2 font-medium">
         Tu gagnes <strong>{{ xp }}</strong> XP !
       </p>
       <button class="mt-6 px-6 py-2 bg-[#8002FF] rounded-full font-semibold hover:bg-[#5d02b4]"
-        (click)="showPopup = false">
+              (click)="fermerPopup()">
         Fermer
       </button>
     </div>
   </div>
-  }
 </div>
