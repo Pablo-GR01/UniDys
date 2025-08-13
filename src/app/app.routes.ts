@@ -31,7 +31,7 @@ export const routes: Routes = [
   {path: 'accueilP', component: AccueilP},
   {path: 'aproposP', component: AproposP},
   {path: 'monespaceP', component: MonespaceP},
-  {path: 'coursdetail/:id', component: CoursDetailP},
+  {path: 'coursdetailP/:id', component: CoursDetailP},
   {path: 'coursP', component: ClasseCPP},
 
 

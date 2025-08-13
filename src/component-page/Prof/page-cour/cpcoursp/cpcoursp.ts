@@ -97,7 +97,7 @@ export class CPCOURSP implements OnInit {
   }
 
   goToCoursDetail(id: string): void {
-    this.router.navigate(['/coursdetail', id]);
+    this.router.navigate(['/coursdetailP', id]);
   }
 
   telechargerFichier(nomFichier: string): void {
