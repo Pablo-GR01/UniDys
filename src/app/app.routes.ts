@@ -10,9 +10,10 @@ import { AproposP } from '../page/page-user/prof/apropos-p/apropos-p';
 import { MonespaceP } from '../page/page-user/prof/monespace-p/monespace-p';
 import { InformationE } from '../page/page-user/eleve/information-e/information-e';
 import { CoursDetailP } from '../component-page/Prof/page-monespace/cours-detail-p/cours-detail-p';
-import { CoursdetailE } from '../component-page/Eleve/page-cour/cours-detail-e/cours-detail-e';
 import { ClasseCPP } from '../page/page-user/prof/classe-cp/classe-cp';
 import { ClasseCPE } from '../page/page-user/eleve/classe-cp/classe-cp';
+import { CoursdetailE } from '../component-page/Eleve/page-cour/cours-detail-e/cours-detail-e';
+
 
 
 
@@ -31,7 +32,7 @@ export const routes: Routes = [
   {path: 'accueilP', component: AccueilP},
   {path: 'aproposP', component: AproposP},
   {path: 'monespaceP', component: MonespaceP},
-  {path: 'coursdetailP/:id', component: CoursDetailP},
+  {path: 'coursdetail/:id', component: CoursDetailP},
   {path: 'coursP', component: ClasseCPP},
 
 
@@ -42,7 +43,7 @@ export const routes: Routes = [
 
   {path: 'InfoE', component: InformationE},
   {path: 'coursE', component: ClasseCPE},
-  {path: 'coursdetailE/:id',component: CoursdetailE}
+  {path: 'coursdetailE/:id', component: CoursdetailE}
 
 ];
 

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Cours } from '../../../../model/cours';
 import { CoursService } from '../../../../services/cours.service';
 import { RouterLink, Router } from '@angular/router';

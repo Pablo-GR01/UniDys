@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { HeaderP } from "../../../../component/header-p/header-p";
 import { FormsModule } from '@angular/forms';
@@ -17,7 +17,7 @@ interface QcmQuestion {
   templateUrl: './cours-detail-p.html',
   styleUrls: ['./cours-detail-p.css'],
   standalone: true,
-  imports: [CommonModule, HeaderP, FormsModule],
+  imports: [CommonModule, HeaderP, FormsModule,HttpClientModule],
 })
 export class CoursDetailP implements OnInit {
   contenuHtml: SafeHtml | null = null;

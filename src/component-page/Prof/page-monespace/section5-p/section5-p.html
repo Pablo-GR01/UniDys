@@ -36,18 +36,12 @@
   <div
     class="relative bg-[#020118] text-white border-4 border-[#8002FF] rounded-xl shadow-xl w-full max-w-4xl p-6 flex flex-col md:flex-row gap-8 max-h-[90vh] overflow-auto">
 
-    <!-- BOUTON FERMETURE (CROIX) -->
-    <button (click)="fermerPopup()"
-      class="absolute top-2 right-4 text-white hover:text-red-600 text-3xl leading-none z-50">
-      &times;
-    </button>
+    <button (click)="fermerPopup()" class="absolute top-2 right-4 text-white hover:text-red-600 text-3xl leading-none z-50">&times;</button>
 
-    <!-- Logo -->
     <div class="flex items-center justify-center md:w-1/2">
       <img src="/assets/LOGO.png" alt="Logo UniDys" class="max-w-[200px] h-auto" />
     </div>
 
-    <!-- Formulaire -->
     <div class="md:w-1/2">
       <h2 class="text-2xl font-bold mb-6 text-center md:text-left">Laisser un avis</h2>
 
@@ -67,7 +61,6 @@
         </button>
       </div>
     </div>
-
   </div>
 </div>
 
@@ -76,31 +69,25 @@
   <div
     class="bg-[#020118] rounded-2xl shadow-xl text-white w-full max-w-5xl flex flex-col md:flex-row max-h-[90vh] overflow-hidden border-6 border-[#8002FF]">
 
-    <!-- Logo -->
-    <div
-      class="w-full md:w-1/3 bg-[#020118] flex items-center justify-center rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none p-6">
+    <div class="w-full md:w-1/3 bg-[#020118] flex items-center justify-center rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none p-6">
       <img src="/assets/LOGO.png" alt="Logo UniDys" class="max-w-full max-h-[200px] object-contain" />
     </div>
 
-    <!-- Formulaire -->
     <div class="w-full md:w-2/3 p-4 md:p-6 flex flex-col overflow-y-auto">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-lg sm:text-xl font-bold">Nouveau cours</h2>
-        <button (click)="fermerPopupCours()"
-          class="text-white hover:text-red-600 text-3xl leading-none">&times;</button>
+        <button (click)="fermerPopupCours()" class="text-white hover:text-red-600 text-3xl leading-none">&times;</button>
       </div>
 
-      <!-- Image matière -->
       <div *ngIf="imageMatiere" class="mb-4">
         <img [src]="imageMatiere" alt="Image matière" class="w-16 h-16 object-cover rounded" />
       </div>
 
-      <!-- Champs -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input [(ngModel)]="titreCours" type="text" placeholder="Titre du cours"
           class="border-2 border-[#8002FF] rounded px-2 py-2" />
         <input [(ngModel)]="nomProf" type="text" placeholder="Nom du professeur"
-          class="border-2 border-[#8002FF] rounded px-2 py-2" />
+          class="border-2 border-[#8002FF] rounded px-2 py-2 text-gray-600 focus:hidden" readonly />
 
         <select [(ngModel)]="niveau" class="border-2 text-white border-[#8002FF] rounded px-2 py-2">
           <option class="text-black" value="" disabled selected>Niveau</option>
@@ -123,7 +110,6 @@
         <input [(ngModel)]="lienYoutube" type="text" placeholder="Lien Youtube (optionnel)"
           class="col-span-1 md:col-span-2 border-2 border-[#8002FF] rounded px-2 py-2" />
 
-        <!-- Message d'erreur PDF -->
         <p *ngIf="messageErreurPdf" class="text-red-500 text-sm mt-2 col-span-2">
           {{ messageErreurPdf }}
         </p>
@@ -132,14 +118,21 @@
         <p *ngIf="pdfFile" class="text-sm col-span-2">📄 Fichier : {{ pdfFile.name }}</p>
       </div>
 
+      <!-- Badge QCM créé -->
+      <div class="mt-2 flex items-center gap-2">
+        <button *ngIf="qcms.length > 0"
+                class="bg-green-800 text-white px-3 py-1 rounded-full text-sm cursor-default hover:scale-105 transition duration-200">
+          {{ qcms.length }} QCM créé{{ qcms.length > 1 ? 's' : '' }}
+        </button>
+      </div>
+      
+
       <div class="mt-4">
-        <button (click)="ouvrirPopupQCM()" class="bg-[#8002FF] hover:bg-[#3F0255] px-4 py-2 rounded">+ Ajouter des
-          QCM</button>
+        <button (click)="ouvrirPopupQCM()" class="bg-[#8002FF] hover:bg-[#3F0255] px-4 py-2 rounded">+ Ajouter des QCM</button>
       </div>
 
       <div class="mt-6 text-right">
-        <button (click)="validerCours()" class="bg-[#8002FF] hover:bg-[#3F0255] px-6 py-2 rounded">Valider le
-          cours</button>
+        <button (click)="validerCours()" class="bg-[#8002FF] hover:bg-[#3F0255] px-6 py-2 rounded">Valider le cours</button>
       </div>
     </div>
   </div>
@@ -156,29 +149,22 @@
     </div>
 
     <div *ngFor="let qcm of qcms; let i = index" class="border rounded p-4 mb-4">
-
-      <!-- Question -->
       <input [(ngModel)]="qcm.question" placeholder="Votre Question"
         class="w-full text-lg border-b-2 border-[#8002FF] px-2 py-2 mb-4" />
 
-
-      <!-- Liste des Réponses avec bouton supprimer -->
       <div *ngFor="let rep of qcm.reponses; let j = index; trackBy: trackByIndex" class="mb-2 flex items-center gap-2">
         <input [(ngModel)]="qcm.reponses[j]" placeholder="Réponse {{ j + 1 }}"
           class="w-full border-2 border-[#8002FF] rounded px-2 py-2" />
-
         <button type="button" (click)="supprimerReponse(i, j)" class="text-sm text-red-500 hover:text-red-700"
           [attr.aria-label]="'Supprimer la réponse ' + (j + 1)">
           <i class="fas fa-minus"></i>
         </button>
       </div>
 
-      <!-- Ajouter des Réponses -->
       <button (click)="ajouterReponse(i)" class="text-sm text-green-400 mt-2">
         <i class="fas fa-plus"></i> Ajouter réponse
       </button>
 
-      <!-- Bonne réponse -->
       <label class="block mt-4 text-sm text-white">Bonne réponse :
         <select [(ngModel)]="qcm.bonneReponse"
           class="ml-2 border border-[#8002FF] px-2 py-1 rounded bg-transparent text-white">
@@ -188,21 +174,15 @@
         </select>
       </label>
 
-      <!-- XP à attribuer -->
       <label class="block mt-4 text-sm text-white">XP à attribuer :</label>
       <div class="flex items-center space-x-4 mt-1">
-        <!-- Bouton - -->
         <button type="button" class="pt-1 pl-2 pb-1 pr-2 bg-[#8002FF] text-white rounded-2xl hover:bg-[#3F0255]"
           (click)="decrementXp(qcm)">
           <i class="fas fa-minus"></i>
         </button>
-
-        <!-- Input XP modifiable -->
         <input type="number" min="0" [ngModel]="qcm.xp" (ngModelChange)="validerXp(qcm)"
           class="w-20 text-center text-xl font-bold rounded border-2 border-[#8002FF] bg-[#020118] text-white"
           placeholder="XP" />
-
-        <!-- Bouton + -->
         <button type="button" class="pt-1 pl-2 pb-1 pr-2 bg-[#8002FF] text-white rounded-2xl hover:bg-[#3F0255]"
           (click)="incrementXp(qcm)">
           <i class="fas fa-plus"></i>
@@ -213,7 +193,6 @@
         class="bg-[#8002FF] hover:bg-[#3F0255] mt-4 px-4 py-2 rounded text-white">Supprimer cette question</button>
     </div>
 
-    <!-- Boutons bas de popup -->
     <button (click)="ajouterQCM()" class="bg-[#8002FF] hover:bg-[#3F0255] px-4 py-2 rounded mb-4 mr-10">
       + Ajouter un QCM
     </button>
