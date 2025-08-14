@@ -13,4 +13,16 @@ router.delete('/users/:id', userController.deleteUserById);
 
 router.post('/users/:id/ajouterXP', userController.addXP);
 
+
+router.get('/counts', async (req, res) => {
+    try {
+      const totalUsers = await User.countDocuments();
+      const totalProfessors = await User.countDocuments({ role: 'Professeur' });
+      const totalStudents = await User.countDocuments({ role: 'Élève' });
+  
+      res.json({ totalUsers, totalProfessors, totalStudents });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  });
 module.exports = router;

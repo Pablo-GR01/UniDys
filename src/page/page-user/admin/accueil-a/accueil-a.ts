@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
 import { HeaderA } from '../../../../component/header-a/header-a';
-import { DashboardA } from '../../../../component-page/Admin/dashboard-a/dashboard-a';
+import { User } from "../../../../component-page/Admin/user/user";
+
 
 @Component({
   selector: 'app-accueil-a',
-  imports: [HeaderA,DashboardA],
+  imports: [HeaderA, User, ],
   templateUrl: './accueil-a.html',
   styleUrl: './accueil-a.css'
 })

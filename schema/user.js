@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const utilisateurSchema = new mongoose.Schema({
   nom: { type: String, required: true },
@@ -11,11 +12,29 @@ const utilisateurSchema = new mongoose.Schema({
   xp: { type: Number, default: 0 },
 });
 
+// Génération des initiales avant sauvegarde
 utilisateurSchema.pre('save', function (next) {
   if (this.nom && this.prenom) {
     this.initiale = (this.prenom[0] + this.nom[0]).toUpperCase();
   }
   next();
 });
+
+// Hachage du mot de passe avant sauvegarde
+utilisateurSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Comparer un mot de passe
+utilisateurSchema.methods.comparePassword = function (password) {
+  return bcrypt.compare(password, this.password);
+};
 
 module.exports = mongoose.model('User', utilisateurSchema);
