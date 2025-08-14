@@ -24,15 +24,18 @@ interface QcmResult {
 })
 export class LevelE implements OnInit, OnDestroy {
   user: User | null = null;
-  palier: string = 'Débutant';
+  level: number = 1;
   progression: number = 0;
   xpRestant: number = 0;
-  level: number = 1;
+  palier: string = 'Débutant';
   isLoading = true;
   errorMessage: string | null = null;
   private subscription: Subscription | null = null;
 
   derniersXp: QcmResult[] = [];
+  totalXp: number = 0; // nouvelle propriété pour le total des XP
+
+  showDerniersXp: boolean = false;
 
   constructor(private http: HttpClient) {}
 
@@ -47,6 +50,7 @@ export class LevelE implements OnInit, OnDestroy {
             this.user = user;
             this.mettreAJourPalier();
             this.getDerniersXp(email);
+            this.calculerTotalXp(email); // <-- récupère le total
             this.errorMessage = null;
           } else {
             this.errorMessage = 'Utilisateur introuvable.';
@@ -81,6 +85,18 @@ export class LevelE implements OnInit, OnDestroy {
       this.derniersXp = results
         .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
         .slice(0, 5);
+    });
+  }
+
+  // Nouvelle méthode pour calculer le total des XP
+  private calculerTotalXp(email: string): void {
+    const url = `http://localhost:3000/api/unidys/qcmresults/${email}`;
+    this.http.get<QcmResult[]>(url).pipe(
+      catchError(() => of([]))
+    ).subscribe(results => {
+      this.totalXp = results
+        .filter(r => r && r.xpGagne)
+        .reduce((acc, r) => acc + r.xpGagne, 0);
     });
   }
 
@@ -124,13 +140,10 @@ export class LevelE implements OnInit, OnDestroy {
     return 600;
   }
 
-  getImageForPalier(): string {
-    switch (this.palier) {
-      case 'Débutant': return 'assets/paliers/debutant.png';
-      case 'Intermédiaire': return 'assets/paliers/intermediaire.png';
-      case 'Avancé': return 'assets/paliers/avance.png';
-      case 'Expert': return 'assets/paliers/expert.png';
-      default: return 'assets/paliers/debutant.png';
-    }
-  }
+  // Popup méthodes
+  ouvrirPopupDerniersXp(): void { this.showDerniersXp = true; }
+  fermerPopupDerniersXp(): void { this.showDerniersXp = false; }
+
+  get deuxDerniersXp(): QcmResult[] { return this.derniersXp.slice(0, 2); }
 }
+

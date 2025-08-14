@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { Cours } from '../model/cours';
 
 @Injectable({
@@ -8,6 +9,7 @@ import { Cours } from '../model/cours';
 })
 export class CoursService {
   private apiUrl = 'http://localhost:3000/api/cours';
+  private apiUrl1 = 'http://localhost:3000/api/unidys/qcm/fait'; // endpoint pour QCM fait
 
   constructor(private http: HttpClient) { }
 
@@ -39,5 +41,11 @@ export class CoursService {
     return this.http.get<Cours[]>(this.apiUrl);
   }
 
-
+  hasUserDoneQcm(coursId: string, userId: string): Observable<boolean> {
+    return this.http.get<{fait: boolean}>(`${this.apiUrl}/${coursId}/${userId}`).pipe(
+      map(res => res.fait), 
+      catchError(() => of(false))
+    );
+  }
+  
 }
