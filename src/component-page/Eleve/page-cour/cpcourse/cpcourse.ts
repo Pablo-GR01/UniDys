@@ -124,4 +124,9 @@ export class CPCOURSE implements OnInit {
         return 'assets/img/default.jpg';
     }
   }
+
+  isActive(niveau: string | null): boolean {
+    return this.niveauActif === niveau;
+  }
+  
 }
