@@ -14,7 +14,7 @@ const coursHtmlRoute = require('./backend/routes/cours-html.route');
 const qcmRoutes = require('./backend/routes/qcm.routes');
 
 // route Admin
-const createAdminRoute = require('./backend/routes/createAdmin');
+// const createAdminRoute = require('./createAdmin');
 
 const app = express();
 const PORT = 3000;
@@ -46,7 +46,7 @@ app.use('/api/cours/html', coursHtmlRoute);
 app.use('/api/qcm', qcmRoutes);
 
 // routes Admin
-app.use('/api/setup', createAdminRoute);
+// app.use('/api/setup', createAdminRoute);
 
 // Démarrage serveur
 app.listen(PORT, () => {
