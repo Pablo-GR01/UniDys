@@ -2,25 +2,17 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Icon } from '../../component/icon/icon';
 import { Logo } from '../../component/logo/logo';
-import { UserSessionService } from '../../services/userService/user-session.service';
-import { UserDataService, Utilisateur } from '../../services/userService/user-data.service';
+import { AuthService } from '../../services/userService/Auth.Service';
 
 @Component({
   selector: 'app-connexion',
   templateUrl: './connexion.html',
   styleUrls: ['./connexion.css'],
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    RouterLink,
-    HttpClientModule,
-    Icon,
-    Logo
-  ],
+  imports: [CommonModule, FormsModule, RouterLink, HttpClientModule, Icon, Logo],
 })
 export class Connexion {
   passwordVisible = false;
@@ -37,9 +29,9 @@ export class Connexion {
 
   constructor(
     private router: Router,
-    private userSession: UserSessionService,
-    private userData: UserDataService
-  ) {}
+    private http: HttpClient,
+    private authService: AuthService
+  ) { }
 
   togglePasswordVisibility(): void {
     this.passwordVisible = !this.passwordVisible;
@@ -57,25 +49,34 @@ export class Connexion {
     }
 
     this.isLoading = true;
+
     const { email, password } = this.connexionData;
 
-    this.userData.loginUser(email, password).subscribe(
-      (user: Utilisateur) => {
-        // Générer les initiales si manquantes
+    this.http.post('http://localhost:3000/api/unidys/login', { email, password }).subscribe(
+      (user: any) => {
         if (!user.initiale && user.prenom && user.nom) {
           user.initiale = (user.prenom[0] ?? '').toUpperCase() + (user.nom[0] ?? '').toUpperCase();
         }
 
-        // Stocker l'utilisateur dans la session
-        this.userSession.login(user);
+        // On stocke l'utilisateur dans le service
+        this.authService.setUser(user);
 
-        this.message = `Bienvenue sur UniDys, ${user.prenom} !`;
+        // On enregistre en localStorage (pour compatibilité avec ton code existant)
+        localStorage.setItem('prenom', user.prenom);
+        localStorage.setItem('nom', user.nom);
+        localStorage.setItem('email', user.email);
+        localStorage.setItem('xp', user.xp?.toString() ?? '0');
 
-        // Déterminer la redirection selon le rôle
-        this.redirectionApresConnexion =
-          user.role === 'admin' ? '/accueilA' :
-          user.role === 'prof' ? '/accueilP' :
-          '/accueilE';
+        this.message = 'Bienvenue sur UniDys !';
+
+        // Redirection selon le rôle
+        if (user.role === 'admin') {
+          this.redirectionApresConnexion = '/accueilA';
+        } else if (user.role === 'prof') {
+          this.redirectionApresConnexion = '/accueilP';
+        } else {
+          this.redirectionApresConnexion = '/accueilE';
+        }
 
         setTimeout(() => {
           this.router.navigate([this.redirectionApresConnexion!]);
@@ -85,7 +86,7 @@ export class Connexion {
         }, 1500);
       },
       (err) => {
-        this.errorMessage = err.error?.message || 'Erreur serveur';
+        this.errorMessage = err.error.message || 'Erreur serveur';
         this.isLoading = false;
         console.error('Erreur de connexion :', err);
       }
