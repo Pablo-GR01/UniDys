@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Logo } from '../../component/logo/logo';
 import { Icon } from '../../component/icon/icon';
-import { UserService } from '../../services/user.service';
+import { AuthService } from '../../services/userService/Auth.Service';
 
 interface InscriptionData {
   nom: string;
@@ -38,20 +38,16 @@ export class Inscription implements OnInit, OnDestroy {
   };
 
   passwordVisible = false;
-
-  // ✅ Deux messages distincts
   message: string | null = null;
-
 
   constructor(
     private http: HttpClient,
     private router: Router,
-    private userService: UserService
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     document.body.style.overflow = 'hidden';
-
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');
     if (token) {
@@ -104,26 +100,15 @@ export class Inscription implements OnInit, OnDestroy {
     const initiale = (this.inscriptionData.prenom[0] ?? '').toUpperCase() +
                      (this.inscriptionData.nom[0] ?? '').toUpperCase();
 
-    const payload = {
-      ...this.inscriptionData,
-      initiale,
-    };
-
-    if (payload.role !== 'prof') {
-      delete payload.codeProf;
-    }
+    const payload = { ...this.inscriptionData, initiale };
+    if (payload.role !== 'prof') delete payload.codeProf;
 
     this.http.post('http://localhost:3000/api/unidys/users', payload).subscribe({
       next: (res: any) => {
-        // ✅ Message personnalisé selon le rôle
-        if (payload.role === 'prof') {
-          this.message= `Bienvenue sur UniDys !`;
-        } else if (payload.role === 'eleve') {
-          this.message = `Bienvenue sur UniDys !`;
-        }
+        this.message = `Bienvenue sur UniDys !`;
 
-        // ✅ Stocker l'utilisateur
-        this.userService.setUser(res);
+        // ✅ Stocker l'utilisateur via AuthService
+        this.authService.setUser(res);
 
         // Réinitialiser le formulaire
         this.inscriptionData = {
@@ -136,13 +121,12 @@ export class Inscription implements OnInit, OnDestroy {
           initiale: '',
         };
 
-        // ✅ Redirection selon le rôle
+        // Redirection selon le rôle
         const redirection =
           payload.role === 'prof' ? '/accueilP' :
           payload.role === 'admin' ? '/accueilA' :
           '/accueilE';
 
-        // ✅ Attente avant redirection
         setTimeout(() => {
           this.router.navigate([redirection]);
         }, 1500);
