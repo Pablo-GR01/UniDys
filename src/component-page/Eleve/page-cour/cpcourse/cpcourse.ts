@@ -1,21 +1,22 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { Cours } from '../../../../model/cours';
-import { CoursService } from '../../../../services/cours.service';
-import { RouterLink, Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { catchError, switchMap, map } from 'rxjs/operators';
+
+import { Cours } from '../../../../model/cours';
+import { CoursApiService } from '../../../../services/coursService/CoursApi.Service';
+import { CoursQcmService } from '../../../../services/coursService/CoursQcm.Service';
 
 @Component({
   selector: 'app-cpcourse',
   standalone: true,
   templateUrl: './cpcourse.html',
   styleUrls: ['./cpcourse.css'],
-  imports: [CommonModule, FormsModule, HttpClientModule, RouterLink],
-  providers: [CoursService]
+  imports: [CommonModule, FormsModule, RouterLink],
+  providers: [CoursApiService, CoursQcmService]
 })
 export class CPCOURSE implements OnInit {
   cours: Cours[] = [];
@@ -27,47 +28,52 @@ export class CPCOURSE implements OnInit {
   pdfUrlSanitized: SafeResourceUrl | null = null;
 
   constructor(
-    private coursService: CoursService,
+    private coursApi: CoursApiService,
+    private coursQcm: CoursQcmService,
     private sanitizer: DomSanitizer,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    const userId = localStorage.getItem('userId'); // id utilisateur connecté
-  
-    this.coursService.getCours().subscribe({
-      next: (data) => {
-        this.cours = data;
-  
+    const userId = localStorage.getItem('userId');
+
+    this.coursApi.getCours().pipe(
+      switchMap(coursList => {
+        this.cours = coursList;
+
         if (!userId) {
           this.cours.forEach(c => c.qcmsFait = false);
-          this.coursFiltres = [...this.cours];
-          return;
+          return of(this.cours);
         }
-  
-        // On récupère tous les états QCM avant de mettre à jour le template
-        const qcmChecks = this.cours.map(cours => {
-          if (cours.qcms && cours.qcms.length > 0) {
-            return this.coursService.hasUserDoneQcm(cours._id, userId).toPromise().then(fait => {
-              cours.qcmsFait = fait;
-            });
+
+        // On crée un tableau d'observables pour vérifier les QCM
+        const qcmChecks = this.cours.map(c => {
+          if (c.qcms && c.qcms.length > 0) {
+            return this.coursQcm.hasUserDoneQcm(c._id, userId).pipe(
+              map(fait => {
+                c.qcmsFait = fait;
+                return c;
+              }),
+              catchError(() => {
+                c.qcmsFait = false;
+                return of(c);
+              })
+            );
           } else {
-            cours.qcmsFait = false;
-            return Promise.resolve();
+            c.qcmsFait = false;
+            return of(c);
           }
         });
-  
-        Promise.all(qcmChecks).then(() => {
-          this.coursFiltres = [...this.cours]; // force la mise à jour du template
-        });
+
+        return forkJoin(qcmChecks);
+      })
+    ).subscribe({
+      next: () => {
+        this.coursFiltres = [...this.cours]; // force la mise à jour du template
       },
-      error: (err) => {
-        console.error('Erreur de chargement :', err);
-      }
+      error: (err) => console.error('Erreur de chargement :', err)
     });
   }
-  
-  
 
   filtrerParNiveau(niveau: string) {
     this.niveauActif = niveau;

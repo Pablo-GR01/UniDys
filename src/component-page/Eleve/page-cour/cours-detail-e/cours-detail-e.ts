@@ -5,7 +5,7 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HeaderE } from '../../../../component/header-e/header-e';
-import { UserService } from '../../../../services/user.service';
+import { ProfileService } from '../../../../services/userService/Profile.Service';
 
 interface QcmQuestion {
   question: string;
@@ -19,7 +19,7 @@ interface QcmQuestion {
   templateUrl: './cours-detail-e.html',
   styleUrls: ['./cours-detail-e.css'],
   standalone: true,
-  imports: [CommonModule, HeaderE, FormsModule, HttpClientModule],
+  imports: [CommonModule, HeaderE, FormsModule,HttpClientModule],
 })
 export class CoursdetailE implements OnInit {
   contenuHtml: SafeHtml | null = null;
@@ -43,18 +43,14 @@ export class CoursdetailE implements OnInit {
     private route: ActivatedRoute,
     private http: HttpClient,
     private sanitizer: DomSanitizer,
-    private userService: UserService
+    private profileService: ProfileService
   ) {}
 
   ngOnInit() {
-    // Récupérer l'ID du cours depuis l'URL
     this.idCours = this.route.snapshot.paramMap.get('id');
-
-    // Récupérer l'ID de l'utilisateur depuis le UserService
-    const user = this.userService.getUser();
+    const user = this.profileService.getUser();
     this.userId = user?._id || null;
 
-    // Charger le contenu du cours
     this.chargerCours();
   }
 
@@ -62,6 +58,7 @@ export class CoursdetailE implements OnInit {
     if (!this.idCours) return;
 
     this.loading = true;
+
     this.http
       .get<{ html: string; qcm: QcmQuestion[] }>(
         `${this.apiBase}/api/cours/complet/${this.idCours}`
@@ -72,8 +69,7 @@ export class CoursdetailE implements OnInit {
           this.qcm = qcm;
           this.reponsesUtilisateur = qcm.map(() => null);
 
-          // Si utilisateur connecté, vérifier si QCM déjà fait
-          if (this.userId) {
+          if (this.userId && qcm.length > 0) {
             this.chargerEtatQcm();
           } else {
             this.loading = false;
@@ -98,8 +94,6 @@ export class CoursdetailE implements OnInit {
             this.reponsesSauvegardees = res.reponses || [];
             this.resultat = res.score ?? 0;
             this.xp = res.xpGagne ?? 0;
-
-            // Afficher les réponses précédentes
             this.reponsesUtilisateur = this.reponsesSauvegardees.map(r => r);
           }
           this.loading = false;
@@ -122,9 +116,8 @@ export class CoursdetailE implements OnInit {
   }
 
   validerQCM(): void {
-    if (this.qcmDejaFait) return; // ne peut valider qu'une seule fois
+    if (this.qcmDejaFait) return;
 
-    // Vérifier que toutes les questions ont été répondues
     for (let i = 0; i < this.qcm.length; i++) {
       if (this.reponsesUtilisateur[i] === null) {
         alert(`Réponds à la question ${i + 1}`);
@@ -157,7 +150,6 @@ export class CoursdetailE implements OnInit {
 
     this.showPopup = true;
 
-    // Sauvegarder immédiatement sur le serveur
     if (this.userId) {
       this.sauvegarderQCM();
     }
@@ -165,15 +157,12 @@ export class CoursdetailE implements OnInit {
 
   fermerPopup(): void {
     this.showPopup = false;
-
-    // Ajouter XP à l'utilisateur
     if (this.userId && this.xp > 0) {
-      this.http
-        .post(`${this.apiBase}/api/users/${this.userId}/ajouterXP`, { xp: this.xp })
-        .subscribe({
-          next: () => console.log('✅ XP ajouté avec succès'),
-          error: (err) => console.error('❌ Erreur ajout XP', err),
-        });
+      // Ajouter XP via ProfileService
+      this.profileService.ajouterXP(this.xp);
+
+      this.http.post(`${this.apiBase}/api/users/${this.userId}/ajouterXP`, { xp: this.xp })
+        .subscribe({ next: () => {}, error: console.error });
     }
   }
 
