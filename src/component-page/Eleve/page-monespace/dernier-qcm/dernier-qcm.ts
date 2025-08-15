@@ -1,26 +1,43 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-dernier-qcm',
-  imports: [CommonModule,FormsModule],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './dernier-qcm.html',
-  styleUrl: './dernier-qcm.css'
+  styleUrls: ['./dernier-qcm.css'] // corrige styleUrl -> styleUrls
 })
 export class DerniersQCM implements OnInit {
 
   derniersQcm: any[] = [];
 
-  constructor() { }
+  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    this.derniersQcm = [
-      { titre: 'QCM Mathématiques - Niveau 3', score: 8, totalPoints: 10, date: '2025-08-12' },
-      { titre: 'QCM Français - Niveau 2', score: 7, totalPoints: 10, date: '2025-08-10' },
-      { titre: 'QCM Sciences - Niveau 1', score: 9, totalPoints: 10, date: '2025-08-08' }
-    ];
-  }
+    // 🔹 Récupération de l'userId depuis localStorage
+    const user = localStorage.getItem('user');
+    const userId = user ? JSON.parse(user)._id : null;
 
+    if (!userId) {
+      console.warn('Aucun userId trouvé');
+      return;
+    }
+
+    this.http.get<any[]>(`/api/qcm/user/${userId}`).subscribe({
+      next: (data) => {
+        this.derniersQcm = data.map(qcm => ({
+          titre: qcm.coursId, // ou un titre plus clair depuis ton backend
+          score: qcm.score,
+          xpGagne: qcm.xpGagne,
+          date: qcm.createdAt
+        }));
+      },
+      error: (err) => {
+        console.error('Erreur lors de la récupération des QCM', err);
+      }
+    });
+  }
 }
