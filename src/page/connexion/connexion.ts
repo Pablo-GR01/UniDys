@@ -19,8 +19,8 @@ export class Connexion {
   isLoading = false;
 
   message: string | null = null;
-  redirectionApresConnexion: string | null = null;
   errorMessage: string | null = null;
+  redirectionApresConnexion: string | null = null;
 
   connexionData = {
     email: '',
@@ -31,7 +31,7 @@ export class Connexion {
     private router: Router,
     private http: HttpClient,
     private authService: AuthService
-  ) { }
+  ) {}
 
   togglePasswordVisibility(): void {
     this.passwordVisible = !this.passwordVisible;
@@ -47,49 +47,50 @@ export class Connexion {
       alert('Veuillez remplir correctement le formulaire.');
       return;
     }
-
+  
     this.isLoading = true;
-
     const { email, password } = this.connexionData;
-
-    this.http.post('http://localhost:3000/api/unidys/login', { email, password }).subscribe(
-      (user: any) => {
+  
+    this.http.post('http://localhost:3000/api/unidys/login', { email, password }).subscribe({
+      next: (user: any) => {
+        // Ajouter initiales si manquantes
         if (!user.initiale && user.prenom && user.nom) {
-          user.initiale = (user.prenom[0] ?? '').toUpperCase() + (user.nom[0] ?? '').toUpperCase();
+          user.initiale =
+            (user.prenom[0] ?? '').toUpperCase() +
+            (user.nom[0] ?? '').toUpperCase();
         }
-
-        // On stocke l'utilisateur dans le service
+  
+        // Stocker l'utilisateur
         this.authService.setUser(user);
-
-        // On enregistre en localStorage (pour compatibilité avec ton code existant)
-        localStorage.setItem('prenom', user.prenom);
-        localStorage.setItem('nom', user.nom);
-        localStorage.setItem('email', user.email);
-        localStorage.setItem('xp', user.xp?.toString() ?? '0');
-
+        localStorage.setItem('user', JSON.stringify(user));
+  
         this.message = 'Bienvenue sur UniDys !';
-
-        // Redirection selon le rôle
-        if (user.role === 'admin') {
-          this.redirectionApresConnexion = '/accueilA';
-        } else if (user.role === 'prof') {
-          this.redirectionApresConnexion = '/accueilP';
-        } else {
-          this.redirectionApresConnexion = '/accueilE';
-        }
-
+  
+        // Déterminer la route de redirection avec fallback sûr
+        const routeMap: { [key: string]: string } = {
+          admin: '/accueilA',
+          prof: '/accueilP',
+          eleve: '/accueilE'
+        };
+        const role = user.role?.toLowerCase() || 'eleve';
+        this.redirectionApresConnexion = routeMap[role] || '/accueilE';
+  
+        // Redirection après délai
         setTimeout(() => {
-          this.router.navigate([this.redirectionApresConnexion!]);
+          const route = this.redirectionApresConnexion ?? '/accueilE';
+          this.router.navigate([route]);
           this.message = null;
           this.redirectionApresConnexion = null;
           this.isLoading = false;
-        }, 1500);
+        }, 1200);
+        
       },
-      (err) => {
-        this.errorMessage = err.error.message || 'Erreur serveur';
+      error: (err) => {
+        this.errorMessage = err.error?.message || 'Erreur serveur';
         this.isLoading = false;
         console.error('Erreur de connexion :', err);
       }
-    );
+    });
   }
+  
 }
