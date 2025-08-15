@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
-import { UserService } from '../../../../services/user.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { Icon } from '../../../../component/icon/icon';
+import { ProfileService } from '../../../../services/userService/Profile.Service';
 
 @Component({
   selector: 'app-section5-e',
@@ -22,16 +21,27 @@ export class Section5E {
   nom: string = '';
   avisMessage: string = '';
 
-  constructor(public userService: UserService, private http: HttpClient) {}
+  constructor(
+    public profileService: ProfileService,
+    private http: HttpClient
+  ) {
+    // Préremplir depuis le profil connecté
+    const user = this.profileService.getUser();
+    this.prenom = user?.prenom || '';
+    this.nom = user?.nom || '';
+  }
 
   ouvrirPopup() {
     this.popupOuvert = true;
+    // Recharger les infos utilisateur si besoin
+    const user = this.profileService.getUser();
+    this.prenom = user?.prenom || '';
+    this.nom = user?.nom || '';
+    this.avisMessage = '';
   }
 
   fermerPopup() {
     this.popupOuvert = false;
-    this.prenom = '';
-    this.nom = '';
     this.avisMessage = '';
   }
 
@@ -65,7 +75,7 @@ export class Section5E {
           return throwError(() => err);
         })
       )
-      .subscribe((res: any) => {
+      .subscribe(() => {
         alert('Merci pour ton avis !');
         this.fermerPopup();
       });

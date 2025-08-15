@@ -1,62 +1,114 @@
 <app-icon></app-icon>
 
 <!-- SECTION UTILISATEUR -->
-<div class="flex items-center gap-4 p-6 bg-[#0A072E] border-4 border-[#8002FF] text-white rounded-xl max-w-md mx-4 mt-10">
-
+<div
+  class="flex items-center gap-5 p-6 bg-[#0A072E]/90 border-4 border-[#8002FF] text-white rounded-2xl shadow-lg shadow-[#8002FF]/30 max-w-md mx-4 mt-10 backdrop-blur-md transition-transform duration-300 hover:scale-[1.02]"
+>
   <!-- Initiales -->
-  <div class="flex items-center justify-center border-2 border-[#8002FF] rounded-full font-black w-16 h-16 sm:w-20 sm:h-20 lg:w-14 lg:h-14 text-xl sm:text-2xl lg:text-2xl">
-    {{ userService.getInitiales() || 'IN' }}
+  <div
+    class="flex items-center justify-center border-2 border-[#8002FF] bg-[#150A40] rounded-full font-black w-16 h-16 sm:w-20 sm:h-20 lg:w-16 lg:h-16 text-xl sm:text-2xl lg:text-xl transition-transform duration-300 hover:rotate-3 hover:scale-105"
+  >
+  {{ profileService.getInitiales() || 'IN' }}
   </div>
 
   <!-- Bonjour + nom -->
-  <div class="font-bold text-lg sm:text-xl lg:text-2xl">
-    Bonjour <span class="ml-2 text-[#8002FF]"> {{ userService.getNomComplet() || 'Invité' }}</span>
+  <div class="flex flex-col leading-tight">
+    <span class="text-lg text-gray-300">Bonjour</span>
+    <span
+      class="font-bold text-xl sm:text-2xl lg:text-xl text-[#A36BFF] drop-shadow-sm"
+    >
+    {{ profileService.getNomComplet() || 'Invité' }}
+    </span>
   </div>
 
+  <!-- Bouton "Laisser un avis" -->
+  <button
+    (click)="ouvrirPopup()"
+    class="ml-auto flex items-center gap-2 bg-gradient-to-r from-[#8002FF] to-[#5A03B0] hover:from-[#5A03B0] hover:to-[#3A007A] text-white px-4 py-2 rounded-lg shadow-md hover:shadow-lg hover:shadow-[#8002FF]/40 transition-all duration-300"
+  >
+    <i class="fas fa-plus"></i>
+    <span class="hidden sm:inline">Laisser un avis</span>
+  </button>
 </div>
 
-
-
-
-<!-- Bouton "Laisser un avis" 
-  <button (click)="ouvrirPopup()"
-    class="flex items-center gap-2 bg-[#8002FF] hover:bg-[#3F0255] text-white px-4 py-2 rounded transition duration-300">
-    <i class="fas fa-plus"></i>
-    Laisser un avis
-  </button>-->
-<!-- POP-UP AVIS --
-<div *ngIf="popupOuvert" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-  <div class="bg-[#020118] text-white border-4 border-[#8002FF] rounded-xl shadow-xl w-full max-w-4xl p-6 flex flex-col md:flex-row gap-8">
-
-    <!-- Colonne gauche : logo --
-    <div class="flex items-center justify-center md:w-1/2">
-      <img src="/assets/LOGO.png" alt="Logo UniDys" class="max-w-[200px] h-auto">
+<!-- POP-UP AVIS -->
+<div
+  *ngIf="popupOuvert"
+  class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4 animate-fadeIn"
+>
+  <div
+    class="bg-[#020118] text-white border-4 border-[#8002FF] rounded-xl shadow-2xl w-full max-w-4xl p-6 flex flex-col md:flex-row gap-8 transform transition-all duration-300 scale-100"
+  >
+    <!-- Colonne gauche : logo -->
+    <div
+      class="flex items-center justify-center md:w-1/2 border-b md:border-b-0 md:border-r border-[#8002FF]/40 pb-6 md:pb-0 md:pr-6"
+    >
+      <img
+        src="/assets/LOGO.png"
+        alt="Logo UniDys"
+        class="max-w-[180px] h-auto drop-shadow-md"
+      />
     </div>
 
-    <!-- Colonne droite : formulaire --
+    <!-- Colonne droite : formulaire -->
     <div class="md:w-1/2">
-      <h2 class="text-2xl font-bold mb-6 text-center md:text-left">Laisser un avis</h2>
+      <h2
+        class="text-2xl font-bold mb-6 text-center md:text-left text-[#A36BFF]"
+      >
+        Laisser un avis
+      </h2>
 
-      <input type="text" [(ngModel)]="prenom" placeholder="Prénom"
-        class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400" />
+      <input
+        type="text"
+        [(ngModel)]="prenom"
+        placeholder="Prénom"
+        class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400 focus:ring-2 focus:ring-[#8002FF] outline-none transition"
+      />
 
-      <input type="text" [(ngModel)]="nom" placeholder="Nom"
-        class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400" />
+      <input
+        type="text"
+        [(ngModel)]="nom"
+        placeholder="Nom"
+        class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400 focus:ring-2 focus:ring-[#8002FF] outline-none transition"
+      />
 
-      <textarea [(ngModel)]="avisMessage" placeholder="Votre message" rows="4"
-        class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400 resize-none"></textarea>
+      <textarea
+        [(ngModel)]="avisMessage"
+        placeholder="Votre message"
+        rows="4"
+        class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400 resize-none focus:ring-2 focus:ring-[#8002FF] outline-none transition"
+      ></textarea>
 
       <div class="flex justify-end gap-3">
-        <button (click)="fermerPopup()"
-          class="px-4 py-2 rounded-lg border border-gray-500 hover:bg-[#3F0255] transition duration-200">
+        <button
+          (click)="fermerPopup()"
+          class="px-4 py-2 rounded-lg border border-gray-500 hover:bg-[#3F0255] transition duration-200"
+        >
           Annuler
         </button>
-        <button (click)="validerAvis()"
-          class="bg-[#8002FF] px-4 py-2 rounded-lg hover:bg-[#3F0255] transition duration-200">
+        <button
+          (click)="validerAvis()"
+          class="bg-gradient-to-r from-[#8002FF] to-[#5A03B0] px-4 py-2 rounded-lg hover:from-[#5A03B0] hover:to-[#3A007A] transition duration-200 shadow-md hover:shadow-lg"
+        >
           Valider
         </button>
       </div>
     </div>
-
   </div>
-</div>-->
+</div>
+
+<style>
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+</style>
