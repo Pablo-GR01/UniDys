@@ -1,37 +1,34 @@
-// CODE QUI FONCTIONNE AU MOINS QUI SOIT
 import { Component, inject, signal } from '@angular/core';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Icon } from '../icon/icon';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-footer-e',
   templateUrl: './footer-e.html',
   styleUrls: ['./footer-e.css'],
   standalone: true,
-  imports: [CommonModule, HttpClientModule,RouterLink,FormsModule,Icon],
+  imports: [CommonModule, HttpClientModule, RouterLink, FormsModule, Icon],
 })
 export class FooterE {
-  private http = inject(HttpClient);
+  private http = inject(HttpClient); // inject HttpClient directement
 
   email = localStorage.getItem('email') ?? '';
   inscrit = signal<boolean>(false);
+  private apiUrl = 'http://localhost:3000/api/unidys/newsletters';
 
   constructor() {
-    // Initialiser avec localStorage pour éviter le "clignotement"
     const inscritLocal = localStorage.getItem('newsletterInscrit');
     this.inscrit.set(inscritLocal === 'true');
-
-    // Vérifie en backend aussi (si email dispo)
     this.verifierInscription();
   }
 
   verifierInscription() {
     if (!this.email) return;
 
-    this.http.get<{ inscrit: boolean }>(`http://localhost:3000/api/unidys/newsletters/check?email=${this.email}`)
+    this.http.get<{ inscrit: boolean }>(`${this.apiUrl}/check?email=${this.email}`)
       .subscribe({
         next: (res) => {
           this.inscrit.set(res.inscrit);
@@ -50,9 +47,7 @@ export class FooterE {
       return;
     }
 
-    const payload = { email: this.email };
-
-    this.http.post('http://localhost:3000/api/unidys/newsletters', payload).subscribe({
+    this.http.post(this.apiUrl, { email: this.email }).subscribe({
       next: () => {
         alert(`Merci pour votre inscription : ${this.email}`);
         this.inscrit.set(true);
