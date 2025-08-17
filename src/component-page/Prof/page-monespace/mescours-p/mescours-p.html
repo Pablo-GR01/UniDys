@@ -1,14 +1,15 @@
 <div class="max-w-7xl mx-auto p-4 font-sans text-gray-100">
   <!-- Titre -->
-  <h2 class="text-3xl md:text-4xl font-extrabold mb-6 text-left text-white border-b-4 border-purple-600 pb-2 mt-5 drop-shadow-md">
+  <h2
+    class="text-3xl md:text-4xl font-extrabold mb-6 text-left text-white border-b-4 border-purple-600 pb-2 mt-5 drop-shadow-md">
     Vos Cours
   </h2>
 
-  <!-- Grille des cours -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+  <!-- Carrousel horizontal -->
+  <div class="relative flex gap-6 overflow-x-auto scrollbar-hide py-2 pb-15">
     <div *ngFor="let cours of cours"
-      class="bg-[#1A123A] rounded-3xl p-4 shadow-md border border-purple-600 cursor-pointer transition-transform transform hover:shadow-lg">
-      
+      class="bg-[#1A123A] rounded-3xl p-4 shadow-md border border-purple-600 cursor-pointer flex-shrink-0 w-64 transition-transform transform hover:scale-105 hover:shadow-lg">
+
       <!-- Image + badge niveau -->
       <div class="relative">
         <img [src]="getImageParMatiere(cours.matiere)"
@@ -28,45 +29,51 @@
         </span>
       </p>
 
-      <!-- Actions principales -->
-      <div class="flex flex-wrap gap-2 mt-2">
+      <!-- Actions principales centrées -->
+      <div class="flex flex-wrap gap-2 mt-2 justify-center">
         <button *ngIf="cours.lienYoutube" (click)="ouvrirLienYoutube(cours.lienYoutube)"
           class="bg-purple-600 hover:bg-purple-700 px-2 py-1 rounded text-xs flex items-center justify-center transition-shadow shadow-sm hover:shadow-md">
-          <i class="fa-solid fa-play mr-1"></i>
+          <i class="fa-solid fa-play mr-1"></i> Lire
         </button>
         <a [routerLink]="['/coursdetail', cours._id]"
           class="bg-purple-600 hover:bg-purple-700 px-2 py-1 rounded text-xs flex items-center justify-center transition-shadow shadow-sm hover:shadow-md">
-          <i class="fas fa-eye mr-1"></i>
+          <i class="fas fa-eye mr-1"></i> Voir
         </a>
         <button *ngIf="cours.fichierPdf" (click)="telechargerFichier(cours.fichierPdf)"
-          class="bg-purple-600 hover:bg-purple-700 px-2 py-1 rounded text-xs transition-shadow shadow-sm hover:shadow-md">
-          <i class="fas fa-download mr-1"></i>
+          class="bg-purple-600 hover:bg-purple-700 px-2 py-1 rounded text-xs flex items-center justify-center transition-shadow shadow-sm hover:shadow-md">
+          <i class="fas fa-download mr-1"></i> Télécharger
         </button>
         <button (click)="ouvrirPopupEdition(cours)"
-          class="bg-purple-600 hover:bg-purple-700 px-2 py-1 rounded text-xs transition-shadow shadow-sm hover:shadow-md">
-          <i class="fas fa-pen mr-1"></i>
+          class="bg-purple-600 hover:bg-purple-700 px-2 py-1 rounded text-xs flex items-center justify-center transition-shadow shadow-sm hover:shadow-md">
+          <i class="fas fa-pen mr-1"></i> Modifier
         </button>
         <button (click)="supprimerCours(cours)"
-          class="bg-red-500 hover:bg-red-600 px-2 py-1 rounded text-xs transition-shadow shadow-sm hover:shadow-red-500/50">
-          <i class="fas fa-trash-alt mr-1"></i>
+          class="bg-red-500 hover:bg-red-600 px-2 py-1 rounded text-xs flex items-center justify-center transition-shadow shadow-sm hover:shadow-red-500/50">
+          <i class="fas fa-trash-alt mr-1"></i> Supprimer
         </button>
       </div>
+
     </div>
   </div>
 
   <!-- Popup PDF -->
   <div *ngIf="popupVisible" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-    <div class="relative bg-[#1A123A] text-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] p-6 overflow-auto border-4 border-purple-600 animate-scale-up">
-      <button class="absolute top-4 right-4 text-3xl font-bold hover:text-red-400" (click)="fermerPopup()">&times;</button>
+    <div
+      class="relative bg-[#1A123A] text-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] p-6 overflow-auto border-4 border-purple-600 animate-scale-up">
+      <button class="absolute top-4 right-4 text-3xl font-bold hover:text-red-400"
+        (click)="fermerPopup()">&times;</button>
       <h3 class="text-2xl font-bold mb-4">{{ coursSelectionne?.titre }}</h3>
-      <iframe *ngIf="pdfUrlSanitized" [src]="pdfUrlSanitized" class="w-full h-[60vh] border rounded-xl shadow-md"></iframe>
+      <iframe *ngIf="pdfUrlSanitized" [src]="pdfUrlSanitized"
+        class="w-full h-[60vh] border rounded-xl shadow-md"></iframe>
     </div>
   </div>
 
   <!-- Popup Edition -->
   <div *ngIf="popupEditionVisible" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-    <div class="relative bg-[#1A123A] text-white rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] p-6 overflow-auto border-4 border-purple-600 animate-scale-up">
-      <button class="absolute top-4 right-4 text-3xl font-bold hover:text-red-400" (click)="fermerPopupEdition()">&times;</button>
+    <div
+      class="relative bg-[#1A123A] text-white rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] p-6 overflow-auto border-4 border-purple-600 animate-scale-up">
+      <button class="absolute top-4 right-4 text-3xl font-bold hover:text-red-400"
+        (click)="fermerPopupEdition()">&times;</button>
       <h3 class="text-2xl font-bold mb-6 text-center">Modifier le cours</h3>
 
       <label class="block mb-2 font-semibold">Nouveau nom:</label>
