@@ -1,36 +1,45 @@
 <div class="bg-[#0A092B] pt-2">
-
   <!-- Barre de recherche + filtres -->
-  <div class="mt-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-[#0A092B] border-2 border-[#8002FF] rounded px-4 py-3 w-full max-w-6xl mx-auto">
+  <div
+    class="mt-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-[#0A092B] border-2 border-[#8002FF] rounded px-4 py-3 w-full max-w-6xl mx-auto">
+    <!-- Recherche -->
     <div class="flex items-center gap-2 w-full md:w-auto">
       <i class="fa-solid fa-magnifying-glass text-white"></i>
       <input type="text" [(ngModel)]="recherche" (ngModelChange)="filtrerCours()" placeholder="Recherche la matière"
-        class="bg-transparent text-white focus:outline-none w-full" />
+        class="bg-transparent text-white focus:outline-none w-full">
     </div>
 
+    <!-- Filtres par niveau -->
     <div class="flex flex-wrap gap-2 justify-start md:justify-center w-full md:w-auto">
-      <button *ngFor="let niv of ['CP','CE1','CE2','CM1','CM2']"
-        (click)="filtrerParNiveau(niv)"
-        [ngClass]="isActive(niv) ? 'bg-[#3F0255] hover:bg-[#5e037a]' : 'bg-[#8002FF] hover:bg-purple-700'"
-        class="text-white px-3 py-1 rounded transition-colors duration-200">{{ niv }}</button>
-
+      <button (click)="filtrerParNiveau('CP')"
+        class="bg-[#8002FF] text-white px-3 py-1 rounded hover:bg-purple-700">CP</button>
+      <button (click)="filtrerParNiveau('CE1')"
+        class="bg-[#8002FF] text-white px-3 py-1 rounded hover:bg-purple-700">CE1</button>
+      <button (click)="filtrerParNiveau('CE2')"
+        class="bg-[#8002FF] text-white px-3 py-1 rounded hover:bg-purple-700">CE2</button>
+      <button (click)="filtrerParNiveau('CM1')"
+        class="bg-[#8002FF] text-white px-3 py-1 rounded hover:bg-purple-700">CM1</button>
+      <button (click)="filtrerParNiveau('CM2')"
+        class="bg-[#8002FF] text-white px-3 py-1 rounded hover:bg-purple-700">CM2</button>
       <button (click)="reinitialiserFiltre()"
-        [ngClass]="isActive(null) ? 'bg-[#3F0255] hover:bg-[#5e037a]' : 'border-2 border-[#8002FF] hover:bg-purple-700'"
-        class="text-white px-3 py-1 rounded transition-colors duration-200">Tous</button>
+        class="bg-gray-600 text-white px-3 py-1 rounded hover:bg-gray-700">Tous</button>
     </div>
   </div>
 
-  <!-- Liste des cours -->
-  <div class="flex flex-wrap justify-center gap-6 mt-10 px-4 w-full max-w-7xl mx-auto pb-20">
+  <!-- Liste des cours ou message vide -->
+  <div #track class="flex flex-wrap justify-center gap-6 mt-10 px-4 w-full max-w-7xl mx-auto pb-20">
 
-    <!-- Aucun cours -->
-    <div *ngIf="coursFiltres.length === 0" class="w-full text-center text-white text-lg font-semibold border-2 border-dashed border-[#8002FF] rounded-lg p-6">
-      Aucun cours disponible
-      <span *ngIf="niveauActif"> pour le niveau {{ niveauActif }}</span>.
+    <!-- Si aucun cours -->
+    @if(coursFiltres.length === 0){
+    <div class="w-full text-center text-white text-lg font-semibold">
+      Aucun cours disponible pour ce niveau.
     </div>
+    }
+
 
     <!-- Cartes de cours -->
-    <div *ngFor="let cours of coursFiltres"
+    @for (cours of coursFiltres; track cours._id) {
+    <div
       class="w-full sm:w-[47%] md:w-[30%] lg:w-[23%] bg-[#0A092B] text-white rounded-xl shadow-md hover:shadow-xl transition-shadow cursor-pointer p-4 border-2 border-[#8002FF]">
 
       <img [src]="getImageParMatiere(cours.matiere)" alt="{{ cours.matiere }}"
@@ -39,37 +48,38 @@
       <h3 class="text-lg font-bold mb-1 truncate">{{ cours.titre }}</h3>
       <p class="text-sm"><span class="font-semibold">Matière :</span> {{ cours.matiere }}</p>
       <p class="text-sm"><span class="font-semibold">Niveau :</span> {{ cours.niveau }}</p>
-
-      <!-- QCM -->
-      <p class="text-sm mt-1">
+      <p class="text-sm">
         <span class="font-semibold">QCM :</span>
         <span [ngClass]="(cours.qcms?.length ?? 0) > 0 ? 'text-green-400' : 'text-red-400'">
           {{ (cours.qcms?.length ?? 0) > 0 ? 'Oui' : 'Non' }}
         </span>
-        <span *ngIf="(cours.qcms?.length ?? 0) > 0"
-          class="ml-2 px-2 py-0.5 text-md rounded pt-1 pb-1 font-semibold"
-          [ngClass]="cours.qcmsFait ? 'bg-green-600 text-white' : 'bg-[#8002FF] text-white'">
-          {{ cours.qcmsFait ? 'Fait ✅' : 'Pas fait ❌' }}
-        </span>
       </p>
 
       <div class="mt-4 flex flex-wrap gap-2 justify-center">
-        <button *ngIf="cours.lienYoutube" (click)="ouvrirLienYoutube(cours.lienYoutube)"
+        <!-- voir vidéo -->
+        @if (cours.lienYoutube) {
+        <button (click)="ouvrirLienYoutube(cours.lienYoutube)"
           class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
           <i class="fa-solid fa-play"></i>
         </button>
+        }
 
-        <a [routerLink]="['/coursdetailE', cours._id]"
+        <!-- voir cours -->
+        <a [routerLink]="['/coursdetail', cours._id]"
           class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm flex items-center justify-center">
           <i class="fas fa-eye"></i>
         </a>
 
-        <button *ngIf="cours.fichierPdf" (click)="telechargerFichier(cours.fichierPdf)"
+        <!-- télécharger cours -->
+        @if (cours.fichierPdf) {
+        <button (click)="telechargerFichier(cours.fichierPdf)"
           class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
           <i class="fas fa-download"></i>
         </button>
+        }
       </div>
     </div>
-
+    }
   </div>
+
 </div>

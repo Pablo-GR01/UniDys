@@ -1,21 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { forkJoin, of } from 'rxjs';
-import { catchError, switchMap, map } from 'rxjs/operators';
-
+import { HttpClientModule } from '@angular/common/http';
 import { Cours } from '../../../../model/cours';
-import { CoursApiService } from '../../../../services/coursService/CoursApi.Service'; // ✅ corrigé
-import { CoursQcmService } from '../../../../services/coursService/CoursQcm.Service'; // ✅ corrigé
+import { CoursService } from '../../../../services/cours.service';
+import { RouterLink, Router } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-cpcourse',
   standalone: true,
   templateUrl: './cpcourse.html',
   styleUrls: ['./cpcourse.css'],
-  imports: [CommonModule, FormsModule, RouterLink]
+  imports: [CommonModule, FormsModule, HttpClientModule, RouterLink],
+  providers: [CoursService]
 })
 export class CPCOURSE implements OnInit {
   cours: Cours[] = [];
@@ -24,53 +22,28 @@ export class CPCOURSE implements OnInit {
   niveauActif: string | null = null;
   coursSelectionne: Cours | null = null;
   popupVisible = false;
+  popupEditionVisible = false;
+  coursAModifier: Cours = {} as Cours;
+  fichierPdfModifie: File | null = null;
+  lienYoutubeModifie: string = '';
   pdfUrlSanitized: SafeResourceUrl | null = null;
 
   constructor(
-    private coursApi: CoursApiService,   // ✅ Angular sait maintenant injecter
-    private coursQcm: CoursQcmService,   // ✅ idem
+    private coursService: CoursService,
     private sanitizer: DomSanitizer,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    const userId = localStorage.getItem('userId');
-
-    this.coursApi.getCours().pipe(
-      switchMap(coursList => {
-        this.cours = coursList;
-
-        if (!userId) {
-          this.cours.forEach(c => c.qcmsFait = false);
-          return of(this.cours);
-        }
-
-        // On crée un tableau d'observables pour vérifier les QCM
-        const qcmChecks = this.cours.map(c => {
-          if (c.qcms && c.qcms.length > 0) {
-            return this.coursQcm.hasUserDoneQcm(c._id, userId).pipe(
-              map(fait => {
-                c.qcmsFait = fait;
-                return c;
-              }),
-              catchError(() => {
-                c.qcmsFait = false;
-                return of(c);
-              })
-            );
-          } else {
-            c.qcmsFait = false;
-            return of(c);
-          }
-        });
-
-        return forkJoin(qcmChecks);
-      })
-    ).subscribe({
-      next: () => {
+    this.coursService.getCours().subscribe({
+      next: (data) => {
+        console.log('Cours reçus :', data);
+        this.cours = data;
         this.coursFiltres = [...this.cours];
       },
-      error: (err) => console.error('Erreur de chargement :', err)
+      error: (err) => {
+        console.error('Erreur de chargement :', err);
+      }
     });
   }
 
@@ -87,6 +60,7 @@ export class CPCOURSE implements OnInit {
 
   filtrerCours() {
     const rechercheLower = this.recherche.toLowerCase();
+
     this.coursFiltres = this.cours.filter(c => {
       const parNiveau = this.niveauActif ? c.niveau === this.niveauActif : true;
       const parMatiere = this.recherche
@@ -96,12 +70,34 @@ export class CPCOURSE implements OnInit {
     });
   }
 
+  ouvrirPopup(cours: Cours): void {
+    this.coursSelectionne = cours;
+    this.popupVisible = true;
+
+    if (cours.fichierPdf) {
+      const url = `http://localhost:3000/uploads/${encodeURIComponent(cours.fichierPdf)}`;
+      this.pdfUrlSanitized = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    } else {
+      this.pdfUrlSanitized = null;
+    }
+  }
+
+  fermerPopup(): void {
+    this.popupVisible = false;
+    this.coursSelectionne = null;
+    this.pdfUrlSanitized = null;
+  }
+
   ouvrirLienYoutube(lien: string | null | undefined): void {
-    if (lien) window.open(lien, '_blank');
+    if (lien) {
+      window.open(lien, '_blank');
+    } else {
+      console.warn("Lien YouTube non disponible.");
+    }
   }
 
   goToCoursDetail(id: string): void {
-    this.router.navigate(['/coursdetailE', id]);
+    this.router.navigate(['/coursdetail', id]);
   }
 
   telechargerFichier(nomFichier: string): void {
@@ -116,15 +112,16 @@ export class CPCOURSE implements OnInit {
 
   getImageParMatiere(matiere: string): string {
     switch (matiere.toLowerCase()) {
-      case 'maths': return 'assets/coursmaths.png';
-      case 'français': return 'assets/coursfrançais.png';
-      case 'histoire': return 'assets/courshistoire.png';
-      case 'sciences': return 'assets/sciences.png';
-      default: return 'assets/img/default.jpg';
+      case 'maths':
+        return 'assets/coursmaths.png';
+      case 'français':
+        return 'assets/coursfrançais.png';
+      case 'histoire':
+        return 'assets/courshistoire.png';
+      case 'sciences':
+        return 'assets/sciences.png';
+      default:
+        return 'assets/img/default.jpg';
     }
-  }
-
-  isActive(niveau: string | null): boolean {
-    return this.niveauActif === niveau;
   }
 }
