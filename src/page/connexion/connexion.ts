@@ -47,10 +47,10 @@ export class Connexion {
       alert('Veuillez remplir correctement le formulaire.');
       return;
     }
-  
+
     this.isLoading = true;
     const { email, password } = this.connexionData;
-  
+
     this.http.post('http://localhost:3000/api/unidys/login', { email, password }).subscribe({
       next: (user: any) => {
         // Ajouter initiales si manquantes
@@ -59,38 +59,48 @@ export class Connexion {
             (user.prenom[0] ?? '').toUpperCase() +
             (user.nom[0] ?? '').toUpperCase();
         }
-  
+
         // Stocker l'utilisateur
         this.authService.setUser(user);
         localStorage.setItem('user', JSON.stringify(user));
-  
+
         this.message = 'Bienvenue sur UniDys !';
-  
-        // Déterminer la route de redirection avec fallback sûr
+
+        // Normaliser le rôle pour la redirection
+        const roleRaw = (user.role || '').toLowerCase();
+        let roleKey: string;
+
+        if (roleRaw.includes('admin')) {
+          roleKey = 'admin';
+        } else if (roleRaw.includes('prof')) {
+          roleKey = 'prof';
+        } else if (roleRaw.includes('eleve') || roleRaw.includes('étudiant')) {
+          roleKey = 'eleve';
+        } else {
+          roleKey = 'eleve'; // fallback
+        }
+
         const routeMap: { [key: string]: string } = {
           admin: '/accueilA',
           prof: '/accueilP',
-          eleve: '/accueilE'
+          eleve: '/accueilE',
         };
-        const role = user.role?.toLowerCase() || 'eleve';
-        this.redirectionApresConnexion = routeMap[role] || '/accueilE';
-  
+
+        this.redirectionApresConnexion = routeMap[roleKey];
+
         // Redirection après délai
         setTimeout(() => {
-          const route = this.redirectionApresConnexion ?? '/accueilE';
-          this.router.navigate([route]);
+          this.router.navigate([this.redirectionApresConnexion!]);
           this.message = null;
           this.redirectionApresConnexion = null;
           this.isLoading = false;
         }, 1200);
-        
       },
       error: (err) => {
         this.errorMessage = err.error?.message || 'Erreur serveur';
         this.isLoading = false;
         console.error('Erreur de connexion :', err);
-      }
+      },
     });
   }
-  
 }

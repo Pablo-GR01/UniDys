@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import { UserService } from '../../services/user.service';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { Icon } from '../icon/icon';
+
+import { ProfileService } from '../../services/userService/Profile.Service';
 
 @Component({
   selector: 'app-menu-hambuger-p',
@@ -14,7 +15,7 @@ import { Icon } from '../icon/icon';
 export class MenuHamburgerP {
   menuOuvert = false;
   mobileMenu = false;
-  constructor(public userService: UserService) { }
+  constructor(public userprofil: ProfileService) { }
 
   toggleMenu() {
     this.menuOuvert = !this.menuOuvert;

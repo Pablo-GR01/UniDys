@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { UserService } from '../../services/user.service';
+import { ProfileService } from '../../services/userService/Profile.Service';
 import { RouterLink } from '@angular/router';
 import { Icon } from '../icon/icon';
 
@@ -14,7 +14,7 @@ import { Icon } from '../icon/icon';
 export class MenuHamburgerE {
   menuOuvert = false;
   mobileMenu = false;
-  constructor(public userService: UserService) { }
+  constructor(public userprofil: ProfileService) { }
 
   toggleMenu() {
     this.menuOuvert = !this.menuOuvert;

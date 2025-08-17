@@ -1,13 +1,20 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { QcmResult } from './qcm-display.service';
+
+export interface QcmResult {
+  userId: string;
+  qcmId: string;
+  score: number;
+  reponses: number[];
+  xpGagne: number;
+  date: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class QcmCreateService {
-
   private apiBase = 'http://localhost:3000/api/qcm';
 
   constructor(private http: HttpClient) {}

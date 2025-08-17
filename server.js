@@ -12,7 +12,7 @@ const coursHtmlRoute = require('./backend/routes/cours-html.route');
 
 // Nouvelle route QCM
 const qcmRoutes = require('./backend/routes/qcm.routes');
-
+const qcmResultsRouter = require('./backend/routes/qcmresults.routes');
 // route Admin
 // const createAdminRoute = require('./createAdmin');
 
@@ -44,6 +44,9 @@ app.use('/api/cours/html', coursHtmlRoute);
 
 // Routes QCM (gestion des résultats)
 app.use('/api/qcm', qcmRoutes);
+
+app.use('/api/qcm/resultats', qcmResultsRouter);
+
 
 // routes Admin
 // app.use('/api/setup', createAdminRoute);
