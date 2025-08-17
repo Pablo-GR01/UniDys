@@ -29,6 +29,11 @@ export class CoursApiService {
     return this.http.put(`${this.apiUrl}/${id}`, data);
   }
 
+  // <-- AJOUT DE LA MÉTHODE DELETE
+  deleteCours(id: string): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
   getCoursParNiveauEtMatiere(niveau: string, matiere: string): Observable<Cours[]> {
     return this.http.get<Cours[]>(`${this.apiUrl}?niveau=${niveau}&matiere=${matiere}`);
   }

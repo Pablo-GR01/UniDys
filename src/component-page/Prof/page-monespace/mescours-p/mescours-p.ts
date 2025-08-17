@@ -52,20 +52,26 @@ export class MescoursP implements OnInit, OnDestroy {
   chargerCoursProf(): void {
     const prenom = localStorage.getItem('prenom');
     const nom = localStorage.getItem('nom');
-
+  
     if (!prenom || !nom) {
       console.warn('Nom ou prénom du professeur manquant dans localStorage');
       this.cours = [];
       return;
     }
-
+  
     const nomProfComplet = `${prenom} ${nom}`;
-
+  
     this.http
       .get<Cours[]>(`http://localhost:3000/api/cours/prof/${encodeURIComponent(nomProfComplet)}`)
       .subscribe({
         next: (data) => {
-          this.cours = data;
+          // Vérifier que la liste n'est pas vide
+          if (data && data.length > 0) {
+            this.cours = data;
+          } else {
+            console.log('Aucun cours trouvé pour ce professeur');
+            this.cours = [];
+          }
         },
         error: (err) => {
           console.error('Erreur lors du chargement des cours:', err);
@@ -73,6 +79,7 @@ export class MescoursP implements OnInit, OnDestroy {
         },
       });
   }
+  
 
   scroll(direction: number): void {
     if (!this.track?.nativeElement) return;
