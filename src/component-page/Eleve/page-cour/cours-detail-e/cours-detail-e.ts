@@ -21,7 +21,7 @@ interface QcmQuestion {
   standalone: true,
   imports: [CommonModule, HeaderE, FormsModule,HttpClientModule],
 })
-export class CoursdetailE implements OnInit {
+export class CoursDetailE implements OnInit {
   contenuHtml: SafeHtml | null = null;
   qcm: QcmQuestion[] = [];
   reponsesUtilisateur: (number | null)[] = [];
@@ -37,7 +37,7 @@ export class CoursdetailE implements OnInit {
   showPopup = false;
   qcmDejaFait = false;
 
-  private apiBase = 'http://localhost:3000';
+  private apiBase = 'http://localhost:3000/api';
 
   constructor(
     private route: ActivatedRoute,
@@ -51,17 +51,21 @@ export class CoursdetailE implements OnInit {
     const user = this.profileService.getUser();
     this.userId = user?._id || null;
 
-    this.chargerCours();
+    if (!this.idCours) {
+      this.loading = false;
+      return;
+    }
+
+    this.chargerCoursEtQcm();
   }
 
-  private chargerCours(): void {
-    if (!this.idCours) return;
-
+  /** Charge le cours et le QCM, puis récupère l'état QCM si user connecté */
+  private chargerCoursEtQcm(): void {
     this.loading = true;
 
     this.http
       .get<{ html: string; qcm: QcmQuestion[] }>(
-        `${this.apiBase}/api/cours/complet/${this.idCours}`
+        `${this.apiBase}/cours/complet/${this.idCours}`
       )
       .subscribe({
         next: ({ html, qcm = [] }) => {
@@ -69,36 +73,31 @@ export class CoursdetailE implements OnInit {
           this.qcm = qcm;
           this.reponsesUtilisateur = qcm.map(() => null);
 
-          if (this.userId && qcm.length > 0) {
-            this.chargerEtatQcm();
+          // Si utilisateur connecté et QCM existant, charger les réponses sauvegardées
+          if (this.userId && this.qcm.length > 0) {
+            this.http
+              .get<any>(`${this.apiBase}/qcm/resultats/${this.idCours}/${this.userId}`)
+              .subscribe({
+                next: (res) => {
+                  if (res) {
+                    this.qcmDejaFait = true;
+                    this.reponsesSauvegardees = res.reponses || [];
+                    this.resultat = res.score ?? 0;
+                    this.xp = res.xpGagne ?? 0;
+                    this.reponsesUtilisateur = this.reponsesSauvegardees.map((r) => r);
+                  }
+                  this.loading = false;
+                },
+                error: () => {
+                  this.loading = false;
+                },
+              });
           } else {
             this.loading = false;
           }
         },
         error: (err) => {
           console.error(err);
-          this.loading = false;
-        },
-      });
-  }
-
-  private chargerEtatQcm(): void {
-    if (!this.userId || !this.idCours) return;
-
-    this.http
-      .get<any>(`${this.apiBase}/api/qcm/resultats/${this.idCours}/${this.userId}`)
-      .subscribe({
-        next: (res) => {
-          if (res) {
-            this.qcmDejaFait = true;
-            this.reponsesSauvegardees = res.reponses || [];
-            this.resultat = res.score ?? 0;
-            this.xp = res.xpGagne ?? 0;
-            this.reponsesUtilisateur = this.reponsesSauvegardees.map(r => r);
-          }
-          this.loading = false;
-        },
-        error: () => {
           this.loading = false;
         },
       });
@@ -115,9 +114,18 @@ export class CoursdetailE implements OnInit {
     return this.reponsesUtilisateur[indexQ] === this.qcm[indexQ]?.bonneReponse;
   }
 
+  isBonneReponse(question: QcmQuestion, indexR: number): boolean {
+    return indexR === question.bonneReponse;
+  }
+
+  get xptotal(): number {
+    return this.qcm.reduce((t, q) => t + (q.xp || 0), 0);
+  }
+
   validerQCM(): void {
     if (this.qcmDejaFait) return;
 
+    // Vérification que toutes les questions ont une réponse
     for (let i = 0; i < this.qcm.length; i++) {
       if (this.reponsesUtilisateur[i] === null) {
         alert(`Réponds à la question ${i + 1}`);
@@ -125,6 +133,7 @@ export class CoursdetailE implements OnInit {
       }
     }
 
+    // Calcul score et XP
     let score = 0;
     let xpTotal = 0;
     this.qcm.forEach((q, i) => {
@@ -147,23 +156,9 @@ export class CoursdetailE implements OnInit {
     this.reponsesSauvegardees = this.reponsesUtilisateur.filter(
       (r): r is number => r !== null
     );
-
     this.showPopup = true;
 
-    if (this.userId) {
-      this.sauvegarderQCM();
-    }
-  }
-
-  fermerPopup(): void {
-    this.showPopup = false;
-    if (this.userId && this.xp > 0) {
-      // Ajouter XP via ProfileService
-      this.profileService.ajouterXP(this.xp);
-
-      this.http.post(`${this.apiBase}/api/users/${this.userId}/ajouterXP`, { xp: this.xp })
-        .subscribe({ next: () => {}, error: console.error });
-    }
+    if (this.userId) this.sauvegarderQCM();
   }
 
   private sauvegarderQCM(): void {
@@ -172,7 +167,7 @@ export class CoursdetailE implements OnInit {
     const reponsesFinales = this.reponsesUtilisateur.filter((r): r is number => r !== null);
 
     this.http
-      .post(`${this.apiBase}/api/qcm/resultats`, {
+      .post(`${this.apiBase}/qcm/resultats`, {
         userId: this.userId,
         qcmId: this.idCours,
         score: this.resultat,
@@ -185,11 +180,14 @@ export class CoursdetailE implements OnInit {
       });
   }
 
-  isBonneReponse(question: QcmQuestion, indexR: number): boolean {
-    return indexR === question.bonneReponse;
-  }
+  fermerPopup(): void {
+    this.showPopup = false;
+    if (this.userId && this.xp > 0) {
+      this.profileService.ajouterXP(this.xp);
 
-  get xptotal(): number {
-    return this.qcm.reduce((t, q) => t + (q.xp || 0), 0);
+      this.http
+        .post(`${this.apiBase}/users/${this.userId}/ajouterXP`, { xp: this.xp })
+        .subscribe({ next: () => {}, error: console.error });
+    }
   }
 }

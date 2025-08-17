@@ -12,7 +12,7 @@ const utilisateurSchema = new mongoose.Schema({
   xp: { type: Number, default: 0 },
 });
 
-// Génération des initiales avant sauvegarde
+// Génération des initiales
 utilisateurSchema.pre('save', function (next) {
   if (this.nom && this.prenom) {
     this.initiale = (this.prenom[0] + this.nom[0]).toUpperCase();
@@ -20,7 +20,7 @@ utilisateurSchema.pre('save', function (next) {
   next();
 });
 
-// Hachage du mot de passe avant sauvegarde
+// Hash du mot de passe
 utilisateurSchema.pre('save', async function (next) {
   if (!this.isModified('password')) return next();
   try {
@@ -32,7 +32,7 @@ utilisateurSchema.pre('save', async function (next) {
   }
 });
 
-// Comparer un mot de passe
+// Vérification mot de passe
 utilisateurSchema.methods.comparePassword = function (password) {
   return bcrypt.compare(password, this.password);
 };

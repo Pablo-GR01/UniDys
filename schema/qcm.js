@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
 
-const QcmResultSchema = new mongoose.Schema({
-  coursId: { type: String, required: true },
-  userId: { type: String, required: true },
-  score: { type: Number, default: 0 },
-  reponses: { type: [Number], default: [] },
+const qcmResultSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+  qcmId: { type: mongoose.Schema.Types.ObjectId, ref: 'Cours', required: true },
+  score: { type: Number, required: true },
+  reponses: { type: [Number], required: true },
   xpGagne: { type: Number, default: 0 },
-  titre: { type: String, required: true } // ← ajouter le titre
-}, { timestamps: true });
+}, {
+  timestamps: true,
+  collection: 'qcmresults'
+});
 
-module.exports = mongoose.model('QcmResult', QcmResultSchema);
+module.exports = mongoose.model('QcmResult', qcmResultSchema);

@@ -12,7 +12,7 @@ import { InformationE } from '../page/page-user/eleve/information-e/information-
 import { CoursDetailP } from '../component-page/Prof/page-monespace/cours-detail-p/cours-detail-p';
 import { ClasseCPP } from '../page/page-user/prof/classe-cp/classe-cp';
 import { ClasseCPE } from '../page/page-user/eleve/classe-cp/classe-cp';
-import { CoursdetailE } from '../component-page/Eleve/page-cour/cours-detail-e/cours-detail-e';
+import { CoursDetailE} from '../component-page/Eleve/page-cour/cours-detail-e/cours-detail-e';
 
 
 
@@ -43,7 +43,7 @@ export const routes: Routes = [
 
   {path: 'InfoE', component: InformationE},
   {path: 'coursE', component: ClasseCPE},
-  {path: 'coursdetailE/:id', component: CoursdetailE}
+  {path: 'coursdetailE/:id', component: CoursDetailE}
 
 ];
 
