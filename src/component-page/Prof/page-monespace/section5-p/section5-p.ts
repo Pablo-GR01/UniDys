@@ -23,6 +23,8 @@ interface Qcm {
   reponses: string[];
   bonneReponse: number;
   xp: number;
+  xpMin?: number;
+  xpMax?: number;
 }
 
 @Component({
@@ -33,11 +35,16 @@ interface Qcm {
   imports: [Icon, FormsModule, CommonModule]
 })
 export class Section5P implements OnInit, OnDestroy {
+  // Liste des cours
   cours: Cours[] = [];
+
+  // Popups
   popupCoursOuvert = false;
   popupQcmOuvert = false;
   popupOuvert = false;
-  showPopupExplique = false; // Pour le popup explicatif
+  showPopupExplique = false;
+
+  // Cours sélectionné et formulaire
   coursSelectionne: Cours | null = null;
   fichierPdf?: File;
   messageErreurPdf = '';
@@ -47,6 +54,16 @@ export class Section5P implements OnInit, OnDestroy {
   lienYoutube = '';
   imageMatiere = '';
   qcms: Qcm[] = [];
+
+  // QCM
+  nouvelleQuestion = '';
+  nouvellesReponses: string[] = ['',''];
+
+  // XP
+  xpMin = 10;
+  xpMax = 100;
+
+  // Avis
   prenom = '';
   nom = '';
   avisMessage = '';
@@ -62,14 +79,9 @@ export class Section5P implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     const utilisateur = JSON.parse(localStorage.getItem('utilisateur') || '{}');
-    if (!utilisateur.prenom || !utilisateur.nom) {
-      console.error('Utilisateur non connecté');
-      return;
-    }
+    if (!utilisateur.prenom || !utilisateur.nom) return;
     this.nomProf = `${utilisateur.prenom} ${utilisateur.nom}`.trim();
     this.chargerCours();
-
-    // S'abonner aux notifications de rafraîchissement
     this.refreshSub = this.refreshService.refreshRequested$.subscribe(() => this.chargerCours());
   }
 
@@ -77,15 +89,16 @@ export class Section5P implements OnInit, OnDestroy {
     this.refreshSub?.unsubscribe();
   }
 
+  // Charger les cours
   chargerCours(): void {
     this.http.get<Cours[]>(`http://localhost:3000/api/cours/prof/${encodeURIComponent(this.nomProf)}`)
       .subscribe({
         next: data => this.cours = data || [],
-        error: err => { console.error('Erreur chargement cours:', err); this.cours = []; }
+        error: err => { console.error(err); this.cours = []; }
       });
   }
 
-  // POPUP COURS
+  // ---------------------- POPUP COURS ----------------------
   ouvrirPopupCours(cours?: Cours) {
     if (cours) {
       this.coursSelectionne = { ...cours };
@@ -113,6 +126,10 @@ export class Section5P implements OnInit, OnDestroy {
     this.fichierPdf = undefined;
     this.qcms = [];
     this.coursSelectionne = null;
+    this.nouvelleQuestion = '';
+    this.nouvellesReponses = ['',''];
+    this.xpMin = 10;
+    this.xpMax = 100;
   }
 
   onPdfSelected(event: any) {
@@ -132,9 +149,8 @@ export class Section5P implements OnInit, OnDestroy {
       alert('Tous les champs obligatoires doivent être remplis.');
       return;
     }
-
     const utilisateur = JSON.parse(localStorage.getItem('utilisateur') || '{}');
-    if (!utilisateur._id) { alert('Utilisateur non connecté'); return; }
+    if (!utilisateur._id) return;
 
     const formData = new FormData();
     formData.append('utilisateurId', utilisateur._id);
@@ -150,12 +166,9 @@ export class Section5P implements OnInit, OnDestroy {
       next: () => { 
         alert('Cours créé avec succès !'); 
         this.fermerPopupCours(); 
-        this.refreshService.demanderRafraichissement(); // rafraîchissement automatique
+        this.refreshService.demanderRafraichissement();
       },
-      error: err => { 
-        console.error('Erreur création cours', err); 
-        alert('Erreur lors de la création du cours.'); 
-      }
+      error: err => { console.error(err); alert('Erreur lors de la création du cours.'); }
     });
   }
 
@@ -175,21 +188,41 @@ export class Section5P implements OnInit, OnDestroy {
     return images[matiere] || 'assets/img/default.jpg';
   }
 
-  // POPUP QCM
-  ouvrirPopupQCM() { this.popupQcmOuvert = true; }
+  // ---------------------- POPUP QCM ----------------------
+  ouvrirPopupQCM() {
+    this.popupQcmOuvert = true;
+    this.nouvelleQuestion = '';
+    this.nouvellesReponses = ['',''];
+    this.xpMin = 10;
+    this.xpMax = 100;
+  }
+
   fermerPopupQCM() { this.popupQcmOuvert = false; }
 
-  ajouterQCM() { this.qcms.push({ question: '', reponses: ['',''], bonneReponse: 0, xp: 0 }); }
-  supprimerQCM(index: number) { this.qcms.splice(index,1); }
-  ajouterReponse(qcmIndex: number) { this.qcms[qcmIndex].reponses.push(''); }
-  supprimerReponse(qcmIndex: number, repIndex: number) { this.qcms[qcmIndex].reponses.splice(repIndex,1); }
-  incrementXp(qcm: Qcm) { qcm.xp++; }
-  decrementXp(qcm: Qcm) { if(qcm.xp>0) qcm.xp--; }
-  validerXp(qcm: Qcm) { qcm.xp = Math.max(0, qcm.xp); }
-  validerQCM() { this.popupQcmOuvert = false; alert('QCM validés !'); }
+  ajouterReponsePopup() { this.nouvellesReponses.push(''); }
+  supprimerReponsePopup(index: number) { this.nouvellesReponses.splice(index,1); }
+
+  validerQCM() {
+    if (!this.nouvelleQuestion || this.nouvellesReponses.length < 2) {
+      alert('Ajoutez une question et au moins 2 réponses.');
+      return;
+    }
+    if (this.xpMin > this.xpMax) { alert('XP min ne peut être supérieur à XP max'); return; }
+
+    this.qcms.push({
+      question: this.nouvelleQuestion,
+      reponses: [...this.nouvellesReponses],
+      bonneReponse: 0,
+      xp: this.xpMin,
+      xpMin: this.xpMin,
+      xpMax: this.xpMax
+    });
+    this.fermerPopupQCM();
+  }
+
   trackByIndex(index: number) { return index; }
 
-  // POPUP AVIS
+  // ---------------------- POPUP AVIS ----------------------
   ouvrirPopup() { this.popupOuvert = true; }
   fermerPopup() { this.popupOuvert = false; }
   validerAvis() {
@@ -200,11 +233,21 @@ export class Section5P implements OnInit, OnDestroy {
 
   mettreAJourImage() { this.imageMatiere = this.getImageParMatiere(this.matiere); }
 
-  // POPUP EXPLICATIF
-  ouvrirPopupexplique(): void { this.showPopupExplique = true; }
-  fermerPopupexplique(): void { this.showPopupExplique = false; }
+  // ---------------------- POPUP EXPLICATIF ----------------------
+  ouvrirPopupexplique() { this.showPopupExplique = true; }
+  fermerPopupexplique() { this.showPopupExplique = false; }
 
-  // Méthodes pour le template
   getInitiales() { return this.profileService.getInitiales(); }
   getNomComplet() { return this.profileService.getNomComplet(); }
+
+  // ---------------------- XP MIN/MAX UNIQUE ----------------------
+  incrementXp() {
+    if (this.xpMax < 100) this.xpMax++;
+    if (this.xpMin < this.xpMax) this.xpMin++;
+  }
+
+  decrementXp() {
+    if (this.xpMin > 10) this.xpMin--;
+    if (this.xpMax > this.xpMin) this.xpMax--;
+  }
 }
