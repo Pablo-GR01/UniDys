@@ -30,13 +30,14 @@ interface Qcm {
   templateUrl: './section5-p.html',
   styleUrls: ['./section5-p.css'],
   standalone: true,
-  imports: [Icon,FormsModule,CommonModule]
+  imports: [Icon, FormsModule, CommonModule]
 })
 export class Section5P implements OnInit, OnDestroy {
   cours: Cours[] = [];
   popupCoursOuvert = false;
   popupQcmOuvert = false;
   popupOuvert = false;
+  showPopupExplique = false; // Pour le popup explicatif
   coursSelectionne: Cours | null = null;
   fichierPdf?: File;
   messageErreurPdf = '';
@@ -68,6 +69,7 @@ export class Section5P implements OnInit, OnDestroy {
     this.nomProf = `${utilisateur.prenom} ${utilisateur.nom}`.trim();
     this.chargerCours();
 
+    // S'abonner aux notifications de rafraîchissement
     this.refreshSub = this.refreshService.refreshRequested$.subscribe(() => this.chargerCours());
   }
 
@@ -83,6 +85,7 @@ export class Section5P implements OnInit, OnDestroy {
       });
   }
 
+  // POPUP COURS
   ouvrirPopupCours(cours?: Cours) {
     if (cours) {
       this.coursSelectionne = { ...cours };
@@ -147,7 +150,7 @@ export class Section5P implements OnInit, OnDestroy {
       next: () => { 
         alert('Cours créé avec succès !'); 
         this.fermerPopupCours(); 
-        this.refreshService.demanderRafraichissement(); 
+        this.refreshService.demanderRafraichissement(); // rafraîchissement automatique
       },
       error: err => { 
         console.error('Erreur création cours', err); 
@@ -172,6 +175,7 @@ export class Section5P implements OnInit, OnDestroy {
     return images[matiere] || 'assets/img/default.jpg';
   }
 
+  // POPUP QCM
   ouvrirPopupQCM() { this.popupQcmOuvert = true; }
   fermerPopupQCM() { this.popupQcmOuvert = false; }
 
@@ -185,6 +189,7 @@ export class Section5P implements OnInit, OnDestroy {
   validerQCM() { this.popupQcmOuvert = false; alert('QCM validés !'); }
   trackByIndex(index: number) { return index; }
 
+  // POPUP AVIS
   ouvrirPopup() { this.popupOuvert = true; }
   fermerPopup() { this.popupOuvert = false; }
   validerAvis() {
@@ -194,6 +199,10 @@ export class Section5P implements OnInit, OnDestroy {
   }
 
   mettreAJourImage() { this.imageMatiere = this.getImageParMatiere(this.matiere); }
+
+  // POPUP EXPLICATIF
+  ouvrirPopupexplique(): void { this.showPopupExplique = true; }
+  fermerPopupexplique(): void { this.showPopupExplique = false; }
 
   // Méthodes pour le template
   getInitiales() { return this.profileService.getInitiales(); }

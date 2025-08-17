@@ -15,17 +15,60 @@
 
   <!-- BOUTONS -->
   <div class="flex flex-wrap gap-4 justify-center">
-    <button (click)="ouvrirPopupCours()"
-      class="flex items-center gap-2 bg-[#8002FF] hover:bg-[#3F0255] text-white px-4 py-2 rounded transition duration-300 text-sm sm:text-base">
-      <i class="fas fa-plus"></i> Créer un cours
-    </button>
 
-    <button (click)="ouvrirPopup()"
-      class="flex items-center gap-2 border-4 border-[#8002FF] hover:bg-[#8002FF] text-white px-4 py-2 rounded transition duration-300 text-sm sm:text-base">
-      <i class="fas fa-plus"></i> Laisser un avis
-    </button>
+    <!-- Bouton Créer un cours -->
+  <button (click)="ouvrirPopupCours()"
+  class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
+         bg-gradient-to-r from-[#8002FF] to-[#3F0255] shadow-lg hover:scale-105 hover:shadow-purple-500/50
+         transition transform duration-300 relative overflow-hidden">
+  <i class="fas fa-book-open text-lg"></i> Créer un cours
+  <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
+</button>
+
+<!-- Bouton Laisser un avis -->
+<button (click)="ouvrirPopup()"
+  class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
+         border-4 border-purple-600 shadow-md hover:bg-purple-700 hover:scale-105 transition transform duration-300 relative overflow-hidden">
+  <i class="fas fa-comment-dots text-lg"></i> Laisser un avis
+  <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
+</button>
+
+<!-- Bouton Explication cours -->
+<button (click)="ouvrirPopupexplique()"
+  class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
+         border-4 border-purple-600 shadow-md hover:bg-purple-700 hover:scale-105 transition transform duration-300 relative overflow-hidden">
+  <i class="fa-solid fa-circle-info text-lg"></i> Explication cours
+  <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
+</button>
+
   </div>
 </div>
+
+<!-- Popup explicatif -->
+<div *ngIf="showPopupExplique" class="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 px-4">
+  <div class="bg-[#020118] border-6 border-[#8002FF] rounded-2xl shadow-2xl w-full max-w-lg p-6 relative animate-fadeIn">
+    
+    <!-- Titre -->
+    <h3 class="text-2xl font-extrabold mb-4 text-purple-700">💡 Explication</h3>
+    
+    <!-- Contenu -->
+    <div class="space-y-3 text-white text-base leading-relaxed">
+      <p>📚 <strong>Cours :</strong> Pour vos cours, remplissez tous les champs et ajoutez obligatoirement un fichier PDF. Les images ne sont pas autorisées.</p>
+      <p>📝 <strong>QCM :</strong> Vous pouvez créer autant de QCM que vous le souhaitez. Assurez-vous de définir le nombre d’XP pour chaque question.</p>
+      <p>⚠️ Veillez à respecter le format requis pour éviter des erreurs lors de la validation.</p>
+    </div>
+    
+    <!-- Footer / Bouton action (optionnel) -->
+    <div class="mt-6 flex justify-end">
+      <button (click)="fermerPopupexplique()" 
+              class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition duration-200">
+        OK, compris !
+      </button>
+    </div>
+
+  </div>
+</div>
+
 
 <!-- POPUP AVIS -->
 <div *ngIf="popupOuvert" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
