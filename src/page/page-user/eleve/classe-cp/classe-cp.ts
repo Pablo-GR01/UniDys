@@ -6,13 +6,11 @@ import { ContactE } from "../../../../component/contact-e/contact-e";
 import { FooterE } from "../../../../component/footer-e/footer-e";
 import { ApprentissageE } from "../../../../component-page/Eleve/page-cour/apprentissage-e/apprentissage-e";
 
-
 @Component({
   selector: 'app-classe-cp',
-  imports: [HeaderE, EnteteE, CPCOURSE, ContactE, FooterE, ApprentissageE ,],
+  standalone: true, // ⚠️ Indispensable pour utiliser imports
+  imports: [HeaderE, EnteteE, CPCOURSE, ContactE, FooterE, ApprentissageE],
   templateUrl: './classe-cp.html',
-  styleUrl: './classe-cp.css'
+  styleUrls: ['./classe-cp.css'], // corrigé : styleUrls au lieu de styleUrl
 })
-export class ClasseCPE {
-
-}
+export class ClasseCPE {}

@@ -3,20 +3,21 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Subscription } from 'rxjs';
-import { CoursRefreshService } from '../../../../services/cours-refresh.service';
 import { Cours } from '../../../../model/cours';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink, RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { CoursRefreshService } from '../../../../services/cours-refresh.service';
 
 @Component({
   selector: 'app-mescours-p',
   templateUrl: './mescours-p.html',
   styleUrls: ['./mescours-p.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, RouterLink],  // Ajout RouterModule ici
+  imports: [CommonModule, FormsModule, RouterModule],
 })
 export class MescoursP implements OnInit, OnDestroy {
   @ViewChild('track', { static: false }) track!: ElementRef<HTMLDivElement>;
+
   cours: Cours[] = [];
   coursSelectionne: Cours | null = null;
   popupVisible = false;
@@ -26,82 +27,58 @@ export class MescoursP implements OnInit, OnDestroy {
   pdfUrlSanitized: SafeResourceUrl | null = null;
   lienYoutubeModifie: string = '';
 
-
   private refreshSub!: Subscription;
 
   constructor(
     private http: HttpClient,
     private sanitizer: DomSanitizer,
     private refreshService: CoursRefreshService,
-    private router: Router,
-  ) { }
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.chargerCoursProf();
+
     this.refreshSub = this.refreshService.refreshRequested$.subscribe(() => {
       this.chargerCoursProf();
     });
   }
 
   ngOnDestroy(): void {
-    if (this.refreshSub) {
-      this.refreshSub.unsubscribe();
-    }
+    if (this.refreshSub) this.refreshSub.unsubscribe();
   }
 
+  // ✅ Charge les cours du prof connecté
   chargerCoursProf(): void {
-    const prenom = localStorage.getItem('prenom');
-    const nom = localStorage.getItem('nom');
-  
-    if (!prenom || !nom) {
-      console.warn('Nom ou prénom du professeur manquant dans localStorage');
+    const nomProf = localStorage.getItem('nomProf'); // Stocker "Javier Garcia" directement
+    if (!nomProf) {
+      console.warn('Nom du professeur manquant dans localStorage');
       this.cours = [];
       return;
     }
-  
-    const nomProfComplet = `${prenom} ${nom}`;
-  
-    this.http
-      .get<Cours[]>(`http://localhost:3000/api/cours/prof/${encodeURIComponent(nomProfComplet)}`)
+
+    this.http.get<Cours[]>(`http://localhost:3000/api/cours/prof/${encodeURIComponent(nomProf)}`)
       .subscribe({
         next: (data) => {
-          // Vérifier que la liste n'est pas vide
-          if (data && data.length > 0) {
-            this.cours = data;
-          } else {
-            console.log('Aucun cours trouvé pour ce professeur');
-            this.cours = [];
-          }
+          console.log('Cours reçus pour', nomProf, data);
+          this.cours = data || [];
         },
         error: (err) => {
-          console.error('Erreur lors du chargement des cours:', err);
+          console.error('Erreur lors du chargement des cours :', err);
           this.cours = [];
         },
       });
   }
-  
 
   scroll(direction: number): void {
     if (!this.track?.nativeElement) return;
-    const element = this.track.nativeElement;
     const scrollAmount = 300;
-    element.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
-  }
-
-  onKeydown(event: KeyboardEvent): void {
-    if (event.key === 'ArrowLeft') {
-      this.scroll(-1);
-      event.preventDefault();
-    } else if (event.key === 'ArrowRight') {
-      this.scroll(1);
-      event.preventDefault();
-    }
+    this.track.nativeElement.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
   }
 
   ouvrirPopup(cours: Cours): void {
     this.coursSelectionne = cours;
     this.popupVisible = true;
-
     if (cours.fichierPdf) {
       const url = `http://localhost:3000/uploads/${encodeURIComponent(cours.fichierPdf)}`;
       this.pdfUrlSanitized = this.sanitizer.bypassSecurityTrustResourceUrl(url);
@@ -131,21 +108,15 @@ export class MescoursP implements OnInit, OnDestroy {
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.fichierPdfModifie = input.files[0];
-    }
+    if (input.files && input.files.length > 0) this.fichierPdfModifie = input.files[0];
   }
 
-  validerModificationCours() {
-    if (!this.coursAModifier || !this.coursAModifier._id) return;
-
+  validerModificationCours(): void {
+    if (!this.coursAModifier?._id) return;
     const formData = new FormData();
     formData.append('titre', this.coursAModifier.titre);
     formData.append('lienYoutube', this.lienYoutubeModifie || '');
-
-    if (this.fichierPdfModifie) {
-      formData.append('pdf', this.fichierPdfModifie);
-    }
+    if (this.fichierPdfModifie) formData.append('fichierPdf', this.fichierPdfModifie);
 
     this.http.put(`http://localhost:3000/api/cours/${this.coursAModifier._id}`, formData).subscribe({
       next: () => {
@@ -153,54 +124,23 @@ export class MescoursP implements OnInit, OnDestroy {
         this.fermerPopupEdition();
         this.refreshService.demanderRafraichissement();
       },
-      error: err => {
+      error: (err) => {
         console.error('Erreur lors de la modification du cours', err);
         alert('Erreur lors de la modification.');
-      }
+      },
     });
   }
 
-
-  getImageParMatiere(matiere: string): string {
-    switch (matiere.toLowerCase()) {
-      case 'maths':
-        return 'assets/coursmaths.png';
-      case 'français':
-        return 'assets/coursfrançais.png';
-      case 'histoire':
-        return 'assets/courshistoire.png';
-      case 'sciences':
-        return 'assets/sciences.png';
-      default:
-        return 'assets/img/default.jpg';
-    }
-  }
-
-  getPdfUrl(fileName: string | undefined | null): string {
-    return fileName ? `http://localhost:3000/uploads/${fileName}` : '';
-  }
-
   supprimerCours(cours: Cours): void {
-    if (confirm(`Supprimer le cours "${cours.titre}" ?`)) {
-      this.http
-        .delete(`http://localhost:3000/api/cours/${cours._id}`)
-        .subscribe({
-          next: () => {
-            this.chargerCoursProf();
-          },
-          error: (err) => {
-            console.error('Erreur lors de la suppression du cours :', err);
-          },
-        });
-    }
+    if (!confirm(`Supprimer le cours "${cours.titre}" ?`)) return;
+    this.http.delete(`http://localhost:3000/api/cours/${cours._id}`).subscribe({
+      next: () => this.chargerCoursProf(),
+      error: (err) => console.error('Erreur lors de la suppression du cours :', err),
+    });
   }
 
   ouvrirLienYoutube(lien: string | null | undefined): void {
-    if (lien) {
-      window.open(lien, '_blank');
-    } else {
-      console.warn("Lien YouTube non disponible.");
-    }
+    if (lien) window.open(lien, '_blank');
   }
 
   goToCoursDetail(id: string): void {
@@ -209,12 +149,21 @@ export class MescoursP implements OnInit, OnDestroy {
 
   telechargerFichier(nomFichier: string): void {
     const url = `http://localhost:3000/uploads/${encodeURIComponent(nomFichier)}`;
-    const lien = document.createElement('a');
-    lien.href = url;
-    lien.download = nomFichier;
-    document.body.appendChild(lien);
-    lien.click();
-    document.body.removeChild(lien);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = nomFichier;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 
+  getImageParMatiere(matiere: string): string {
+    switch (matiere.toLowerCase()) {
+      case 'maths': return 'assets/coursmaths.png';
+      case 'français': return 'assets/coursfrançais.png';
+      case 'histoire': return 'assets/courshistoire.png';
+      case 'sciences': return 'assets/sciences.png';
+      default: return 'assets/img/default.jpg';
+    }
+  }
 }

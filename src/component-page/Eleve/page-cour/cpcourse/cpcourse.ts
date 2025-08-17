@@ -7,16 +7,15 @@ import { forkJoin, of } from 'rxjs';
 import { catchError, switchMap, map } from 'rxjs/operators';
 
 import { Cours } from '../../../../model/cours';
-import { CoursApiService } from '../../../../services/coursService/CoursApi.Service';
-import { CoursQcmService } from '../../../../services/coursService/CoursQcm.Service';
+import { CoursApiService } from '../../../../services/coursService/CoursApi.Service'; // ✅ corrigé
+import { CoursQcmService } from '../../../../services/coursService/CoursQcm.Service'; // ✅ corrigé
 
 @Component({
   selector: 'app-cpcourse',
   standalone: true,
   templateUrl: './cpcourse.html',
   styleUrls: ['./cpcourse.css'],
-  imports: [CommonModule, FormsModule, RouterLink],
-  providers: [CoursApiService, CoursQcmService]
+  imports: [CommonModule, FormsModule, RouterLink]
 })
 export class CPCOURSE implements OnInit {
   cours: Cours[] = [];
@@ -28,8 +27,8 @@ export class CPCOURSE implements OnInit {
   pdfUrlSanitized: SafeResourceUrl | null = null;
 
   constructor(
-    private coursApi: CoursApiService,
-    private coursQcm: CoursQcmService,
+    private coursApi: CoursApiService,   // ✅ Angular sait maintenant injecter
+    private coursQcm: CoursQcmService,   // ✅ idem
     private sanitizer: DomSanitizer,
     private router: Router
   ) {}
@@ -69,7 +68,7 @@ export class CPCOURSE implements OnInit {
       })
     ).subscribe({
       next: () => {
-        this.coursFiltres = [...this.cours]; // force la mise à jour du template
+        this.coursFiltres = [...this.cours];
       },
       error: (err) => console.error('Erreur de chargement :', err)
     });
