@@ -37,22 +37,22 @@
         </p>
 
         <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
-          <button (click)="enregistrerEmail()" [disabled]="inscrit()"
-            class="bg-[#8002FF] hover:bg-[#3F0255] text-white rounded hover:scale-105 hover:shadow-white transition-transform duration-300
-            px-3 sm:px-4 md:px-5 py-2 text-xs sm:text-sm md:text-base lg:text-lg"
-            aria-label="Envoyer">
-            <ng-container *ngIf="!inscrit(); else dejaInscrit">
-              <div class="flex items-center gap-2">
-                <i class="fas fa-arrow-right"></i>
-                <span class="font-black">Rejoindre la newsletter</span>
-              </div>
-            </ng-container>
-            <ng-template #dejaInscrit>
-              <span class="flex items-center gap-2 text-green-400">
-                <i class="fas fa-check-circle"></i>
-                Vous êtes déjà inscrit
-              </span>
-            </ng-template>
+          <button (click)="enregistrerEmail()" [disabled]="inscrit()" class="bg-gradient-to-r from-[#8002FF] to-[#3F0255] 
+                hover:from-[#3F0255] hover:to-[#1A012B]  text-white rounded hover:scale-105 hover:shadow-white transition-transform duration-300
+    px-3 sm:px-4 md:px-5 py-2 text-xs sm:text-sm md:text-base lg:text-lg" [class.opacity-50]="inscrit()"
+            [class.cursor-not-allowed]="inscrit()" aria-label="Envoyer">
+
+            @if (!inscrit()) {
+            <div class="flex items-center gap-2">
+              <i class="fas fa-arrow-right"></i>
+              <span class="font-black">Rejoindre la newsletter</span>
+            </div>
+            } @else {
+            <span class="flex items-center gap-2 text-green-400">
+              <i class="fas fa-check-circle"></i>
+              Vous êtes déjà inscrit
+            </span>
+            }
           </button>
         </div>
       </div>

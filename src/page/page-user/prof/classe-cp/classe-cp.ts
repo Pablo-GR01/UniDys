@@ -8,13 +8,13 @@ import { ApprentissageE } from "../../../../component-page/Eleve/page-cour/appre
 import { CPCOURSP } from '../../../../component-page/Prof/page-cour/cpcoursp/cpcoursp';
 import { FooterP } from '../../../../component/footer-p/footer-p';
 import { ApprentissageP } from '../../../../component-page/Prof/page-cour/apprentissage-p/apprentissage-p';
-import { EnteteP } from '../../../../component-page/Prof/page-accueil/entete-p/entete-p';
+import { EnteteP } from '../../../../component-page/Prof/page-cour/entete-p/entete-p';
 import { HeaderP } from '../../../../component/header-p/header-p';
 
 
 @Component({
   selector: 'app-classe-cp',
-  imports: [HeaderP, EnteteP, CPCOURSP, ContactE, FooterP, ApprentissageP ,],
+  imports: [HeaderP, EnteteP, CPCOURSP, ContactE, FooterP, ApprentissageP],
   templateUrl: './classe-cp.html',
   styleUrl: './classe-cp.css'
 })

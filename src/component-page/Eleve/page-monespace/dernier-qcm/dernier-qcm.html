@@ -1,36 +1,46 @@
-<div class="p-6 bg-[#0A072E] text-white rounded-2xl shadow-2xl max-w-4xl mx-auto mt-10">
-  <h2 class="text-3xl font-extrabold mb-6 text-[#8002FF] text-center sm:text-left">Mes derniers QCM</h2>
+<!-- -------------------- DERNIERS QCM -------------------- -->
+    <div class="flex-1">
+      <div class="ml-23 border-2 border-[#8002FF] p-6 bg-[#0A072E] text-white rounded-2xl shadow-2xl w-full">
 
-  <!-- Loading -->
-  <div *ngIf="loading" class="text-gray-400 text-center py-6 animate-pulse">
-    Chargement des QCM...
-  </div>
+        <h2 class="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-extrabold mb-6 text-[#8002FF] text-center sm:text-left">
+          Mes derniers QCM
+        </h2>
 
-  <!-- Aucun QCM -->
-  <div *ngIf="!loading && derniersQcm.length === 0" class="text-gray-400 text-center py-6">
-    Vous n'avez encore fait aucun QCM.
-  </div>
+        <!-- Loading -->
+        <div *ngIf="loading" class="text-gray-400 text-center py-6 animate-pulse text-base sm:text-lg">
+          Chargement des QCM...
+        </div>
 
-  <!-- Liste des QCM -->
-  <div *ngIf="!loading && derniersQcm.length > 0" class="grid gap-6">
-    <div *ngFor="let qcm of derniersQcm"
-         class="p-5 bg-gradient-to-r from-[#150A40]/80 to-[#1A0C55]/80 border-l-4 border-[#8002FF] rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:scale-105 hover:shadow-lg transition-transform duration-300">
-      
-      <!-- Informations QCM -->
-      <div>
-        <h3 class="font-bold text-xl text-[#FFB6FF]">{{ qcm.titre }}</h3>
-        <p class="text-gray-300 text-sm mt-1">Fait le : {{ qcm.date | date:'medium' }}</p>
-      </div>
+        <!-- Aucun QCM -->
+        <div *ngIf="!loading && derniersQcm.length === 0" class="text-white text-center py-6 text-base sm:text-lg">
+          Vous n'avez encore fait aucun QCM.
+        </div>
 
-      <!-- Score et XP -->
-      <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-2 sm:mt-0">
-        <span class="bg-[#8002FF]/30 px-4 py-2 rounded-lg font-semibold text-sm sm:text-base text-white">
-          Score : {{ qcm.score }}
-        </span>
-        <span class="bg-[#FF70FF]/30 px-4 py-2 rounded-lg font-semibold text-sm sm:text-base text-white">
-          XP : {{ qcm.xpGagne }}
-        </span>
+        <!-- Liste des QCM -->
+        <div *ngIf="!loading && derniersQcm.length > 0" class="grid gap-4 sm:gap-6">
+          <div *ngFor="let qcm of derniersQcm"
+               class="p-4 sm:p-5 bg-gradient-to-r from-[#1A0C55]/80 to-[#3F0255]/80 border-l-4 border-[#8002FF] 
+                      rounded-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 
+                      hover:scale-105 hover:shadow-xl transition-transform duration-300 cursor-pointer">
+
+            <!-- Informations QCM -->
+            <div class="flex-1">
+              <h3 class="font-bold text-lg sm:text-xl md:text-2xl text-[#FFB6FF] truncate">{{ qcm.titre }}</h3>
+              <p class="text-gray-300 text-sm sm:text-base mt-1">Fait le : {{ qcm.date | date:'medium' }}</p>
+            </div>
+
+            <!-- Score et XP -->
+            <div class="flex flex-col sm:flex-row gap-2 sm:gap-4 mt-2 sm:mt-0">
+              <span class="bg-gradient-to-r from-[#8002FF]/40 to-[#5A02FF]/40 px-3 sm:px-4 py-2 rounded-lg font-semibold text-sm sm:text-base text-white shadow-md">
+                Score : {{ qcm.score }}
+              </span>
+              <span class="bg-gradient-to-r from-[#FF70FF]/40 to-[#FF3EFF]/40 px-3 sm:px-4 py-2 rounded-lg font-semibold text-sm sm:text-base text-white shadow-md">
+                XP : {{ qcm.xpGagne }}
+              </span>
+            </div>
+
+          </div>
+        </div>
+
       </div>
     </div>
-  </div>
-</div>

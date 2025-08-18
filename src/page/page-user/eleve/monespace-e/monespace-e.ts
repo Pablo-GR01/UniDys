@@ -9,13 +9,14 @@ import { ContactE } from "../../../../component/contact-e/contact-e";
 import { FooterE } from "../../../../component/footer-e/footer-e";
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { DerniersQCM } from '../../../../component-page/Eleve/page-monespace/dernier-qcm/dernier-qcm';
+import { ProgessionE } from "../../../../component-page/Eleve/page-monespace/progession-e/progession-e";
 
 
 
 
 @Component({
   selector: 'app-monespace-e',
-  imports: [CommonModule, Entete5E, HeaderE, Section5E, LevelE, ContactE, FooterE, DerniersQCM , HttpClientModule],
+  imports: [CommonModule, Entete5E, HeaderE, Section5E, LevelE, ContactE, FooterE, DerniersQCM, HttpClientModule, ProgessionE],
   templateUrl: './monespace-e.html',
   styleUrls: ['./monespace-e.css']
 })

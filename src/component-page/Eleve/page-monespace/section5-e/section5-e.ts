@@ -80,4 +80,8 @@ export class Section5E {
         this.fermerPopup();
       });
   }
+
+  getInitiales() { return this.profileService.getInitiales(); }
+  getNomComplet() { return this.profileService.getNomComplet(); }
+
 }
