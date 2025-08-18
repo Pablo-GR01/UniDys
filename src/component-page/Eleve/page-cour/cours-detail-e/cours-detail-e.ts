@@ -19,7 +19,7 @@ interface QcmQuestion {
   templateUrl: './cours-detail-e.html',
   styleUrls: ['./cours-detail-e.css'],
   standalone: true,
-  imports: [CommonModule, HeaderE, FormsModule,HttpClientModule],
+  imports: [CommonModule, HeaderE, FormsModule, HttpClientModule],
 })
 export class CoursDetailE implements OnInit {
   contenuHtml: SafeHtml | null = null;
@@ -59,7 +59,6 @@ export class CoursDetailE implements OnInit {
     this.chargerCoursEtQcm();
   }
 
-  /** Charge le cours et le QCM, puis récupère l'état QCM si user connecté */
   private chargerCoursEtQcm(): void {
     this.loading = true;
 
@@ -72,8 +71,9 @@ export class CoursDetailE implements OnInit {
           this.contenuHtml = this.sanitizer.bypassSecurityTrustHtml(html);
           this.qcm = qcm;
           this.reponsesUtilisateur = qcm.map(() => null);
+          this.loading = false;
 
-          // Si utilisateur connecté et QCM existant, charger les réponses sauvegardées
+          // Vérifie si l'utilisateur a déjà fait le QCM
           if (this.userId && this.qcm.length > 0) {
             this.http
               .get<any>(`${this.apiBase}/qcm/resultats/${this.idCours}/${this.userId}`)
@@ -86,14 +86,9 @@ export class CoursDetailE implements OnInit {
                     this.xp = res.xpGagne ?? 0;
                     this.reponsesUtilisateur = this.reponsesSauvegardees.map((r) => r);
                   }
-                  this.loading = false;
                 },
-                error: () => {
-                  this.loading = false;
-                },
+                error: () => {},
               });
-          } else {
-            this.loading = false;
           }
         },
         error: (err) => {
@@ -109,23 +104,9 @@ export class CoursDetailE implements OnInit {
       : this.reponsesUtilisateur[indexQ] === indexR;
   }
 
-  questionEstJuste(indexQ: number): boolean {
-    if (this.resultat === null) return false;
-    return this.reponsesUtilisateur[indexQ] === this.qcm[indexQ]?.bonneReponse;
-  }
-
-  isBonneReponse(question: QcmQuestion, indexR: number): boolean {
-    return indexR === question.bonneReponse;
-  }
-
-  get xptotal(): number {
-    return this.qcm.reduce((t, q) => t + (q.xp || 0), 0);
-  }
-
   validerQCM(): void {
     if (this.qcmDejaFait) return;
 
-    // Vérification que toutes les questions ont une réponse
     for (let i = 0; i < this.qcm.length; i++) {
       if (this.reponsesUtilisateur[i] === null) {
         alert(`Réponds à la question ${i + 1}`);
@@ -133,7 +114,6 @@ export class CoursDetailE implements OnInit {
       }
     }
 
-    // Calcul score et XP
     let score = 0;
     let xpTotal = 0;
     this.qcm.forEach((q, i) => {
@@ -158,6 +138,26 @@ export class CoursDetailE implements OnInit {
     );
     this.showPopup = true;
 
+    if (this.userId && this.xp > 0) {
+      this.http
+        .post<{ updatedXP: number }>(
+          `${this.apiBase}/users/${this.userId}/ajouterXP`,
+          { xp: this.xp }
+        )
+        .subscribe({
+          next: (res) => {
+            console.log('✅ XP ajoutée serveur:', res.updatedXP);
+            // Met à jour localStorage
+            const user = this.profileService.getUser();
+            if (user) {
+              user.xp = res.updatedXP;
+              localStorage.setItem('user', JSON.stringify(user));
+            }
+          },
+          error: (err) => console.error('❌ Erreur ajout XP serveur', err),
+        });
+    }
+
     if (this.userId) this.sauvegarderQCM();
   }
 
@@ -180,14 +180,21 @@ export class CoursDetailE implements OnInit {
       });
   }
 
+  get xptotal(): number {
+  return this.qcm.reduce((t, q) => t + (q.xp || 0), 0);
+}
+questionEstJuste(indexQ: number): boolean {
+  if (this.resultat === null) return false;
+  return this.reponsesUtilisateur[indexQ] === this.qcm[indexQ]?.bonneReponse;
+}
+
+isBonneReponse(question: QcmQuestion, indexR: number): boolean {
+  return indexR === question.bonneReponse;
+}
+
+
+
   fermerPopup(): void {
     this.showPopup = false;
-    if (this.userId && this.xp > 0) {
-      this.profileService.ajouterXP(this.xp);
-
-      this.http
-        .post(`${this.apiBase}/users/${this.userId}/ajouterXP`, { xp: this.xp })
-        .subscribe({ next: () => {}, error: console.error });
-    }
   }
 }
