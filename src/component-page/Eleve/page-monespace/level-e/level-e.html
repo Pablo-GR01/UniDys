@@ -5,21 +5,29 @@
               transition-transform duration-300 hover:scale-105">
 
     <!-- Badge Niveau -->
-    <div class="flex-shrink-0 relative group">
-      <div 
-        [ngClass]="{
-          'from-gray-400 to-gray-600': level <= 1,
-          'from-blue-400 to-blue-700': level === 2,
-          'from-yellow-300 to-yellow-500': level === 3,
-          'from-orange-400 to-orange-600': level >= 4
-        }"
-        class="border-2 border-[#8002FF] flex items-center justify-center w-28 h-28 sm:w-32 sm:h-32 rounded-xl shadow-2xl text-white text-4xl sm:text-5xl font-extrabold relative
-               before:absolute before:inset-0 before:rounded-xl before:bg-white/10 before:blur-xl before:animate-pulse
-               transition-transform duration-500 group-hover:scale-110">
-      {{ level }}
-      </div>
+<div class="flex-shrink-0 relative group">
+  <div 
+    [ngClass]="{
+      'from-gray-400 to-gray-600': level <= 1,
+      'from-blue-400 to-blue-700': level === 2,
+      'from-yellow-300 to-yellow-500': level === 3,
+      'from-orange-400 to-orange-600': level >= 4
+    }"
+    class="border-2 border-[#8002F8] flex items-center justify-center w-28 h-28 sm:w-32 sm:h-32 rounded-xl shadow-2xl relative
+           before:absolute before:inset-0 before:rounded-xl before:bg-white/10 before:blur-xl before:animate-pulse
+           transition-transform duration-500 group-hover:scale-110 overflow-hidden"
+  >
+    <!-- Image dynamique -->
+    <img 
+      [src]="'assets/level-' + level + '.svg'" 
+      [alt]="'Niveau ' + level" 
+      class="w-20 h-20 sm:w-24 sm:h-24 object-contain select-none"
+    />
+
     
-    </div>
+  </div>
+</div>
+
 
     <!-- XP + Level -->
     <div class="flex flex-col items-center flex-1 mx-4 w-full">
