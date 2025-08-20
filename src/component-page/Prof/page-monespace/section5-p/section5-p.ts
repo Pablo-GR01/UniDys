@@ -206,18 +206,30 @@ export class Section5P implements OnInit, OnDestroy {
       alert('Ajoutez une question et au moins 2 réponses.');
       return;
     }
-    if (this.xpMin > this.xpMax) { alert('XP min ne peut être supérieur à XP max'); return; }
-
+    if (this.xpMin > this.xpMax) { 
+      alert('XP min ne peut être supérieur à XP max'); 
+      return; 
+    }
+  
+    // Trouver l’index de la réponse correcte
+    const indexBonneReponse = this.bonneReponse.findIndex(b => b === true);
+    if (indexBonneReponse === -1) {
+      alert("Sélectionnez une bonne réponse !");
+      return;
+    }
+  
     this.qcms.push({
       question: this.nouvelleQuestion,
       reponses: [...this.nouvellesReponses],
-      bonneReponse: 0,
+      bonneReponse: indexBonneReponse,  // <-- ici le prof choisit
       xp: this.xpMin,
       xpMin: this.xpMin,
       xpMax: this.xpMax
     });
+  
     this.fermerPopupQCM();
   }
+  
 
   trackByIndex(index: number) { return index; }
 
@@ -251,5 +263,9 @@ export class Section5P implements OnInit, OnDestroy {
   ouvrirQCMDepuisCours() {
     this.ouvrirPopupQCM();
   }
+  choisirBonneReponse(index: number) {
+    this.bonneReponse = this.nouvellesReponses.map((_, j) => j === index);
+  }
+  
   
 }

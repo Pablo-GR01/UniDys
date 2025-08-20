@@ -179,28 +179,39 @@
     </div>
 
     <!-- Réponses -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <div *ngFor="let rep of nouvellesReponses; let i = index; trackBy: trackByIndex"
-           class="flex items-center gap-3 p-3 rounded-3xl bg-gradient-to-r from-[#8002FF] to-[#3F0255] shadow-lg transition-transform duration-300 transform hover:scale-105 hover:shadow-[#FFCC00]/50">
+    <!-- Réponses -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+  <div *ngFor="let rep of nouvellesReponses; let i = index; trackBy: trackByIndex"
+       class="flex items-center gap-3 p-3 rounded-3xl bg-gradient-to-r from-[#8002FF] to-[#3F0255] shadow-lg transition-transform duration-300 transform hover:scale-105 hover:shadow-[#FFCC00]/50">
 
-        <div class="flex-shrink-0 text-3xl text-white">
-          <i class="fas fa-lightbulb"></i>
-        </div>
-
-        <textarea [(ngModel)]="nouvellesReponses[i]" placeholder="Réponse {{i+1}}" rows="1"
-          class="flex-1 border-2 border-[#8002FF] p-2 rounded-2xl bg-[#020118] placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-[#FFCC00] text-base transition-all resize-none"></textarea>
-
-        <div class="flex flex-col items-center gap-1">
-          <label class="flex items-center gap-1 text-white cursor-pointer">
-            <input type="checkbox" [(ngModel)]="bonneReponse[i]" class="accent-[#FFCC00] w-5 h-5"/>
-          </label>
-          <button (click)="supprimerReponsePopup(i)"
-                  class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded-2xl text-white font-semibold transition-transform duration-300 transform hover:scale-110">
-            <i class="fas fa-trash-alt text-sm"></i>
-          </button>
-        </div>
-      </div>
+    <div class="flex-shrink-0 text-3xl text-white">
+      <i class="fas fa-lightbulb"></i>
     </div>
+
+    <textarea [(ngModel)]="nouvellesReponses[i]" placeholder="Réponse {{i+1}}" rows="1"
+      class="flex-1 border-2 border-[#8002FF] p-2 rounded-2xl bg-[#020118] placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-[#FFCC00] text-base transition-all resize-none"></textarea>
+
+    <div class="flex flex-col items-center gap-1">
+      <label class="flex items-center gap-1 text-white cursor-pointer">
+        <!-- Radio au lieu de checkbox -->
+        <input 
+          type="radio" 
+          name="bonneReponse" 
+          [checked]="bonneReponse[i]" 
+          (change)="choisirBonneReponse(i)" 
+          class="accent-[#FFCC00] w-5 h-5"/>
+
+        Correcte
+      </label>
+
+      <button (click)="supprimerReponsePopup(i)"
+              class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded-2xl text-white font-semibold transition-transform duration-300 transform hover:scale-110">
+        <i class="fas fa-trash-alt text-sm"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
 
     <!-- Ajouter réponse -->
     <button (click)="ajouterReponsePopup()"
