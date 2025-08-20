@@ -37,49 +37,75 @@
     }
 
 
-    <!-- Cartes de cours -->
-    @for (cours of coursFiltres; track cours._id) {
-    <div
-      class="w-full sm:w-[47%] md:w-[30%] lg:w-[23%] bg-[#0A092B] text-white rounded-xl shadow-md hover:shadow-xl transition-shadow cursor-pointer p-4 border-2 border-[#8002FF]">
+    
+<!-- Cartes de cours en grille -->
+@for (cours of coursFiltres; track cours._id) {
+  <div
+    class="bg-[#020118] rounded-3xl p-5 shadow-md border border-purple-600 
+           cursor-pointer flex-shrink-0 w-full sm:w-[47%] md:w-[30%] lg:w-[23%]
+           transition-transform transform hover:scale-105 hover:shadow-purple-400/70
+           duration-300">
 
+    <!-- Image + badge niveau -->
+    <div class="relative">
       <img [src]="getImageParMatiere(cours.matiere)" alt="{{ cours.matiere }}"
-        class="w-full h-32 object-cover rounded-lg mb-3 border-2 border-[#8002FF]" />
-
-      <h3 class="text-lg font-bold mb-1 truncate">{{ cours.titre }}</h3>
-      <p class="text-sm"><span class="font-semibold">Matière :</span> {{ cours.matiere }}</p>
-      <p class="text-sm"><span class="font-semibold">Niveau :</span> {{ cours.niveau }}</p>
-      <p class="text-sm">
-        <span class="font-semibold">QCM :</span>
-        <span [ngClass]="(cours.qcms?.length ?? 0) > 0 ? 'text-green-400' : 'text-red-400'">
-          {{ (cours.qcms?.length ?? 0) > 0 ? 'Oui' : 'Non' }}
-        </span>
-      </p>
-
-      <div class="mt-4 flex flex-wrap gap-2 justify-center">
-        <!-- voir vidéo -->
-        @if (cours.lienYoutube) {
-        <button (click)="ouvrirLienYoutube(cours.lienYoutube)"
-          class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
-          <i class="fa-solid fa-play"></i>
-        </button>
-        }
-
-        <!-- voir cours -->
-        <a [routerLink]="['/coursdetail', cours._id]"
-          class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm flex items-center justify-center">
-          <i class="fas fa-eye"></i>
-        </a>
-
-        <!-- télécharger cours -->
-        @if (cours.fichierPdf) {
-        <button (click)="telechargerFichier(cours.fichierPdf)"
-          class="bg-[#8002FF] hover:bg-[#3F0255] px-3 py-1 rounded text-sm">
-          <i class="fas fa-download"></i>
-        </button>
-        }
+        class="w-full h-40 object-cover rounded-2xl border-2 border-purple-600 shadow-sm" />
+      <div
+        class="absolute top-2 left-2 bg-[#8002FF] text-xs px-2 py-0.5 rounded font-semibold text-white">
+        {{ cours.niveau }}
       </div>
     </div>
-    }
+
+    <!-- Infos cours -->
+    <h3 class="text-md font-bold mt-3 mb-1 truncate text-white">{{ cours.titre }}</h3>
+    <p class="text-xs text-white mb-1 truncate">
+      <span class="font-semibold text-white">Matière :</span> {{ cours.matiere }}
+    </p>
+    <p class="text-xs mb-3">
+      <span class="font-semibold text-white">QCM :</span>
+      <span
+        [ngClass]="(cours.qcms?.length ?? 0) > 0 ? 'text-green-400 font-semibold' : 'text-red-400 font-semibold'">
+        {{ (cours.qcms?.length ?? 0) > 0 ? 'Oui' : 'Non' }}
+      </span>
+    </p>
+
+    <!-- Actions principales -->
+    <div class="flex flex-wrap gap-2 mt-2 justify-center">
+      <!-- Lire sur YouTube -->
+      @if (cours.lienYoutube) {
+        <button (click)="ouvrirLienYoutube(cours.lienYoutube)"
+          class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-white
+                 bg-gradient-to-r from-[#8002FF] to-[#3F0255]
+                 shadow-md hover:scale-105 hover:shadow-purple-400/70
+                 transition transform duration-300">
+          <i class="fa-solid fa-play"></i> Lire
+        </button>
+      }
+
+      <!-- Voir le cours -->
+      <a [routerLink]="['/coursdetail', cours._id]"
+        class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-white
+               bg-gradient-to-r from-[#8002FF] to-[#3F0255]
+               shadow-md hover:scale-105 hover:shadow-purple-400/70
+               transition transform duration-300">
+        <i class="fas fa-eye"></i> Voir
+      </a>
+
+      <!-- Télécharger PDF -->
+      @if (cours.fichierPdf) {
+        <button (click)="telechargerFichier(cours.fichierPdf)"
+          class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-white
+                 bg-gradient-to-r from-[#8002FF] to-[#3F0255]
+                 shadow-md hover:scale-105 hover:shadow-purple-400/70
+                 transition transform duration-300">
+          <i class="fas fa-download"></i> Télécharger
+        </button>
+      }
+    </div>
+  </div>
+}
+
+
   </div>
 
 </div>

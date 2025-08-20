@@ -103,21 +103,21 @@
         <input [(ngModel)]="titreCours" type="text" placeholder="Titre du cours" class="border-2 border-[#8002FF] rounded px-2 py-2" />
         <input [(ngModel)]="nomProf" type="text" placeholder="Nom du professeur" class="border-2 border-[#8002FF] rounded px-2 py-2 text-gray-600" readonly />
 
-        <select [(ngModel)]="niveau" class="border-2 text-white border-[#8002FF] rounded px-2 py-2">
+        <select [(ngModel)]="niveau" class=" bg-[#020118] border-2 text-white border-[#8002FF] rounded px-2 py-2">
           <option value="" disabled>Niveau</option>
-          <option>CP</option>
-          <option>CE1</option>
-          <option>CE2</option>
-          <option>CM1</option>
-          <option>CM2</option>
+          <option class="text-white">CP</option>
+          <option class="text-white">CE1</option>
+          <option class="text-white">CE2</option>
+          <option class="text-white">CM1</option>
+          <option class="text-white">CM2</option>
         </select>
 
-        <select [(ngModel)]="matiere" (change)="mettreAJourImage()" class="border-2 border-[#8002FF] rounded px-2 py-2 text-white">
+        <select [(ngModel)]="matiere" (change)="mettreAJourImage()" class=" bg-[#020118] border-2 border-[#8002FF] rounded px-2 py-2 text-white">
           <option value="" disabled>Matière</option>
-          <option>Français</option>
-          <option>Maths</option>
-          <option>Histoire</option>
-          <option>Sciences</option>
+          <option class="text-white">Français</option>
+          <option class="text-white">Maths</option>
+          <option class="text-white">Histoire</option>
+          <option class="text-white">Sciences</option>
         </select>
 
         <input [(ngModel)]="lienYoutube" type="text" placeholder="Lien Youtube (optionnel)" class="col-span-1 md:col-span-2 border-2 border-[#8002FF] rounded px-2 py-2" />
@@ -134,7 +134,11 @@
       </div>
 
       <div class="mt-4 flex gap-2">
-        <button (click)="ouvrirPopupQCM()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">+ Ajouter QCM</button>
+        <button (click)="ouvrirQCMDepuisCours()" 
+                class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 flex items-center gap-2">
+          <i class="fas fa-plus-circle"></i> Ajouter QCM
+        </button>
+
         <button (click)="validerCours()" class="bg-[#8002FF] hover:bg-[#3F0255] px-6 py-2 rounded">Valider le cours</button>
       </div>
     </div>
@@ -142,40 +146,78 @@
 </div>
 
 <!-- -------------------- POPUP CRÉATION QCM -------------------- -->
-<div *ngIf="popupQcmOuvert" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-  <div class="bg-[#020118] rounded-2xl shadow-xl text-white w-full max-w-4xl p-6 flex flex-col gap-4 max-h-[90vh] overflow-auto border-4 border-[#8002FF]">
+<div *ngIf="popupQcmOuvert" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-gradient-to-br from-[#1C0B3A] to-[#2A0C55] rounded-3xl shadow-2xl text-white w-full max-w-5xl p-6 flex flex-col gap-6 max-h-[90vh] overflow-auto border-4 border-[#8002FF]">
 
     <!-- Header -->
-    <div class="flex justify-between items-center mb-4">
-      <h2 class="text-2xl font-bold text-[#8002FF]">Nouveau QCM</h2>
-      <button (click)="fermerPopupQCM()" class="text-white hover:text-red-600 text-3xl leading-none">&times;</button>
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-3xl font-extrabold text-[#8002FF] flex items-center gap-3">
+        <i class="fas fa-pencil-alt"></i> Crée ton QCM
+      </h2>
+      <button (click)="fermerPopupQCM()" 
+              class="text-white hover:text-red-500 text-3xl font-bold transition transform hover:scale-125">&times;</button>
+    </div>
+    
+    <!-- XP -->
+    <div class="absolute ml-30 mt-19 flex flex-col md:flex-row items-center justify-center gap-4">
+      <label class="font-bold text-[#FFCC00] text-lg flex items-center gap-2">
+        <i class="fas fa-star"></i> XP
+      </label>
+      <div class="flex items-center">
+        <button (click)="decrementXp()" class="bg-purple-500 hover:bg-purple-600 text-white px-5 py-2 rounded-2xl font-bold transition transform hover:scale-110">-</button>
+        <span class="w-20 text-center text-white font-mono text-lg">{{xpMin}}</span>
+        <button (click)="incrementXp()" class="bg-purple-500 hover:bg-purple-600 text-white px-5 py-2 rounded-2xl font-bold transition transform hover:scale-110">+</button>
+      </div>
     </div>
 
     <!-- Question -->
-    <input [(ngModel)]="nouvelleQuestion" type="text" placeholder="Question complète" 
-      class="w-full border-2 border-[#8002FF] p-3 rounded bg-[#0A092B] placeholder-gray-400 focus:outline-none focus:border-purple-500 transition"/>
+    <div class="flex flex-col gap-2">
+      <label class="font-bold text-[#8002FF] text-lg flex items-center gap-2">
+        <i class="fas fa-question-circle"></i> Question
+      </label>
+      <textarea [(ngModel)]="nouvelleQuestion" placeholder="Écris ta question ici..." rows="3"
+        class="w-full border-2 border-[#8002FF] p-3 rounded-2xl bg-[#020118] placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-[#FFCC00] text-lg transition-all resize-none"></textarea>
+    </div>
 
-    <!-- Réponses -->
-    <div class="flex flex-col gap-3">
-      <div *ngFor="let rep of nouvellesReponses; let i = index" class="flex gap-2 items-center">
-        <input [(ngModel)]="nouvellesReponses[i]" type="text" placeholder="Réponse {{i+1}}" 
-          class="flex-1 border-2 border-[#8002FF] p-2 rounded bg-[#0A092B] placeholder-gray-400 focus:outline-none focus:border-purple-500 transition"/>
-        <button (click)="supprimerReponsePopup(i)" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-white font-bold transition">X</button>
+    <!-- Réponses en deux colonnes -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+      <div *ngFor="let rep of nouvellesReponses; let i = index; trackBy: trackByIndex"
+           class="flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-r from-[#8002FF] to-[#3F0255] shadow-md transition transform hover:scale-105 hover:shadow-[#FFCC00]/50">
+
+        <!-- Icône réponse -->
+        <div class="flex-shrink-0 text-3xl text-white">
+          <i class="fas fa-lightbulb"></i>
+        </div>
+
+        <!-- Texte réponse -->
+        <textarea [(ngModel)]="nouvellesReponses[i]" placeholder="Réponse {{i+1}}" rows="2"
+          class="flex-1 border-2 border-[#8002FF] p-3 rounded-2xl bg-[#020118] placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-[#FFCC00] text-lg transition resize-none"></textarea>
+
+        <!-- Correct / Supprimer -->
+        <div class="flex flex-col items-center gap-2">
+          <label class="flex items-center gap-2 text-white cursor-pointer">
+            <input type="checkbox" [(ngModel)]="bonneReponse[i]" class="accent-[#8002FF] w-6 h-6"/>
+          </label>
+          <button (click)="supprimerReponsePopup(i)"
+                  class="bg-red-500 hover:bg-red-600 px-3 py-1 rounded-2xl text-white font-semibold transition transform hover:scale-110">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
       </div>
     </div>
-    <button (click)="ajouterReponsePopup()" class="bg-green-600 hover:bg-green-700 px-4 py-2 rounded mt-2 w-full font-semibold transition">+ Ajouter une réponse</button>
 
-    <!-- XP -->
-    <div class="flex items-center justify-center gap-4 mt-4">
-      <label class="font-semibold text-[#8002FF]">XP :</label>
-      <button (click)="decrementXp()" class="bg-purple-700 hover:bg-purple-800 text-white px-3 py-1 rounded font-bold transition">-</button>
-      <span class="w-16 text-center text-white font-mono text-lg">{{xpMin}}</span>
-      <button (click)="incrementXp()" class="bg-purple-700 hover:bg-purple-800 text-white px-3 py-1 rounded font-bold transition">+</button>
-    </div>
+    <button (click)="ajouterReponsePopup()"
+      class="bg-green-400 hover:bg-green-500 px-4 py-3 rounded-2xl w-full font-bold transition shadow-md hover:shadow-green-300/50 mt-2 text-lg flex items-center justify-center gap-3">
+      <i class="fas fa-plus-circle text-lg"></i> Ajouter une réponse
+    </button>
+
+    
 
     <!-- Valider -->
-    <button (click)="validerQCM()" 
-      class="bg-[#8002FF] hover:bg-[#3F0255] px-6 py-3 rounded mt-6 w-full font-bold text-lg transition">Valider QCM</button>
+    <button (click)="validerQCM()"
+      class="bg-gradient-to-r from-[#FFCC00] to-[#FFAA00] hover:from-[#FFAA00] hover:to-[#FFCC00] px-6 py-3 rounded-3xl w-full font-bold text-xl transition shadow-lg hover:shadow-yellow-400/50 mt-6 flex items-center justify-center gap-3">
+      <i class="fas fa-check"></i> Valider QCM
+    </button>
   </div>
 </div>
 

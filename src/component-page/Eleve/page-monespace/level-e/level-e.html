@@ -19,14 +19,14 @@
       >
         <!-- Image dynamique -->
         <img 
-          [src]="'assets/level-' + level + '.svg'" 
+          [src]="'assets/Level-' + level + '.png'" 
           [alt]="'Niveau ' + level" 
           class="w-20 h-20 sm:w-24 sm:h-24 object-contain select-none drop-shadow-lg"
         />
 
         <!-- Overlay Level Tag -->
         <span class="absolute bottom-1 right-1 text-xs sm:text-sm font-bold text-white px-2 py-0.5 rounded-md
-                     bg-purple-700/80 backdrop-blur-md shadow-md">
+                     bg-[#020118] border-2 border-[#8002FF] backdrop-blur-md shadow-md">
           Lv. {{ level }}
         </span>
       </div>
@@ -43,9 +43,9 @@
       </span>
 
       <!-- Barre de progression -->
-      <div class="w-full bg-gray-900/70 rounded-full h-5 overflow-hidden mt-5 shadow-inner relative">
+      <div class="w-full bg-gray-900/70 rounded-full h-8 overflow-hidden mt-5 shadow-inner relative">
         <div [style.width.%]="progression"
-             class="h-5 rounded-full animate-[pulse_2s_infinite]"
+             class="h-5 rounded-full"
              [ngStyle]="{'background': 'linear-gradient(90deg, #8002ff, #c084fc, #8002ff)',
                          'background-size': '200% 100%',
                          'animation': 'gradientMove 3s linear infinite',
@@ -61,7 +61,7 @@
     <!-- Prochain objectif -->
     <div class="flex flex-col items-center justify-center flex-shrink-0 mt-4 sm:mt-0 group">
       <div class="flex items-center justify-center">
-        <i class="fas fa-rocket text-purple-300 text-4xl sm:text-5xl animate-bounce drop-shadow-[0_0_15px_#a855f7]"></i>
+        <i class="fas fa-rocket text-transparent"></i>
       </div>
       <span class="text-white text-sm sm:text-base font-semibold mt-3 text-center">
         {{ xpRestant }} XP restants
