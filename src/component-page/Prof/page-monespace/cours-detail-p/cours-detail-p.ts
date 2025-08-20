@@ -37,16 +37,17 @@ export class CoursDetailP implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.idCours = this.route.snapshot.paramMap.get('id');
-
+  
     if (this.idCours) {
       this.chargerCours();
-
-      // Rafraîchissement automatique toutes les 30 secondes
-      this.refreshSub = interval(30000).subscribe(() => {
+  
+      // Rafraîchissement automatique une seule fois après 5 secondes
+      setTimeout(() => {
         this.chargerCours();
-      });
+      },0);
     }
   }
+  
 
   ngOnDestroy(): void {
     if (this.refreshSub) this.refreshSub.unsubscribe();

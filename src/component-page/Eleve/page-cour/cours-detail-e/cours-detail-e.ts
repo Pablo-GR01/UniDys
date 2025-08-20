@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HeaderE } from '../../../../component/header-e/header-e';
 import { ProfileService } from '../../../../services/userService/Profile.Service';
+import { interval, Subscription } from 'rxjs';
 
 interface QcmQuestion {
   question: string;
@@ -21,7 +22,7 @@ interface QcmQuestion {
   standalone: true,
   imports: [CommonModule, HeaderE, FormsModule, HttpClientModule],
 })
-export class CoursDetailE implements OnInit {
+export class CoursDetailE implements OnInit, OnDestroy {
   contenuHtml: SafeHtml | null = null;
   qcm: QcmQuestion[] = [];
   reponsesUtilisateur: (number | null)[] = [];
@@ -38,6 +39,7 @@ export class CoursDetailE implements OnInit {
   qcmDejaFait = false;
 
   private apiBase = 'http://localhost:3000/api';
+  private refreshSub: Subscription | null = null; // 🔥 Ajout pour l'auto-refresh
 
   constructor(
     private route: ActivatedRoute,
@@ -57,6 +59,15 @@ export class CoursDetailE implements OnInit {
     }
 
     this.chargerCoursEtQcm();
+
+    // Un seul rafraîchissement automatique après 5 secondes
+  setTimeout(() => {
+    this.chargerCoursEtQcm();
+  }, 0);
+  }
+
+  ngOnDestroy(): void {
+    if (this.refreshSub) this.refreshSub.unsubscribe();
   }
 
   private chargerCoursEtQcm(): void {
@@ -70,7 +81,9 @@ export class CoursDetailE implements OnInit {
         next: ({ html, qcm = [] }) => {
           this.contenuHtml = this.sanitizer.bypassSecurityTrustHtml(html);
           this.qcm = qcm;
-          this.reponsesUtilisateur = qcm.map(() => null);
+          if (!this.qcmDejaFait) {
+            this.reponsesUtilisateur = qcm.map(() => null);
+          }
           this.loading = false;
 
           // Vérifie si l'utilisateur a déjà fait le QCM
@@ -181,18 +194,17 @@ export class CoursDetailE implements OnInit {
   }
 
   get xptotal(): number {
-  return this.qcm.reduce((t, q) => t + (q.xp || 0), 0);
-}
-questionEstJuste(indexQ: number): boolean {
-  if (this.resultat === null) return false;
-  return this.reponsesUtilisateur[indexQ] === this.qcm[indexQ]?.bonneReponse;
-}
+    return this.qcm.reduce((t, q) => t + (q.xp || 0), 0);
+  }
 
-isBonneReponse(question: QcmQuestion, indexR: number): boolean {
-  return indexR === question.bonneReponse;
-}
+  questionEstJuste(indexQ: number): boolean {
+    if (this.resultat === null) return false;
+    return this.reponsesUtilisateur[indexQ] === this.qcm[indexQ]?.bonneReponse;
+  }
 
-
+  isBonneReponse(question: QcmQuestion, indexR: number): boolean {
+    return indexR === question.bonneReponse;
+  }
 
   fermerPopup(): void {
     this.showPopup = false;
