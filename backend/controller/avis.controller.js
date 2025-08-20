@@ -9,7 +9,7 @@ const newsletterSchema = new mongoose.Schema({
 });
 
 // Modèle basé sur la collection 'newsletters'
-const Newsletter = mongoose.model('Newsletter', newsletterSchema, 'newsletters');
+//const Newsletter = mongoose.model('Newsletter', newsletterSchema, 'newsletters');
 
 // GET /api/newsletters
 exports.getAvis = async (req, res) => {

@@ -21,7 +21,7 @@ interface Cours {
 interface Qcm {
   question: string;
   reponses: string[];
-  bonnesReponses: boolean[];
+  bonneReponse: number;
   xp: number;
   xpMin?: number;
   xpMax?: number;
@@ -35,10 +35,8 @@ interface Qcm {
   imports: [Icon, FormsModule, CommonModule]
 })
 export class Section5P implements OnInit, OnDestroy {
-
-  // -------------------- COURS --------------------
+  // Liste des cours
   cours: Cours[] = [];
-  coursSelectionne: Cours | null = null;
 
   // Popups
   popupCoursOuvert = false;
@@ -46,24 +44,24 @@ export class Section5P implements OnInit, OnDestroy {
   popupOuvert = false;
   showPopupExplique = false;
 
-  // Formulaire cours
+  // Cours sélectionné et formulaire
+  coursSelectionne: Cours | null = null;
+  fichierPdf?: File;
+  messageErreurPdf = '';
   titreCours = '';
   niveau = '';
   matiere = '';
   lienYoutube = '';
   imageMatiere = '';
-  fichierPdf?: File;
   qcms: Qcm[] = [];
-  messageErreurPdf = '';
 
   // QCM
   nouvelleQuestion = '';
   nouvellesReponses: string[] = ['',''];
-  bonneReponse: boolean[] = [false,false];
 
   // XP
   xpMin = 10;
-  xpMax = 50;
+  xpMax = 100;
 
   // Avis
   prenom = '';
@@ -89,10 +87,9 @@ export class Section5P implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.refreshSub?.unsubscribe();
-    this.restoreBodyScroll();
   }
 
-  // -------------------- CHARGEMENT COURS --------------------
+  // Charger les cours
   chargerCours(): void {
     this.http.get<Cours[]>(`http://localhost:3000/api/cours/prof/${encodeURIComponent(this.nomProf)}`)
       .subscribe({
@@ -101,7 +98,7 @@ export class Section5P implements OnInit, OnDestroy {
       });
   }
 
-  // -------------------- POPUP COURS --------------------
+  // ---------------------- POPUP COURS ----------------------
   ouvrirPopupCours(cours?: Cours) {
     if (cours) {
       this.coursSelectionne = { ...cours };
@@ -113,13 +110,11 @@ export class Section5P implements OnInit, OnDestroy {
       this.qcms = cours.qcms || [];
     }
     this.popupCoursOuvert = true;
-    this.blockBodyScroll();
   }
 
   fermerPopupCours() {
     this.popupCoursOuvert = false;
     this.resetForm();
-    this.restoreBodyScroll();
   }
 
   resetForm() {
@@ -133,9 +128,8 @@ export class Section5P implements OnInit, OnDestroy {
     this.coursSelectionne = null;
     this.nouvelleQuestion = '';
     this.nouvellesReponses = ['',''];
-    this.bonneReponse = [false,false];
     this.xpMin = 10;
-    this.xpMax = 50;
+    this.xpMax = 100;
   }
 
   onPdfSelected(event: any) {
@@ -194,38 +188,19 @@ export class Section5P implements OnInit, OnDestroy {
     return images[matiere] || 'assets/img/default.jpg';
   }
 
-  // -------------------- POPUP QCM --------------------
+  // ---------------------- POPUP QCM ----------------------
   ouvrirPopupQCM() {
     this.popupQcmOuvert = true;
     this.nouvelleQuestion = '';
     this.nouvellesReponses = ['',''];
-    this.bonneReponse = [false,false];
     this.xpMin = 10;
-    this.xpMax = 50;
-    this.blockBodyScroll();
+    this.xpMax = 100;
   }
 
-  trackByIndex(index: number, item: any): number { return index; }
+  fermerPopupQCM() { this.popupQcmOuvert = false; }
 
-  ouvrirQCMDepuisCours() {
-    this.fermerPopupCours();
-    this.ouvrirPopupQCM();
-  }
-
-  fermerPopupQCM() {
-    this.popupQcmOuvert = false;
-    this.restoreBodyScroll();
-  }
-
-  ajouterReponsePopup() {
-    this.nouvellesReponses.push('');
-    this.bonneReponse.push(false);
-  }
-
-  supprimerReponsePopup(index: number) {
-    this.nouvellesReponses.splice(index,1);
-    this.bonneReponse.splice(index,1);
-  }
+  ajouterReponsePopup() { this.nouvellesReponses.push(''); }
+  supprimerReponsePopup(index: number) { this.nouvellesReponses.splice(index,1); }
 
   validerQCM() {
     if (!this.nouvelleQuestion || this.nouvellesReponses.length < 2) {
@@ -237,7 +212,7 @@ export class Section5P implements OnInit, OnDestroy {
     this.qcms.push({
       question: this.nouvelleQuestion,
       reponses: [...this.nouvellesReponses],
-      bonnesReponses: [...this.bonneReponse],
+      bonneReponse: 0,
       xp: this.xpMin,
       xpMin: this.xpMin,
       xpMax: this.xpMax
@@ -245,64 +220,34 @@ export class Section5P implements OnInit, OnDestroy {
     this.fermerPopupQCM();
   }
 
-  // -------------------- POPUP AVIS --------------------
-  ouvrirPopup() { 
-    this.popupOuvert = true; 
-    this.blockBodyScroll();
-  }
+  trackByIndex(index: number) { return index; }
 
-  fermerPopup() { 
-    this.popupOuvert = false; 
-    this.restoreBodyScroll();
-  }
-
+  // ---------------------- POPUP AVIS ----------------------
+  ouvrirPopup() { this.popupOuvert = true; }
+  fermerPopup() { this.popupOuvert = false; }
   validerAvis() {
-    if(!this.prenom || !this.nom || !this.avisMessage){ 
-      alert('Remplissez tous les champs'); 
-      return; 
-    }
+    if(!this.prenom || !this.nom || !this.avisMessage){ alert('Remplissez tous les champs'); return; }
     alert(`Merci pour votre avis, ${this.prenom} ${this.nom} !`);
-    this.prenom=''; this.nom=''; this.avisMessage=''; 
-    this.popupOuvert=false;
-    this.restoreBodyScroll();
+    this.prenom=''; this.nom=''; this.avisMessage=''; this.popupOuvert=false;
   }
 
   mettreAJourImage() { this.imageMatiere = this.getImageParMatiere(this.matiere); }
 
-  // -------------------- POPUP EXPLICATIF --------------------
-  ouvrirPopupexplique() { 
-    this.showPopupExplique = true; 
-    this.blockBodyScroll();
-  }
+  // ---------------------- POPUP EXPLICATIF ----------------------
+  ouvrirPopupexplique() { this.showPopupExplique = true; }
+  fermerPopupexplique() { this.showPopupExplique = false; }
 
-  fermerPopupexplique() { 
-    this.showPopupExplique = false; 
-    this.restoreBodyScroll();
-  }
-
-  // -------------------- INIT & PROFILE --------------------
   getInitiales() { return this.profileService.getInitiales(); }
   getNomComplet() { return this.profileService.getNomComplet(); }
 
-  // -------------------- XP --------------------
+  // ---------------------- XP MIN/MAX UNIQUE ----------------------
   incrementXp() {
-    if (this.xpMax < 50) this.xpMax++;
+    if (this.xpMax < 100) this.xpMax++;
     if (this.xpMin < this.xpMax) this.xpMin++;
   }
 
   decrementXp() {
     if (this.xpMin > 10) this.xpMin--;
     if (this.xpMax > this.xpMin) this.xpMax--;
-  }
-
-  // -------------------- SCROLL --------------------
-  private blockBodyScroll() {
-    document.body.style.overflow = 'hidden';
-  }
-
-  private restoreBodyScroll() {
-    if (!this.popupCoursOuvert && !this.popupQcmOuvert && !this.popupOuvert && !this.showPopupExplique) {
-      document.body.style.overflow = 'auto';
-    }
   }
 }

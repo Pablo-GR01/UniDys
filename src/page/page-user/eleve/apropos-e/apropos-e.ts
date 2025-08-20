@@ -5,7 +5,7 @@ import { EngagementE } from "../../../../component-page/Eleve/page-apropos/engag
 import { Entete4E } from "../../../../component-page/Eleve/page-apropos/entete4-e/entete4-e";
 import { FooterE } from "../../../../component/footer-e/footer-e";
 import { CommonModule } from '@angular/common';
-import { AvisComponent } from '../../../../component/avis/avis';
+
 
 @Component({
   selector: 'app-apropos-e',
@@ -17,7 +17,7 @@ import { AvisComponent } from '../../../../component/avis/avis';
     EngagementE,
     Entete4E,
     FooterE,
-    AvisComponent
+    
   ],
   templateUrl: './apropos-e.html',
   styleUrls: ['./apropos-e.css'], // <-- corrigé
