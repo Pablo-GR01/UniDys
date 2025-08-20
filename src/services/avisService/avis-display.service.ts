@@ -12,7 +12,7 @@ export interface Avis {
 
 @Injectable({ providedIn: 'root' })
 export class AvisDisplayService {
-  private apiUrl = 'http://localhost:3000/api/avis';
+  private apiUrl = 'http://localhost:3000/api/newsletters'; // collection newsletters
 
   constructor(private http: HttpClient) {}
 
@@ -20,3 +20,5 @@ export class AvisDisplayService {
     return this.http.get<Avis[]>(this.apiUrl);
   }
 }
+
+
