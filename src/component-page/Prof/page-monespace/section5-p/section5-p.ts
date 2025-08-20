@@ -35,16 +35,14 @@ interface Qcm {
   imports: [Icon, FormsModule, CommonModule]
 })
 export class Section5P implements OnInit, OnDestroy {
-  // Liste des cours
+
   cours: Cours[] = [];
 
-  // Popups
   popupCoursOuvert = false;
   popupQcmOuvert = false;
   popupOuvert = false;
   showPopupExplique = false;
 
-  // Cours sélectionné et formulaire
   coursSelectionne: Cours | null = null;
   fichierPdf?: File;
   messageErreurPdf = '';
@@ -54,16 +52,13 @@ export class Section5P implements OnInit, OnDestroy {
   lienYoutube = '';
   imageMatiere = '';
   qcms: Qcm[] = [];
-
-  // QCM
+  bonneReponse: boolean[] = [false, false]; // initialisé avec deux réponses par défaut
   nouvelleQuestion = '';
-  nouvellesReponses: string[] = ['',''];
+  nouvellesReponses: string[] = ['', ''];
 
-  // XP
   xpMin = 10;
   xpMax = 100;
 
-  // Avis
   prenom = '';
   nom = '';
   avisMessage = '';
@@ -85,11 +80,8 @@ export class Section5P implements OnInit, OnDestroy {
     this.refreshSub = this.refreshService.refreshRequested$.subscribe(() => this.chargerCours());
   }
 
-  ngOnDestroy(): void {
-    this.refreshSub?.unsubscribe();
-  }
+  ngOnDestroy(): void { this.refreshSub?.unsubscribe(); }
 
-  // Charger les cours
   chargerCours(): void {
     this.http.get<Cours[]>(`http://localhost:3000/api/cours/prof/${encodeURIComponent(this.nomProf)}`)
       .subscribe({
@@ -98,7 +90,6 @@ export class Section5P implements OnInit, OnDestroy {
       });
   }
 
-  // ---------------------- POPUP COURS ----------------------
   ouvrirPopupCours(cours?: Cours) {
     if (cours) {
       this.coursSelectionne = { ...cours };
@@ -112,10 +103,7 @@ export class Section5P implements OnInit, OnDestroy {
     this.popupCoursOuvert = true;
   }
 
-  fermerPopupCours() {
-    this.popupCoursOuvert = false;
-    this.resetForm();
-  }
+  fermerPopupCours() { this.popupCoursOuvert = false; this.resetForm(); }
 
   resetForm() {
     this.titreCours = '';
@@ -127,7 +115,7 @@ export class Section5P implements OnInit, OnDestroy {
     this.qcms = [];
     this.coursSelectionne = null;
     this.nouvelleQuestion = '';
-    this.nouvellesReponses = ['',''];
+    this.nouvellesReponses = ['', ''];
     this.xpMin = 10;
     this.xpMax = 100;
   }
@@ -188,19 +176,20 @@ export class Section5P implements OnInit, OnDestroy {
     return images[matiere] || 'assets/img/default.jpg';
   }
 
-  // ---------------------- POPUP QCM ----------------------
   ouvrirPopupQCM() {
     this.popupQcmOuvert = true;
     this.nouvelleQuestion = '';
-    this.nouvellesReponses = ['',''];
+    this.nouvellesReponses = ['', ''];
+    this.bonneReponse = [false, false]; // <-- réinitialisation des bonnes réponses
     this.xpMin = 10;
     this.xpMax = 100;
   }
+  
 
   fermerPopupQCM() { this.popupQcmOuvert = false; }
 
   ajouterReponsePopup() { this.nouvellesReponses.push(''); }
-  supprimerReponsePopup(index: number) { this.nouvellesReponses.splice(index,1); }
+  supprimerReponsePopup(index: number) { this.nouvellesReponses.splice(index, 1); }
 
   validerQCM() {
     if (!this.nouvelleQuestion || this.nouvellesReponses.length < 2) {
@@ -222,9 +211,9 @@ export class Section5P implements OnInit, OnDestroy {
 
   trackByIndex(index: number) { return index; }
 
-  // ---------------------- POPUP AVIS ----------------------
   ouvrirPopup() { this.popupOuvert = true; }
   fermerPopup() { this.popupOuvert = false; }
+
   validerAvis() {
     if(!this.prenom || !this.nom || !this.avisMessage){ alert('Remplissez tous les champs'); return; }
     alert(`Merci pour votre avis, ${this.prenom} ${this.nom} !`);
@@ -233,14 +222,12 @@ export class Section5P implements OnInit, OnDestroy {
 
   mettreAJourImage() { this.imageMatiere = this.getImageParMatiere(this.matiere); }
 
-  // ---------------------- POPUP EXPLICATIF ----------------------
   ouvrirPopupexplique() { this.showPopupExplique = true; }
   fermerPopupexplique() { this.showPopupExplique = false; }
 
   getInitiales() { return this.profileService.getInitiales(); }
   getNomComplet() { return this.profileService.getNomComplet(); }
 
-  // ---------------------- XP MIN/MAX UNIQUE ----------------------
   incrementXp() {
     if (this.xpMax < 100) this.xpMax++;
     if (this.xpMin < this.xpMax) this.xpMin++;
@@ -250,4 +237,9 @@ export class Section5P implements OnInit, OnDestroy {
     if (this.xpMin > 10) this.xpMin--;
     if (this.xpMax > this.xpMin) this.xpMax--;
   }
+
+  ouvrirQCMDepuisCours() {
+    this.ouvrirPopupQCM();
+  }
+  
 }
