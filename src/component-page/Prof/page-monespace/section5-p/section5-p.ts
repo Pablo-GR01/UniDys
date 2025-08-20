@@ -57,12 +57,13 @@ export class Section5P implements OnInit, OnDestroy {
   nouvellesReponses: string[] = ['', ''];
 
   xpMin = 10;
-  xpMax = 100;
+  xpMax = 50;
 
   prenom = '';
   nom = '';
   avisMessage = '';
   nomProf = '';
+  windowHeight: number = window.innerHeight;
 
   private refreshSub!: Subscription;
 
@@ -78,7 +79,16 @@ export class Section5P implements OnInit, OnDestroy {
     this.nomProf = `${utilisateur.prenom} ${utilisateur.nom}`.trim();
     this.chargerCours();
     this.refreshSub = this.refreshService.refreshRequested$.subscribe(() => this.chargerCours());
+  
+    // Initialisation de windowHeight
+    this.windowHeight = window.innerHeight;
+  
+    // Écouteur pour mettre à jour windowHeight au redimensionnement
+    window.addEventListener('resize', () => {
+      this.windowHeight = window.innerHeight;
+    });
   }
+  
 
   ngOnDestroy(): void { this.refreshSub?.unsubscribe(); }
 
@@ -229,7 +239,7 @@ export class Section5P implements OnInit, OnDestroy {
   getNomComplet() { return this.profileService.getNomComplet(); }
 
   incrementXp() {
-    if (this.xpMax < 100) this.xpMax++;
+    if (this.xpMax < 50) this.xpMax++;
     if (this.xpMin < this.xpMax) this.xpMin++;
   }
 
