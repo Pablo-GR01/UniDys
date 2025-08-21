@@ -16,6 +16,11 @@ const coursSchema = new mongoose.Schema({
   fichierPdf: { type: String, required: true },
   utilisateurId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   qcms: { type: [qcmSchema], default: [] },
+  dysTypes: { 
+    type: [String], 
+    enum: ['dyslexie', 'dyspraxie', 'dysphasie', 'dyscalculie', 'autre'], 
+    default: [] 
+  }, // <-- nouveau champ pour choisir la ou les DYS
 }, {
   timestamps: true
 });

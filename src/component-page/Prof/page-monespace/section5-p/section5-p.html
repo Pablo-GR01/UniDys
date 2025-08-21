@@ -45,22 +45,69 @@
 </div>
 
 <!-- -------------------- POPUP EXPLICATIF -------------------- -->
-<div *ngIf="showPopupExplique" class="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 px-4">
-  <div class="bg-[#020118] border-6 border-[#8002FF] rounded-2xl shadow-2xl w-full max-w-lg p-6 relative animate-fadeIn">
-    <h3 class="text-2xl font-extrabold mb-4 text-purple-700">💡 Explication</h3>
-    <div class="space-y-3 text-white text-base leading-relaxed">
-      <p>📚 <strong>Cours :</strong> Remplissez tous les champs et ajoutez un fichier PDF obligatoire.</p>
-      <p>📝 <strong>QCM :</strong> Créez autant de QCM que nécessaire avec XP min/max.</p>
-      <p>⚠️ Respectez le format requis pour éviter des erreurs.</p>
+<div *ngIf="showPopupExplique" 
+     class="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 px-4 transition-opacity duration-300">
+
+  <div class="bg-gradient-to-b from-[#0A072E] to-[#020118] border-4 border-purple-700 rounded-3xl shadow-2xl w-[500px] h-[400px] p-6 relative flex flex-col">
+
+    <!-- Titre -->
+    <h3 class="text-2xl font-extrabold mb-4 text-purple-400 text-center drop-shadow-md">💡 Explication</h3>
+
+    <!-- Onglets -->
+    <div class="flex justify-around mb-4">
+      <button (click)="activeTab='cours'" 
+              [class]="activeTab === 'cours' ? 'bg-[#8002FF] text-white font-bold px-4 py-2 rounded-lg transition-all duration-300' : 'bg-transparent text-white font-bold px-4 py-2 rounded-lg hover:bg-purple-700 transition-all duration-300'">
+        📚 Cours
+      </button>
+      <button (click)="activeTab='qcm'" 
+              [class]="activeTab === 'qcm' ? 'bg-[#8002FF] text-white font-bold px-4 py-2 rounded-lg transition-all duration-300' : 'bg-transparent text-white font-bold px-4 py-2 rounded-lg hover:bg-purple-700 transition-all duration-300'">
+        📝 QCM
+      </button>
+      <button (click)="activeTab='autre'" 
+              [class]="activeTab === 'autre' ? 'bg-[#8002FF] text-white font-bold px-4 py-2 rounded-lg transition-all duration-300' : 'bg-transparent text-white font-bold px-4 py-2 rounded-lg hover:bg-purple-700 transition-all duration-300'">
+        ⚠️ Autre
+      </button>
     </div>
-    <div class="mt-6 flex justify-end">
-      <button (click)="fermerPopupexplique()" 
-              class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition duration-200">
+
+    <!-- Contenu Onglets -->
+    <div class="flex-1 overflow-auto space-y-4">
+      <!-- Cours -->
+      <div *ngIf="activeTab === 'cours'" class="p-5 bg-[#11102a] rounded-xl shadow-inner shadow-purple-900/30">
+        <p class="text-white text-base leading-relaxed">
+          Veuillez remplir tous les champs et joindre un fichier PDF obligatoire. 
+          Dans ce PDF, précisez le public ciblé pour ce cours : dyslexique, 
+          tout public ou autre. Pour le moment, les images ne s’affichent pas directement, 
+          mais vous pouvez télécharger le cours avec toutes les images incluses.
+        </p>
+      </div>
+
+      <!-- QCM -->
+      <div *ngIf="activeTab === 'qcm'" class="p-5 bg-[#11102a] rounded-xl shadow-inner shadow-purple-900/30">
+        <p class="text-white text-base leading-relaxed">
+          Créez autant de QCM que nécessaire. Attribuez entre 10 et 50 XP par question.
+        </p>
+      </div>
+
+      <!-- Autre -->
+      <div *ngIf="activeTab === 'autre'" class="p-5 bg-[#11102a] rounded-xl shadow-inner shadow-purple-900/30">
+        <p class="text-white text-base leading-relaxed">
+          Veuillez respecter le format requis afin d’éviter toute erreur et de garantir la bonne lecture du cours et des QCM.
+        </p>
+      </div>
+    </div>
+
+    <!-- Bouton Fermer -->
+    <div class="mt-4 flex justify-end">
+      <button (click)="fermerPopupexplique()" class="bg-purple-500 text-white px-6 py-2 rounded-2xl">
         OK, compris !
       </button>
     </div>
+
   </div>
 </div>
+
+
+
 
 <!-- -------------------- POPUP AVIS -------------------- -->
 <div *ngIf="popupOuvert" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
@@ -118,6 +165,7 @@
           <option>Histoire</option>
           <option>Sciences</option>
         </select>
+        
 
         <input [(ngModel)]="lienYoutube" type="text" placeholder="Lien Youtube (optionnel)" class="col-span-1 md:col-span-2 border-2 border-[#8002FF] rounded px-2 py-2" />
 

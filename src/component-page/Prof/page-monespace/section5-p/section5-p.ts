@@ -25,7 +25,6 @@ interface Qcm {
   xp: number;
   xpMin?: number;
   xpMax?: number;
-  titreCours?: string;  // <-- ajouté ici
 }
 
 @Component({
@@ -128,7 +127,7 @@ export class Section5P implements OnInit, OnDestroy {
     this.nouvelleQuestion = '';
     this.nouvellesReponses = ['', ''];
     this.xpMin = 10;
-    this.xpMax = 50;
+    this.xpMax = 100;
   }
 
   onPdfSelected(event: any) {
@@ -193,7 +192,15 @@ export class Section5P implements OnInit, OnDestroy {
     this.nouvellesReponses = ['', ''];
     this.bonneReponse = [false, false]; // <-- réinitialisation des bonnes réponses
     this.xpMin = 10;
-    this.xpMax = 50;
+    this.xpMax = 100;
+  }
+  
+
+  // Déclaration de la propriété activeTab
+  activeTab: 'cours' | 'qcm' | 'autre' = 'cours'; // Valeur par défaut
+
+  fermerPopupexplique() {
+    this.showPopupExplique = false;
   }
   
 
@@ -219,12 +226,10 @@ export class Section5P implements OnInit, OnDestroy {
       return;
     }
   
-    // Ajouter le QCM avec le titre du cours
     this.qcms.push({
-      titreCours: this.titreCours,  // <-- ajout ici
       question: this.nouvelleQuestion,
       reponses: [...this.nouvellesReponses],
-      bonneReponse: indexBonneReponse,
+      bonneReponse: indexBonneReponse,  // <-- ici le prof choisit
       xp: this.xpMin,
       xpMin: this.xpMin,
       xpMax: this.xpMax
@@ -233,6 +238,7 @@ export class Section5P implements OnInit, OnDestroy {
     this.fermerPopupQCM();
   }
   
+
   trackByIndex(index: number) { return index; }
 
   ouvrirPopup() { this.popupOuvert = true; }
@@ -247,7 +253,7 @@ export class Section5P implements OnInit, OnDestroy {
   mettreAJourImage() { this.imageMatiere = this.getImageParMatiere(this.matiere); }
 
   ouvrirPopupexplique() { this.showPopupExplique = true; }
-  fermerPopupexplique() { this.showPopupExplique = false; }
+  
 
   getInitiales() { return this.profileService.getInitiales(); }
   getNomComplet() { return this.profileService.getNomComplet(); }
@@ -268,6 +274,7 @@ export class Section5P implements OnInit, OnDestroy {
   choisirBonneReponse(index: number) {
     this.bonneReponse = this.nouvellesReponses.map((_, j) => j === index);
   }
+
   
   
 }

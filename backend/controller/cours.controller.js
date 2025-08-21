@@ -25,17 +25,28 @@ exports.creerCours = async (req, res) => {
       }
     }
 
+    // ← Récupération des types DYS
+    let dysTypes = [];
+    if (req.body.dysTypes) {
+      try {
+        dysTypes = JSON.parse(req.body.dysTypes);
+        if (!Array.isArray(dysTypes)) dysTypes = [];
+      } catch {
+        return res.status(400).json({ message: 'Format DYS invalide.' });
+      }
+    }
+
     const nouveauCours = new Cours({
       titre,
       niveau,
       matiere,
-      nomProf: `${user.prenom} ${user.nom}`.trim(), // Toujours prénom + nom
+      nomProf: `${user.prenom} ${user.nom}`.trim(),
       lienYoutube: lienYoutube || '',
       fichierPdf: fichier.filename,
       utilisateurId,
       qcms,
+      dysTypes, // ← ajout ici
     });
-    
 
     await nouveauCours.save();
 
