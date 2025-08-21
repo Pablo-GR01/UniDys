@@ -25,6 +25,7 @@ interface Qcm {
   xp: number;
   xpMin?: number;
   xpMax?: number;
+  titreCours?: string;  // <-- ajouté ici
 }
 
 @Component({
@@ -127,7 +128,7 @@ export class Section5P implements OnInit, OnDestroy {
     this.nouvelleQuestion = '';
     this.nouvellesReponses = ['', ''];
     this.xpMin = 10;
-    this.xpMax = 100;
+    this.xpMax = 50;
   }
 
   onPdfSelected(event: any) {
@@ -192,7 +193,7 @@ export class Section5P implements OnInit, OnDestroy {
     this.nouvellesReponses = ['', ''];
     this.bonneReponse = [false, false]; // <-- réinitialisation des bonnes réponses
     this.xpMin = 10;
-    this.xpMax = 100;
+    this.xpMax = 50;
   }
   
 
@@ -218,10 +219,12 @@ export class Section5P implements OnInit, OnDestroy {
       return;
     }
   
+    // Ajouter le QCM avec le titre du cours
     this.qcms.push({
+      titreCours: this.titreCours,  // <-- ajout ici
       question: this.nouvelleQuestion,
       reponses: [...this.nouvellesReponses],
-      bonneReponse: indexBonneReponse,  // <-- ici le prof choisit
+      bonneReponse: indexBonneReponse,
       xp: this.xpMin,
       xpMin: this.xpMin,
       xpMax: this.xpMax
@@ -230,7 +233,6 @@ export class Section5P implements OnInit, OnDestroy {
     this.fermerPopupQCM();
   }
   
-
   trackByIndex(index: number) { return index; }
 
   ouvrirPopup() { this.popupOuvert = true; }

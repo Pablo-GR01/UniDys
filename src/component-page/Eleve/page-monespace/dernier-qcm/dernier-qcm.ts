@@ -18,11 +18,16 @@ export class DerniersQCM implements OnInit {
 
   // Pagination
   currentPage: number = 1;
-  pageSize: number = 4; // 10 QCM par page
+  pageSize: number = 4;
 
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
+    this.loadDerniersQcm();
+  }
+
+  // Charger les derniers QCM de l'utilisateur
+  loadDerniersQcm() {
     const user = localStorage.getItem('user');
     const userId = user ? JSON.parse(user)._id : null;
 
@@ -32,12 +37,15 @@ export class DerniersQCM implements OnInit {
       return;
     }
 
+    this.loading = true;
     this.http.get<any[]>(`http://localhost:3000/api/qcm/results/user/${userId}`).subscribe({
       next: data => {
         this.derniersQcm = data.map(qcm => ({
           _id: qcm._id,
-          coursId: qcm.coursId,
-          titre: `Cours #${qcm.coursId}`,
+          coursId: qcm.qcmId?._id || null,
+          // 🔥 Ici on récupère le titre du cours depuis qcm.qcmId.titre
+          titre: `QCM : ${qcm.qcmId?.titre || 'Cours Inconnu'}`,
+          matiere: qcm.qcmId?.matiere || 'Matière inconnue',
           score: qcm.score,
           xpGagne: qcm.xpGagne,
           date: new Date(qcm.createdAt),
@@ -54,7 +62,30 @@ export class DerniersQCM implements OnInit {
     });
   }
 
-  // QCM affichés sur la page principale
+  // Envoyer un résultat de QCM
+  sendQcmResult(qcmId: string, score: number, reponses: number[], xpGagne: number) {
+    const user = localStorage.getItem('user');
+    const userId = user ? JSON.parse(user)._id : null;
+
+    if (!userId) {
+      console.warn('Aucun utilisateur connecté ou ID introuvable');
+      return;
+    }
+
+    const body = { userId, qcmId, score, reponses, xpGagne };
+
+    this.http.post('http://localhost:3000/api/qcm/resultats', body).subscribe({
+      next: res => {
+        console.log('Résultat QCM envoyé avec succès', res);
+        this.loadDerniersQcm(); // Recharger après envoi
+      },
+      error: err => {
+        console.error('Erreur lors de l\'envoi du QCM', err);
+      }
+    });
+  }
+
+  // QCM affichés sur la page principale (2 premiers)
   get displayedQcm() {
     return this.derniersQcm.slice(0, 2);
   }
@@ -78,8 +109,9 @@ export class DerniersQCM implements OnInit {
     }
   }
 
+  // Ouvrir/fermer popup
   togglePopup() {
     this.showPopup = !this.showPopup;
-    this.currentPage = 1; // recommencer à la première page à chaque ouverture
+    this.currentPage = 1;
   }
 }

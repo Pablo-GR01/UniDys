@@ -20,8 +20,8 @@
         <!-- Image dynamique -->
         <img 
           [src]="'assets/Level-' + level + '.png'" 
-          [alt]="'Niveau ' + level" 
-          class="w-20 h-20 sm:w-24 sm:h-24 object-contain select-none drop-shadow-lg"
+          [alt]="'Level' + level" 
+          class="w-30 h-30 sm:w-24 sm:h-24 object-contain select-none drop-shadow-lg"
         />
 
         <!-- Overlay Level Tag -->
@@ -39,17 +39,17 @@
       </h2>
       <span class="px-6 py-2 rounded-full text-lg sm:text-xl font-semibold text-purple-50 
                    bg-gradient-to-r from-purple-600 to-purple-900 shadow-lg mt-3 text-center">
-        Niveau : {{ level }}
+       Level : {{ level }}
       </span>
 
       <!-- Barre de progression -->
-      <div class="w-full bg-gray-900/70 rounded-full h-8 overflow-hidden mt-5 shadow-inner relative">
+      <div class="w-full bg-gray-900/70 rounded-full h-4 overflow-hidden mt-5 shadow-inner relative">
         <div [style.width.%]="progression"
-             class="h-5 rounded-full"
+             class="h-4 rounded-full"
              [ngStyle]="{'background': 'linear-gradient(90deg, #8002ff, #c084fc, #8002ff)',
                          'background-size': '200% 100%',
                          'animation': 'gradientMove 3s linear infinite',
-                         'box-shadow': '0 0 15px #a855f7'}">
+                         'box-shadow': '0 0 10px #a855f7'}">
         </div>
         <!-- Pourcentage affiché -->
         <span class="absolute right-2 top-0 text-white font-bold text-xs sm:text-sm h-full flex items-center">
