@@ -102,36 +102,37 @@ export class LevelE implements OnInit, OnDestroy {
 
   private mettreAJourPalier(): void {
     if (!this.user || this.user.xp == null) {
-      this.palier = 'Débutant';
-      this.level = 1;
+      this.level = 0;
       this.progression = 0;
       this.xpRestant = 100;
       return;
     }
-
+  
     const xp = this.user.xp;
-    let xpMax = 100;
-
-    if (xp < 100) {
-      this.palier = 'Débutant';
-      xpMax = 100;
-    } else if (xp < 300) {
-      this.palier = 'Intermédiaire';
-      xpMax = 300;
-    } else if (xp < 600) {
-      this.palier = 'Avancé';
-      xpMax = 600;
-    } else {
-      this.palier = 'Expert';
-      xpMax = xp + 500;
+  
+    // Tableau cumulatif XP par level (exemple : level 0 → 0, level 1 → 100, level 2 → 300, etc.)
+    const xpParLevel = [0, 100, 300, 600, 1000, 1500, 2100, 2800, 3600, 4500, 5500, 6600, 7800, 9100, 10500];
+  
+    // Trouver le level actuel
+    let lvl = 0;
+    for (let i = 0; i < xpParLevel.length; i++) {
+      if (xp >= xpParLevel[i]) {
+        lvl = i;
+      } else {
+        break;
+      }
     }
-
-    const xpMin = this.getXpMinForCurrentLevel(xp);
+    this.level = lvl;
+  
+    // XP pour le level actuel
+    const xpMin = xpParLevel[lvl];
+    const xpMax = xpParLevel[lvl + 1] ?? xpMin + 100; // Si pas défini, ajouter 100 par défaut
+  
+    // Progression et XP restant
     this.progression = ((xp - xpMin) / (xpMax - xpMin)) * 100;
     this.xpRestant = xpMax - xp;
-
-    this.level = Math.floor(xp / 100) + 1;
   }
+  
 
   private getXpMinForCurrentLevel(xp: number): number {
     if (xp < 100) return 0;

@@ -36,13 +36,20 @@
   <div *ngIf="showModal1" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
     <div class="bg-[#020118] border-4 border-[#8002FF] rounded-xl p-6 w-full max-w-xl shadow-2xl">
       <h2 class="text-xl sm:text-2xl font-bold mb-6">Modifier vos informations</h2>
-      <form>
-        <input type="text" placeholder="Nom"
+      <form (ngSubmit)="updateProfile()">
+        <input type="text" placeholder="Nom" [(ngModel)]="lastName" name="lastName"
           class="w-full mb-4 p-3 rounded border-2 border-[#8002FF] bg-transparent text-white placeholder-gray-400" />
-        <input type="text" placeholder="Prénom"
+        <input type="text" placeholder="Prénom" [(ngModel)]="firstName" name="firstName"
           class="w-full mb-4 p-3 rounded border-2 border-[#8002FF] bg-transparent text-white placeholder-gray-400" />
-        <input type="email" placeholder="Adresse email"
+        <input type="email" placeholder="Adresse email" [(ngModel)]="email" name="email"
           class="w-full mb-4 p-3 rounded border-2 border-[#8002FF] bg-transparent text-white placeholder-gray-400" />
+
+        <h3 class="text-lg font-semibold mb-2">Changer le mot de passe</h3>
+        <input type="password" placeholder="Ancien mot de passe" [(ngModel)]="oldPassword" name="oldPassword"
+          class="w-full mb-4 p-3 rounded border-2 border-[#8002FF] bg-transparent text-white placeholder-gray-400" />
+        <input type="password" placeholder="Nouveau mot de passe" [(ngModel)]="newPassword" name="newPassword"
+          class="w-full mb-4 p-3 rounded border-2 border-[#8002FF] bg-transparent text-white placeholder-gray-400" />
+
         <div class="flex justify-end gap-2">
           <button type="button" (click)="showModal1 = false"
             class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded">
