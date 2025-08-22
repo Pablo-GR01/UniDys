@@ -9,7 +9,7 @@ router.post('/users', userController.registerUser);
 router.post('/login', authController.login);
 router.get('/users/:email', userController.getUserByEmail);
 router.delete('/users/:id', userController.deleteUserById);
-
+router.get('/unidys/users', userController.getAllUsers);
 // Route pour ajouter XP
 router.post('/users/:id/ajouterXP', async (req, res) => {
   const { id } = req.params;

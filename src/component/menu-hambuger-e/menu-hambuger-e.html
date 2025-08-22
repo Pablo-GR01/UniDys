@@ -31,9 +31,8 @@
 </div>
 
 <!-- Menu déroulant bureau -->
-@if(menuOuvert && !mobileMenu){
-<div
-  class="absolute right-4 mt-4 bg-[var(--Bleu-Foncé)] border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-xl shadow-md z-50 w-48 sm:w-56 hidden md:block 2xl:-mr-50">
+<div *ngIf="menuOuvert && !mobileMenu"
+     class="absolute right-4 mt-4 bg-[var(--Bleu-Foncé)] border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-xl shadow-md z-50 w-48 sm:w-56 md:block 2xl:-mr-50">
   <ul class="flex flex-col gap-1 py-2">
     <li class="px-4 py-2 hover:bg-[var(--Violet)] cursor-pointer rounded flex items-center gap-2">
       <i class="fa-solid fa-circle-info"></i>
@@ -41,34 +40,31 @@
     </li>
     <li class="px-4 py-2 hover:bg-[var(--Violet)] cursor-pointer rounded flex items-center gap-2">
       <i class="fa-solid fa-power-off"></i>
-      <a routerLink="/connexion" class="block w-full text-sm sm:text-base">Déconnexion</a>
+      <span (click)="deconnecter()" class="block w-full text-sm cursor-pointer">Déconnexion</span>
     </li>
   </ul>
 </div>
-}
-
 
 <!-- Menu mobile -->
-@if(mobileMenu){
-  <div class="absolute top-14 right-4 bg-[var(--Bleu-Foncé)] border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-xl shadow-md z-50 w-48">
-    <ul class="flex flex-col gap-1 py-2">
-      <li class="px-4 py-2 hover:bg-[var(--Violet)] cursor-pointer rounded">
-        <a routerLink="/accueilE" class="block w-full text-sm">Accueil</a>
-      </li>
-      <li class="px-4 py-2 hover:bg-[var(--Violet)] cursor-pointer rounded">
-        <a routerLink="/coursE" class="block w-full text-sm">Cours</a>
-      </li>
-      <li class="px-4 py-2 hover:bg-[var(--Violet)] cursor-pointer rounded">
-        <a routerLink="/aproposE" class="block w-full text-sm">À propos</a>
-      </li>
-      <li class="px-4 py-2 hover:bg-[var(--Violet)] cursor-pointer rounded flex items-center gap-2">
-        <i class="fa-solid fa-circle-info"></i>
-        <a routerLink="/InfoE" class="block w-full text-sm">Informations</a>
-      </li>
-      <li class="px-4 py-2 hover:bg-[var(--Violet)] cursor-pointer rounded flex items-center gap-2">
-        <i class="fa-solid fa-power-off"></i>
-        <a routerLink="/connexion" class="block w-full text-sm">Déconnexion</a>
-      </li>
-    </ul>
-  </div>
-}
+<div *ngIf="mobileMenu"
+     class="absolute top-14 right-4 bg-[var(--Bleu-Foncé)] border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-xl shadow-md z-50 w-48">
+  <ul class="flex flex-col gap-1 py-2">
+    <li class="px-4 py-2 hover:bg-[var(--Violet)] cursor-pointer rounded">
+      <a routerLink="/accueilE" class="block w-full text-sm">Accueil</a>
+    </li>
+    <li class="px-4 py-2 hover:bg-[var(--Violet)] cursor-pointer rounded">
+      <a routerLink="/coursE" class="block w-full text-sm">Cours</a>
+    </li>
+    <li class="px-4 py-2 hover:bg-[var(--Violet)] cursor-pointer rounded">
+      <a routerLink="/aproposE" class="block w-full text-sm">À propos</a>
+    </li>
+    <li class="px-4 py-2 hover:bg-[var(--Violet)] cursor-pointer rounded flex items-center gap-2">
+      <i class="fa-solid fa-circle-info"></i>
+      <a routerLink="/InfoE" class="block w-full text-sm">Informations</a>
+    </li>
+    <li class="px-4 py-2 hover:bg-[var(--Violet)] cursor-pointer rounded flex items-center gap-2">
+      <i class="fa-solid fa-power-off"></i>
+      <span (click)="deconnecter()" class="block w-full text-sm cursor-pointer">Déconnexion</span>
+    </li>
+  </ul>
+</div>

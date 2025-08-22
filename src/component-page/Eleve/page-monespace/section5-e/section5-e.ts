@@ -6,13 +6,15 @@ import { catchError } from 'rxjs/operators';
 import { throwError } from 'rxjs';
 import { Icon } from '../../../../component/icon/icon';
 import { ProfileService } from '../../../../services/userService/Profile.Service';
+import { RouterLink } from '@angular/router';
+
 
 @Component({
   selector: 'app-section5-e',
   templateUrl: './section5-e.html',
   styleUrls: ['./section5-e.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, Icon, HttpClientModule],
+  imports: [CommonModule, FormsModule, Icon, HttpClientModule, RouterLink],
 })
 export class Section5E {
   popupOuvert = false;

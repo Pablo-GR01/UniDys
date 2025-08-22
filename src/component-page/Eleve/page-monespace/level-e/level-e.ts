@@ -3,11 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of, Subscription, timer } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
+import { ProfileService } from '../../../../services/userService/Profile.Service';
 
 interface User {
   xp: number;
   prenom?: string;
   nom?: string;
+  email?: string;
 }
 
 interface QcmResult {
@@ -30,69 +32,87 @@ export class LevelE implements OnInit, OnDestroy {
   palier: string = 'Débutant';
   isLoading = true;
   errorMessage: string | null = null;
-  private subscription: Subscription | null = null;
 
   derniersXp: QcmResult[] = [];
-
   showDerniersXp: boolean = false;
 
-  constructor(private http: HttpClient) {}
+  private subscription: Subscription | null = null;
+
+  constructor(private http: HttpClient,
+    private ProfileService: ProfileService) {}
 
   ngOnInit(): void {
-    const email = localStorage.getItem('email');
-    if (email) {
-      this.subscription = timer(0, 30000).pipe(
-        switchMap(() => this.getUserByEmail(email))
-      ).subscribe({
+    const user = this.ProfileService.getUser(); // récupère l'utilisateur connecté
+    if (!user || !user.email) {
+      this.errorMessage = 'Utilisateur non connecté.';
+      this.user = { xp: 0 };
+      this.isLoading = false;
+      return;
+    }
+  
+    const email = user.email; // email correct du profil connecté
+
+    // Rafraîchissement toutes les 30 secondes
+    this.subscription = timer(0, 30000)
+      .pipe(switchMap(() => this.getUserByEmail(email)))
+      .subscribe({
         next: (user) => {
           if (user) {
-            if (user.xp == null) user.xp = 0;
+            this.user = { ...user, xp: user.xp ?? 0 };
 
-            this.user = user;
-
-            // ⚡ Affiche exactement l'XP de l'utilisateur connecté
+            // Calcul niveau/progression
             this.mettreAJourPalier(this.user.xp);
 
-            // Récupérer les derniers XP si besoin
+            // Récupérer uniquement les derniers QCM de cet utilisateur
             this.getDerniersXp(email);
 
             this.errorMessage = null;
           } else {
             this.errorMessage = 'Utilisateur introuvable.';
+            this.user = { xp: 0 };
           }
           this.isLoading = false;
         },
-        error: () => {
+        error: (err) => {
+          console.error('Erreur récupération utilisateur:', err);
           this.errorMessage = 'Erreur lors de la récupération des données utilisateur.';
+          this.user = { xp: 0 };
           this.isLoading = false;
         }
       });
-    } else {
-      this.isLoading = false;
-      this.errorMessage = 'Utilisateur non connecté.';
-    }
   }
 
   ngOnDestroy(): void {
     this.subscription?.unsubscribe();
   }
 
+  /** Récupère l'utilisateur connecté par email */
   private getUserByEmail(email: string): Observable<User | null> {
-    const url = `http://localhost:3000/api/unidys/users/${email}`;
-    return this.http.get<User>(url).pipe(catchError(() => of(null)));
+    const url = `http://localhost:3000/api/unidys/users/${encodeURIComponent(email)}`;
+    return this.http.get<User>(url).pipe(
+      catchError(err => {
+        console.error('Erreur API getUserByEmail:', err);
+        return of(null);
+      })
+    );
   }
 
+  /** Récupère uniquement les derniers QCM de l'utilisateur connecté */
   private getDerniersXp(email: string): void {
-    const url = `http://localhost:3000/api/unidys/qcmresults/${email}`;
-    this.http.get<QcmResult[]>(url).pipe(
-      catchError(() => of([]))
-    ).subscribe(results => {
-      this.derniersXp = results
-        .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-        .slice(0, 5);
-    });
+    const url = `http://localhost:3000/api/unidys/qcmresults/${encodeURIComponent(email)}`;
+    this.http.get<QcmResult[]>(url)
+      .pipe(catchError(err => {
+        console.error('Erreur API getDerniersXp:', err);
+        return of([]);
+      }))
+      .subscribe(results => {
+        this.derniersXp = results
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+          .slice(0, 5);
+      });
   }
 
+  /** Calcule le niveau, progression et XP restant */
   private mettreAJourPalier(xp: number): void {
     const xpParLevel = [0, 100, 300, 600, 1000, 1500, 2100, 2800, 3600, 4500, 5500, 6600, 7800, 9100, 10500];
 

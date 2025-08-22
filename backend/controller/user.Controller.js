@@ -53,3 +53,14 @@ exports.addXP = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+// Récupérer tous les utilisateurs
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find(); // récupère tous les utilisateurs
+    res.status(200).json(users);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des utilisateurs :', error);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};

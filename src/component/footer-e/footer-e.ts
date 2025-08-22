@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Icon } from '../icon/icon';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ProfileService } from '../../services/userService/Profile.Service';
 
 @Component({
   selector: 'app-footer-e',
@@ -14,14 +15,19 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 })
 export class FooterE {
   private http = inject(HttpClient); // inject HttpClient directement
+  private profileService = inject(ProfileService); // inject ProfileService
 
-  email = localStorage.getItem('email') ?? '';
+  email: string = '';
   inscrit = signal<boolean>(false);
   private apiUrl = 'http://localhost:3000/api/unidys/newsletters';
 
   constructor() {
+    const user = this.profileService.getUser();
+    this.email = user?.email ?? '';
+
     const inscritLocal = localStorage.getItem('newsletterInscrit');
     this.inscrit.set(inscritLocal === 'true');
+
     this.verifierInscription();
   }
 

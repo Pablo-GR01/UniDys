@@ -34,4 +34,10 @@ export class ProfileService {
     const user = this.getUser();
     return user?.role || 'invité';
   }
+
+  // -------------------------------
+  // Ajout de la méthode clearProfile
+  clearProfile() {
+    this.authService.setUser(null); // vide l'utilisateur dans AuthService
+  }
 }

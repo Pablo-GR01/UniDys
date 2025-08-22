@@ -1,28 +1,49 @@
-<div class="border-2 border-[var(--Violet)] mt-20 bg-[var(--Bleu)] pt-30 pb-100 ml-50 mr-50 rounded-2xl shadow-2xl">
-    <h2 class="text-white text-3xl font-bold mb-8 text-center">Classement des élèves</h2>
-  
-    <table class="w-full text-left text-white border-separate border-spacing-y-2">
+<div class="border-2 border-[var(--Violet)] mt-20 bg-gradient-to-b from-[var(--Bleu)] to-[var(--Violet-Foncé)] 
+            pt-10 pb-10 px-10 mx-12 rounded-3xl shadow-2xl">
+
+  <!-- Titre -->
+  <h2 class="text-white text-3xl sm:text-4xl font-extrabold mb-4 text-center tracking-wide drop-shadow-lg">
+    Classement des élèves
+  </h2>
+
+  <!-- Compteur avant remise à zéro des XP -->
+  <div class="text-center text-yellow-300 text-lg font-semibold mb-6">
+    Remise à zéro des XP dans : {{ countdown.days }}j {{ countdown.hours }}h {{ countdown.minutes }}m {{ countdown.seconds }}s
+  </div>
+
+  <!-- Tableau des élèves -->
+  <div class="overflow-x-auto rounded-2xl">
+    <table class="w-full text-center text-white border-collapse">
       <thead>
-        <tr class="bg-[var(--Violet)] text-lg">
-          <th class="p-3 rounded-l-xl">Rang</th>
-          <th class="p-3">Nom</th>
-          <th class="p-3">XP</th>
-          <th class="p-3 rounded-r-xl">Level</th>
+        <tr class="bg-[var(--Violet)] text-lg uppercase tracking-wider">
+          <th class="p-4 rounded-tl-2xl">Rang</th>
+          <th class="p-4">Nom</th>
+          <th class="p-4">XP</th>
+          <th class="p-4 rounded-tr-2xl">Level</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let eleve of eleves; let i = index" 
             class="bg-[var(--Violet-Foncé)] hover:bg-[var(--Violet)] transition duration-200">
-          <td class="p-3 font-bold"># {{ i + 1 }}</td>
-          <td class="p-3">{{ eleve.nom }} . {{ eleve.prenom.charAt(0) }}</td>
-          <td class="p-3">{{ eleve.xp }}</td>
-          <td class="p-3">{{ eleve.level }}</td>
+          
+          <!-- Rang avec médaille Font Awesome + numéro -->
+          <td class="p-4 font-semibold text-xl flex items-center justify-center gap-2">
+            <span *ngIf="i === 0" class="text-yellow-400"><i class="fas fa-medal"></i></span>
+            <span *ngIf="i === 1" class="text-gray-300"><i class="fas fa-medal"></i></span>
+            <span *ngIf="i === 2" class="text-orange-500"><i class="fas fa-medal"></i></span>
+            <span>#{{ i + 1 }}</span>
+          </td>
+
+          <td class="p-4">{{ eleve.nom }} {{ eleve.prenom.charAt(0) }}.</td>
+          <td class="p-4">{{ eleve.xp }}</td>
+          <td class="p-4">{{ eleve.level }}</td>
         </tr>
       </tbody>
     </table>
-  
-    <div *ngIf="eleves.length === 0" class="text-center text-[var(--Blanc)] mt-6">
-      Aucun élève trouvé pour le moment.
-    </div>
   </div>
-  
+
+  <!-- Message motivant pour les élèves avec peu d'XP -->
+  <div class="text-center text-[var(--Blanc)] mt-6 text-lg italic">
+    Pas de panique si tu n’avez pas beaucoup d’XP pour l’instant ! Chaque progrès compte, continue à apprendre à ton rythme.
+  </div>
+</div>
