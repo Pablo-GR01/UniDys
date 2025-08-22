@@ -51,7 +51,7 @@ app.use('/api/cours/html', coursHtmlRoute);
 
 // route élèves
 app.use('/api', eleveRoutes); // <-- ajouté ici
-
+app.use('/api/unidys/cours', coursRoutes);
 // Routes QCM (gestion des résultats)
 app.use('/api/qcm', qcmRoutes);
 app.use('/api/qcm/resultats', qcmResultsRouter);

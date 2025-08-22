@@ -16,19 +16,24 @@ export class User implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    // Récupérer tous les utilisateurs
+    // ✅ Appel au controller User → getAllUsers
     this.http.get<any[]>('http://localhost:3000/api/unidys/users')
       .subscribe({
-        next: users => this.userCount = Array.isArray(users) ? users.length : 0,
+        next: users => {
+          console.log("Réponse API Users:", users);
+          this.userCount = Array.isArray(users) ? users.length : 0;
+        },
         error: err => console.error('Erreur API utilisateurs:', err)
       });
 
-    // Récupérer tous les cours
-    this.http.get<any[]>('http://localhost:3000/api/unidys/courses')
-  .subscribe({
-    next: courses => this.courseCount = Array.isArray(courses) ? courses.length : 0,
-    error: err => console.error('Erreur API cours:', err)
-  });
-
+    // ✅ Appel au controller Cours → getAllCourses
+    this.http.get<any[]>('http://localhost:3000/api/unidys/cours')
+      .subscribe({
+        next: courses => {
+          console.log("Réponse API Cours:", courses);
+          this.courseCount = Array.isArray(courses) ? courses.length : 0;
+        },
+        error: err => console.error('Erreur API cours:', err)
+      });
   }
 }

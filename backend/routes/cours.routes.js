@@ -8,6 +8,12 @@ const pdfParse = require('pdf-parse');
 const Cours = require('../../schema/cours');
 const User = require('../../schema/user');
 
+const coursController = require('../controller/cours.controller');
+
+router.get('/unidys/courses', coursController.getAllCourses);
+router.post('/unidys/courses', coursController.creerCours);
+router.put('/unidys/courses/:id', coursController.modifierCours);
+
 // Assure-toi que le dossier uploads existe
 const uploadDir = path.join(__dirname, '../../uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
@@ -210,14 +216,15 @@ router.get('/complet/:id', async (req, res) => {
 });
 
 // --- GET tous les cours ---
+// Récupérer tous les cours
 router.get('/', async (req, res) => {
   try {
     const cours = await Cours.find();
     res.json(cours);
   } catch (err) {
-    console.error('Erreur récupération tous cours:', err);
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: err.message });
   }
 });
+
 
 module.exports = router;

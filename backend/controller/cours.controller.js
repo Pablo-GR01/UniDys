@@ -96,7 +96,16 @@ exports.modifierCours = async (req, res) => {
   }
 };
 
-
+// Récupérer tous les cours (corrigé)
+exports.getAllCourses = async (req, res) => {
+  try {
+    const courses = await Cours.find(); // <-- utiliser le modèle Cours
+    res.status(200).json(courses);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur serveur' });
+  }
+};
 
 // Autres méthodes : listerCoursParProf, supprimerCours, modifierPdfCours ...
 
