@@ -26,10 +26,10 @@
 
 
 <div class="min-h-screen flex items-center justify-center px-4 -mt-15">
-  <div class="bg-[#020118] rounded-2xl p-8 pt-1 w-full max-w-md shadow-xl border-6 border-[#8002FF] relative">
+  <div class="bg-[var(--Bleu-Foncé)] rounded-2xl p-8 pt-1 w-full max-w-md shadow-xl border-6 border-[var(--Violet)] relative">
 
     <!-- Inscription -->
-    <h2 class="text-center text-xl font-bold text-[#8002FF] mb-6 mt-3
+    <h2 class="text-center text-xl font-bold text-[var(--Violet)] mb-6 mt-3
     2xl:text-4xl
     xl:text-3xl
     md:text-3xl
@@ -38,13 +38,13 @@
     <!-- Choix profil -->
     <div class="flex justify-center gap-4 mb-4">
       <button (click)="activerProf()" [ngClass]="{
-          'bg-[#8002FF]': actif === 'prof',
+          'bg-[var(--Violet)]': actif === 'prof',
           'bg-transparent': actif !== 'prof'
         }" class="text-white px-4 py-1 rounded-full font-semibold border border-white">
         Prof
       </button>
       <button (click)="activerEleve()" [ngClass]="{
-          'bg-[#8002FF]': actif === 'eleve',
+          'bg-[var(--Violet)]': actif === 'eleve',
           'bg-transparent': actif !== 'eleve'
         }" class="text-white px-4 py-1 rounded-full font-semibold border border-white">
         Élève
@@ -56,34 +56,34 @@
 
       <!-- Nom -->
       <div class="mb-4">
-        <label class="text-white text-sm">Nom</label>
+        <label class="-[var(--Blanc)] text-sm">Nom</label>
         <input type="text" [(ngModel)]="inscriptionData.nom" name="nom"
-          class="w-full mt-1 px-3 py-2 bg-[#0A092B] border-2 border-[#8002FF] text-white rounded-md outline-none"
+          class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)]] border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-md outline-none"
           placeholder="Votre nom" required />
       </div>
 
       <!-- Prénom -->
       <div class="mb-4">
-        <label class="text-white text-sm">Prénom</label>
+        <label class="-[var(--Blanc)] text-sm">Prénom</label>
         <input type="text" [(ngModel)]="inscriptionData.prenom" name="prenom"
-          class="w-full mt-1 px-3 py-2 bg-[#0A092B] border-2 border-[#8002FF] text-white rounded-md outline-none"
+          class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)]] border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-md outline-none"
           placeholder="Votre prénom" required />
       </div>
 
       <!-- Mail -->
       <div class="mb-4">
-        <label class="text-white text-sm">Adresse mail</label>
-        <div class="flex items-center bg-[#0A092B] border-2 border-[#8002FF] px-3 py-2 rounded-md mt-1">
-          <i class="fa-solid fa-envelope text-white mr-2"></i>
+        <label class="text-[var(--Blanc)] text-sm">Adresse mail</label>
+        <div class="flex items-center bg-[var(--Bleu)]] border-2 border-[var(--Violet)] px-3 py-2 rounded-md mt-1">
+          <i class="fa-solid fa-envelope text-[var(--Blanc)] mr-2"></i>
           <input type="email" [(ngModel)]="inscriptionData.email" name="email"
-            class="bg-transparent outline-none text-white w-full" placeholder="Adresse mail" required />
+            class="bg-transparent outline-none text-[var(--Blanc)] w-full" placeholder="Adresse mail" required />
         </div>
       </div>
 
       <!-- Mot de passe -->
       <div class="mb-4">
-        <label class="text-white text-sm">Mot de passe</label>
-        <div class="flex items-center bg-[#0A092B] border-2 border-[#8002FF] px-3 py-2 rounded-md mt-1 relative">
+        <label class="text-[var(--Blanc)] text-sm">Mot de passe</label>
+        <div class="flex items-center bg-[var(--Bleu)]] border-2 border-[var(--Violet)] px-3 py-2 rounded-md mt-1 relative">
           <i class="fa-solid fa-lock text-white mr-2"></i>
           <input [type]="passwordVisible ? 'text' : 'password'" [(ngModel)]="inscriptionData.password" name="password"
             class="bg-transparent outline-none text-white w-full pr-10" placeholder="Mot de passe" required />
@@ -98,9 +98,9 @@
 
       @if(actif === 'prof'){
       <div class="mb-4">
-        <label class="text-white text-sm">Code professeur</label>
+        <label class="text-[var(--Blanc)] text-sm">Code professeur</label>
         <input type="password" [(ngModel)]="inscriptionData.codeProf" name="codeProf"
-          class="w-full mt-1 px-3 py-2 bg-[#0A092B] border-2 border-[#8002FF] text-white rounded-md outline-none"
+          class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)]] border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-md outline-none"
           placeholder="Code professeur" required />
       </div>
       }
@@ -108,7 +108,7 @@
 
       <!-- Valider -->
       <button type="submit" [disabled]="!formulaireValide()"
-        class="bg-[#8002FF] text-white w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255] disabled:opacity-50 disabled:cursor-not-allowed">
+        class="bg-[#8002FF] text-[var(--Blanc)] w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255] disabled:opacity-50 disabled:cursor-not-allowed">
         Valider
       </button>
     </form>
@@ -116,7 +116,7 @@
     <!-- Lien vers connexion -->
     <p class="text-center text-sm text-gray-300 mt-6">
       Vous avez déjà un compte ?
-      <a routerLink="/connexion" class="text-[#8002FF] font-semibold hover:underline transition duration-200">
+      <a routerLink="/connexion" class="text-[var(--Violet)] font-semibold hover:underline transition duration-200">
         Se connecter
       </a>
     </p>

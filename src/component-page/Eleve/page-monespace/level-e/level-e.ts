@@ -12,7 +12,7 @@ interface User {
 
 interface QcmResult {
   xpGagne: number;
-  date: string; // ou timestamp
+  date: string;
 }
 
 @Component({
@@ -24,7 +24,7 @@ interface QcmResult {
 })
 export class LevelE implements OnInit, OnDestroy {
   user: User | null = null;
-  level: number = 1;
+  level: number = 0;
   progression: number = 0;
   xpRestant: number = 0;
   palier: string = 'Débutant';
@@ -33,7 +33,6 @@ export class LevelE implements OnInit, OnDestroy {
   private subscription: Subscription | null = null;
 
   derniersXp: QcmResult[] = [];
-  totalXp: number = 0; // nouvelle propriété pour le total des XP
 
   showDerniersXp: boolean = false;
 
@@ -47,10 +46,16 @@ export class LevelE implements OnInit, OnDestroy {
       ).subscribe({
         next: (user) => {
           if (user) {
+            if (user.xp == null) user.xp = 0;
+
             this.user = user;
-            this.mettreAJourPalier();
+
+            // ⚡ Affiche exactement l'XP de l'utilisateur connecté
+            this.mettreAJourPalier(this.user.xp);
+
+            // Récupérer les derniers XP si besoin
             this.getDerniersXp(email);
-            this.calculerTotalXp(email); // <-- récupère le total
+
             this.errorMessage = null;
           } else {
             this.errorMessage = 'Utilisateur introuvable.';
@@ -88,63 +93,27 @@ export class LevelE implements OnInit, OnDestroy {
     });
   }
 
-  // Nouvelle méthode pour calculer le total des XP
-  private calculerTotalXp(email: string): void {
-    const url = `http://localhost:3000/api/unidys/qcmresults/${email}`;
-    this.http.get<QcmResult[]>(url).pipe(
-      catchError(() => of([]))
-    ).subscribe(results => {
-      this.totalXp = results
-        .filter(r => r && r.xpGagne)
-        .reduce((acc, r) => acc + r.xpGagne, 0);
-    });
-  }
-
-  private mettreAJourPalier(): void {
-    if (!this.user || this.user.xp == null) {
-      this.level = 0;
-      this.progression = 0;
-      this.xpRestant = 100;
-      return;
-    }
-  
-    const xp = this.user.xp;
-  
-    // Tableau cumulatif XP par level (exemple : level 0 → 0, level 1 → 100, level 2 → 300, etc.)
+  private mettreAJourPalier(xp: number): void {
     const xpParLevel = [0, 100, 300, 600, 1000, 1500, 2100, 2800, 3600, 4500, 5500, 6600, 7800, 9100, 10500];
-  
-    // Trouver le level actuel
+
     let lvl = 0;
     for (let i = 0; i < xpParLevel.length; i++) {
-      if (xp >= xpParLevel[i]) {
-        lvl = i;
-      } else {
-        break;
-      }
+      if (xp >= xpParLevel[i]) lvl = i;
+      else break;
     }
     this.level = lvl;
-  
-    // XP pour le level actuel
+
     const xpMin = xpParLevel[lvl];
-    const xpMax = xpParLevel[lvl + 1] ?? xpMin + 100; // Si pas défini, ajouter 100 par défaut
-  
-    // Progression et XP restant
+    const xpMax = xpParLevel[lvl + 1] ?? xpMin + 100;
+
     this.progression = ((xp - xpMin) / (xpMax - xpMin)) * 100;
-    this.xpRestant = xpMax - xp;
-  }
-  
-
-  private getXpMinForCurrentLevel(xp: number): number {
-    if (xp < 100) return 0;
-    if (xp < 300) return 100;
-    if (xp < 600) return 300;
-    return 600;
+    this.xpRestant = Math.max(0, xpMax - xp);
   }
 
-  // Popup méthodes
   ouvrirPopupDerniersXp(): void { this.showDerniersXp = true; }
   fermerPopupDerniersXp(): void { this.showDerniersXp = false; }
 
-  get deuxDerniersXp(): QcmResult[] { return this.derniersXp.slice(0, 2); }
+  get deuxDerniersXp(): QcmResult[] {
+    return this.derniersXp.slice(0, 2);
+  }
 }
-

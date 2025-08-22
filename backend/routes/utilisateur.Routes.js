@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../schema/user');
+const User = require('../../schema/user');
 const authMiddleware = require('../middleware/auth');
 
 // ✅ Mise à jour du profil utilisateur

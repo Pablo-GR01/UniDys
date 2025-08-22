@@ -10,22 +10,22 @@
 </div>
 
 <!-- Fond principal -->
-<div class="bg-[#020118]">
+<div class="bg-[var(--Bleu-Foncé)]">
   <div class="min-h-screen flex flex-col items-center justify-center px-4 -mt-20">
 
     <!-- Message de bienvenue au-dessus de la boîte de connexion -->
     @if (message) {
-    <div class="border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
-                  text-lg md:text-xl 2xl:text-2xl px-10 py-5 mb-6 bg-[#0A092B]/90">
+    <div class="border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
+                  text-lg md:text-xl 2xl:text-2xl px-10 py-5 mb-6 bg-[var(--Bleu)]">
       <p class="mb-0">{{ message }}</p>
     </div>
     }
 
     <!-- Boîte de connexion -->
-    <div class="bg-[#020118] rounded-2xl p-8 w-full max-w-md shadow-xl border-6 border-[#8002FF] relative">
+    <div class="bg-[var(--Bleu-Foncé)] rounded-2xl p-8 w-full max-w-md shadow-xl border-6 border-[var(--Violet)] relative">
 
       <!-- Titre -->
-      <h2 class="text-center font-black text-[#8002FF] mb-6
+      <h2 class="text-center font-black text-[var(--Violet)] mb-6
       2xl:text-4xl
       xl:text-3xl
       md:text-3xl
@@ -39,14 +39,14 @@
       <form (ngSubmit)="valider()" #connexionForm="ngForm">
         <!-- Email -->
         <div class="mb-4">
-          <label class="text-white text-sm" for="email">Adresse mail</label>
-          <div class="flex items-center bg-[#0A092B] border-2 border-[#8002FF] px-3 py-2 rounded mt-1">
-            <i class="fa-solid fa-envelope text-white mr-2"></i>
-            <input type="email" id="email" name="email" class="bg-transparent outline-none text-white w-full"
+          <label class="text-[var(--Blanc)] text-sm" for="email">Adresse mail</label>
+          <div class="flex items-center border-4 border-[var(--Violet)] px-3 py-2 rounded mt-1">
+            <i class="fa-solid fa-envelope text-[var(--Blanc)] mr-2"></i>
+            <input type="email" id="email" name="email" class="bg-transparent outline-none text-[var(--Blanc)] w-full"
               placeholder="Adresse mail" required [(ngModel)]="connexionData.email" #email="ngModel" />
           </div>
           @if (email.invalid && email.touched) {
-          <div class="text-red-500 text-xs mt-1">
+          <div class="text-[var(--Rouge)] text-xs mt-1">
             Email invalide.
           </div>
           }
@@ -54,26 +54,26 @@
 
         <!-- Mot de passe -->
         <div class="mb-4">
-          <label class="text-white text-sm" for="password">Mot de passe</label>
-          <div class="flex items-center bg-[#0A092B] border-2 border-[#8002FF] px-3 py-2 rounded-md mt-1 relative">
-            <i class="fa-solid fa-lock text-white mr-2"></i>
+          <label class="text-[var(--Blanc)] text-sm" for="password">Mot de passe</label>
+          <div class="flex items-center border-4 border-[var(--Violet)] px-3 py-2 rounded-md mt-1 relative">
+            <i class="fa-solid fa-lock text-[var(--Blanc)] mr-2"></i>
             <input [type]="passwordVisible ? 'text' : 'password'" id="password" name="password"
-              class="bg-transparent outline-none text-white w-full pr-10" placeholder="Mot de passe" required
+              class="bg-transparent outline-none text-[var(--Blanc)] w-full pr-10" placeholder="Mot de passe" required
               minlength="6" [(ngModel)]="connexionData.password" #password="ngModel" />
-            <button type="button" class="absolute right-3 text-white" (click)="togglePasswordVisibility()"
+            <button type="button" class="absolute right-3 text-[var(--Blanc)]" (click)="togglePasswordVisibility()"
               aria-label="Afficher / masquer mot de passe" tabindex="-1">
               <i class="fa" [ngClass]="passwordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
             </button>
           </div>
           @if (password.invalid && password.touched) {
-          <div class="text-red-500 text-xs mt-1">
+          <div class="text-[var(--Rouge)] text-xs mt-1">
             Le mot de passe doit contenir au moins 6 caractères.
           </div>
           }
         </div>
 
         <!-- Bouton de validation -->
-        <button (click)="valider()" [disabled]="!formulaireValide() || isLoading" class="flex items-center justify-center gap-2 bg-[#8002FF] text-white font-semibold rounded hover:bg-[#6900d8] disabled:opacity-50 transition-all duration-300
+        <button (click)="valider()" [disabled]="!formulaireValide() || isLoading" class="flex items-center justify-center gap-2 bg-[var(--Violet)] text-white font-semibold rounded hover:bg-[var(--Violet-Foncé)] disabled:opacity-50 transition-all duration-300
        w-full min-w-[250px] py-2 
        px-6 sm:px-10 md:px-20 lg:px-28 xl:px-36 2xl:px-40">
           <span class="inline-block">
@@ -84,9 +84,9 @@
       </form>
 
       <!-- Lien inscription -->
-      <p class="text-center text-sm text-gray-300 mt-6">
+      <p class="text-center text-sm text-[var(--Blanc)] mt-6">
         Vous n'avez pas encore de compte ?
-        <a routerLink="/inscription" class="text-[#8002FF] font-semibold hover:underline transition duration-200">
+        <a routerLink="/inscription" class="text-[var(--Violet)] font-semibold hover:underline transition duration-200">
           Créer un compte
         </a>
       </p>

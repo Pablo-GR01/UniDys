@@ -13,6 +13,9 @@ import { CoursDetailP } from '../component-page/Prof/page-monespace/cours-detail
 import { ClasseCPP } from '../page/page-user/prof/classe-cp/classe-cp';
 import { ClasseCPE } from '../page/page-user/eleve/classe-cp/classe-cp';
 import { CoursDetailE} from '../component-page/Eleve/page-cour/cours-detail-e/cours-detail-e';
+import { ClassementE } from '../component-page/Eleve/page-monespace/classement-e/classement-e';
+import { ClassementG } from '../page/page-user/eleve/classement-g/classement-g';
+
 
 
 
@@ -40,6 +43,7 @@ export const routes: Routes = [
   {path: 'accueilE', component: AccueilE},
   {path: 'aproposE', component: AproposE},
   {path: 'monespaceE', component: MonEspaceE},
+  {path: 'classementE', component: ClassementG},
 
   {path: 'InfoE', component: InformationE},
   {path: 'coursE', component: ClasseCPE},

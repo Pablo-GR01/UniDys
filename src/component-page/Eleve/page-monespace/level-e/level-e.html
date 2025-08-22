@@ -1,19 +1,14 @@
-<!-- -------------------- LEVEL / XP Amélioré UI/UX -------------------- -->
-<div class="w-full mt-7 mx-auto px-4 sm:px-8 py-6">
+<div class="w-full mt-7 mx-auto px-4 sm:px-8 py-6" *ngIf="!isLoading && user">
   <div class="flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-10 
               bg-gradient-to-r from-[#2A013D] to-[#8002FF] border border-purple-700 rounded-3xl shadow-2xl
               relative overflow-visible">
 
     <!-- Badge Niveau -->
     <div class="flex-shrink-0 relative group z-10">
-
-      <!-- Halo lumineux pulsant -->
       <div class="absolute inset-0 rounded-full bg-purple-700/30 blur-3xl animate-pulse z-0"></div>
-
-      <!-- Image dynamique grande qui dépasse -->
       <img 
         [src]="'assets/Level-' + level + '.png'" 
-        [alt]="'Level' + level" 
+        [alt]="'Level ' + level" 
         class="w-64 h-64 sm:w-72 sm:h-72 object-contain select-none drop-shadow-2xl
                transition-transform duration-500 group-hover:scale-110
                -mt-28 -mb-28 -ml-20 relative z-10"
@@ -42,7 +37,6 @@
                          'animation': 'gradientMove 3s linear infinite',
                          'box-shadow': '0 0 15px #a855f7'}">
         </div>
-        <!-- Pourcentage affiché -->
         <span class="absolute right-2 top-0 text-white font-bold text-xs sm:text-sm h-full flex items-center">
           {{ progression | number:'1.0-0' }}%
         </span>
@@ -51,10 +45,7 @@
 
     <!-- Prochain objectif -->
     <div class="flex flex-col items-center justify-center flex-shrink-0 mt-6 sm:mt-0">
-      <div class="flex items-center justify-center p-4 rounded-full bg-purple-800/30 shadow-lg animate-bounce">
-        <i class="fas fa-rocket text-white text-2xl"></i>
-      </div>
-      <span class="text-white text-sm sm:text-base font-semibold mt-3 text-center">
+      <span class="text-white text-sm sm:text-base font-semibold mt-3  text-center">
         {{ xpRestant }} XP restants
       </span>
     </div>
@@ -62,7 +53,6 @@
   </div>
 </div>
 
-<!-- 🎨 Effets CSS supplémentaires -->
 <style>
 @keyframes gradientMove {
   0% { background-position: 0% 50%; }

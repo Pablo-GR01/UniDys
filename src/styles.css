@@ -22,3 +22,17 @@
     scrollbar-color: #8002FF #0A092B;
   }
   
+  :root {
+    /* Palette principale */
+    --Violet: #8002FF;
+    --Violet-Foncé: #3F0255;
+    --Violet-Foncé2: #1A012B;
+    --Bleu-Foncé: #020118;
+    --Bleu: #0A092B;
+    --Blanc: #FFFF;
+    --Rouge: #8d0202;
+    --Vert: #096804;
+    
+
+  }
+  

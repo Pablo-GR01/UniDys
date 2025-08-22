@@ -5,13 +5,13 @@
 
     <!-- Bloc de contenu centré -->
     <div class="absolute inset-0 flex flex-col items-center justify-center text-center px-4 sm:px-6 md:px-10 lg:px-20">
-        <h2 class="text-white font-black
+        <h2 class="text-[var(--Blanc)] font-black
   text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl
   mb-4 drop-shadow-lg">
             BIENVENUE
         </h2>
 
-        <p class="text-white font-medium
+        <p class="text-[var(--Blanc)] font-medium
       text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl
       max-w-4xl mb-6 px-2 sm:px-0">
             UniDys accompagne les élèves du CP au CM2,
@@ -23,15 +23,21 @@
 
         <button 
             routerLink="/coursE"
-            class="text-white font-black rounded-xl hover:scale-105 
-                bg-gradient-to-r from-[#8002FF] to-[#3F0255] 
-                hover:from-[#3F0255] hover:to-[#1A012B] 
+            class="flex items-center justify-center gap-2 text-[var(--Blanc)] font-black rounded-xl hover:scale-105 
+                bg-gradient-to-r from-[var(--Violet)] to-[var(--Violet-Foncé)]
+                hover:from-[var(--Violet-Foncé)] hover:to-[var(--Violet-Foncé2)] 
                 focus:outline-none 
                 transition duration-300 ease-in-out hover:shadow-lg
                 text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 2xl:text-3xl
                 px-6 sm:px-8 md:px-10 lg:px-12 xl:px-16 2xl:px-20
                 py-2">
+            
+            <!-- Icône -->
+            <i class="fa-solid fa-book"></i>
+            
+            <!-- Texte -->
             Cours
         </button>
+
     </div>
 </div>

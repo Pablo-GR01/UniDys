@@ -1,7 +1,7 @@
 <app-header-e></app-header-e>
 
-<div class="max-w-5xl mx-auto p-6 bg-[#0A092B] text-white rounded-2xl shadow-2xl mt-8 border border-[#8002FF]">
-  <h2 class="text-4xl font-extrabold mb-8 text-center text-[#8002FF] drop-shadow-lg">
+<div class="max-w-5xl mx-auto p-6 bg-[var(--Bleu)] text-[var(--Blanc)] rounded-2xl shadow-2xl mt-8 border border-[var(--Violet)]">
+  <h2 class="text-4xl font-extrabold mb-8 text-center text-[var(--Violet)] drop-shadow-lg">
     📚 Détail du cours
   </h2>
 
@@ -13,8 +13,8 @@
   </section>
 
   <div *ngIf="loading" class="flex justify-center items-center p-8">
-    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-    <span class="ml-3 text-white">Chargement du contenu...</span>
+    <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--Blanc)]"></div>
+    <span class="ml-3 text-[var(--Blanc)]">Chargement du contenu...</span>
   </div>
 
   <div *ngIf="!loading && !contenuHtml" class="text-center p-8 text-gray-400">
@@ -23,7 +23,7 @@
 
   <!-- Section QCM -->
   <section *ngIf="qcm.length > 0"
-    class="mt-12 p-6 bg-[#1C1B3A] rounded-xl shadow-xl border border-[#8002FF] transition-all duration-300"
+    class="mt-12 p-6 bg-[var(--Bleu-Foncé)] rounded-xl shadow-xl border border-[var(--Violet)] transition-all duration-300"
     aria-label="Questionnaire à choix multiple">
 
     <div class="flex justify-between items-center mb-4">
@@ -38,12 +38,12 @@
       <fieldset *ngFor="let question of qcm; let questionIndex = index" [ngClass]="{
                   'bg-green-900/20 border-l-4 border-green-500 shadow-md': resultat !== null && questionEstJuste(questionIndex),
                   'bg-red-900/20 border-l-4 border-red-500 shadow-md': resultat !== null && !questionEstJuste(questionIndex),
-                  'bg-[#0A092B] border border-[#8002FF]/40': resultat === null
+                  'bg-[var(--Bleu)] border border-[var(--Violet)]/40': resultat === null
                 }" class="rounded-xl p-6 transition-all duration-300 hover:scale-[1.01] relative">
 
-        <legend class="text-lg font-bold text-white mb-4 flex justify-between items-center">
+        <legend class="text-lg font-bold text-[var(--Blanc)] mb-4 flex justify-between items-center">
           <div class="flex items-center gap-2">
-            <span class="px-3 py-1 bg-[#8002FF] rounded-full text-sm font-medium">
+            <span class="px-3 py-1 bg-[var(--Violet)] rounded-full text-sm font-medium">
               {{ questionIndex + 1 }}/{{ qcm.length }}
             </span>
             <span class="text-[#00FFC2]">{{ question.question || 'Question sans titre' }}</span>
@@ -60,7 +60,7 @@
               [ngClass]="{
                      'bg-green-400/80 text-green-900 font-semibold': resultat !== null && isBonneReponse(question, reponseIndex),
                      'bg-red-400/80 text-red-900 line-through': resultat !== null && !questionEstJuste(questionIndex) && estCoche(questionIndex, reponseIndex) && !isBonneReponse(question, reponseIndex),
-                     'bg-white/10 text-white hover:bg-white/20': !(resultat !== null && isBonneReponse(question, reponseIndex)) && !(resultat !== null && !questionEstJuste(questionIndex) && estCoche(questionIndex, reponseIndex) && !isBonneReponse(question, reponseIndex))
+                     'bg-white/10 text-[var(--Blanc)] hover:bg-white/20': !(resultat !== null && isBonneReponse(question, reponseIndex)) && !(resultat !== null && !questionEstJuste(questionIndex) && estCoche(questionIndex, reponseIndex) && !isBonneReponse(question, reponseIndex))
                    }">
               <input type="radio" name="qcm_{{ questionIndex }}" [value]="reponseIndex"
                 [(ngModel)]="reponsesUtilisateur[questionIndex]" [disabled]="qcmDejaFait || resultat !== null" />
@@ -74,12 +74,12 @@
 
       <div class="flex justify-center mt-6">
         <button *ngIf="!qcmDejaFait" type="submit"
-          class="px-8 py-3 bg-[#8002FF] text-white font-semibold rounded-full shadow-lg hover:bg-[#5d02b4] active:scale-95 transition duration-200">
+          class="px-8 py-3 bg-[var(--Violet)] text-[var(--Blanc)] font-semibold rounded-full shadow-lg hover:bg-[var(--Violet-Foncé)] active:scale-95 transition duration-200">
           Valider mes réponses
         </button>
 
         <button *ngIf="qcmDejaFait" type="button" (click)="showPopup = true"
-          class="px-8 py-3 bg-[#FFD700] text-[#0A092B] font-semibold rounded-full shadow-lg hover:bg-[#FFC400] active:scale-95 transition duration-200">
+          class="px-8 py-3 bg-[#FFD700] text-[var(--Bleu)] font-semibold rounded-full shadow-lg hover:bg-[#FFC400] active:scale-95 transition duration-200">
           Voir mes résultats
         </button>
       </div>
@@ -89,7 +89,7 @@
 
   <!-- Popup résultats -->
   <div *ngIf="showPopup && resultat !== null" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-    <div class="bg-[#0A092B] p-6 rounded-xl border border-[#8002FF] max-w-md text-center text-white shadow-lg">
+    <div class="bg-[var(--Bleu)] p-6 rounded-xl border border-[var(--Violet)] max-w-md text-center text-[var(--Blanc)] shadow-lg">
       <p class="text-2xl font-bold mb-4" [ngClass]="{
            'text-green-400': resultat === (qcm?.length ?? 0),
            'text-yellow-400': resultat > 0 && resultat < (qcm?.length ?? 0),
@@ -104,7 +104,7 @@
       <p class="text-[#FFD700] text-lg mt-2 font-medium">
         Tu gagnes <strong>{{ xp }}</strong> XP !
       </p>
-      <button class="mt-6 px-6 py-2 bg-[#8002FF] rounded-full font-semibold hover:bg-[#5d02b4]" (click)="fermerPopup()">
+      <button class="mt-6 px-6 py-2 bg-[var(--Violet)] rounded-full font-semibold hover:bg-[var(--Violet-Foncé)]" (click)="fermerPopup()">
         Fermer
       </button>
     </div>
