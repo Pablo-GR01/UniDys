@@ -1,18 +1,32 @@
-<div class="p-10 bg-gray-100 min-h-screen">
-    <h1 class="text-3xl font-bold mb-8 text-gray-800">Dashboard UniDys</h1>
-  
-    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-      <!-- Bloc Utilisateurs -->
-      <div class="bg-blue-600 p-8 rounded-3xl border-4 border-purple-600 shadow-xl transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl flex flex-col items-center justify-center">
+<div class="pt-10 min-h-screen">
+
+  <h1 class="text-3xl font-bold mb-8 text-[var(--Blanc)] text-center">Dashboard UniDys</h1>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 ml-30 mr-30">
+
+    <!-- Bloc Utilisateurs -->
+    <a routerLink="/userA"><div class="bg-[var(--Bleu)] p-8 rounded-3xl border-4 border-[var(--Violet)] shadow-xl transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl flex flex-col items-center justify-center">
+        <i class="fas fa-users text-4xl text-white mb-2"></i> <!-- Icon ajoutée -->
         <p class="text-white text-lg font-semibold mb-2">Utilisateurs</p>
         <p class="text-white text-4xl font-bold">{{ userCount }}</p>
       </div>
-  
-      <!-- Bloc Cours -->
-      <div class="bg-purple-600 p-8 rounded-3xl border-4 border-blue-600 shadow-xl transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl flex flex-col items-center justify-center">
+    </a>
+
+    <!-- Bloc Cours -->
+    <a routerLink=""><div class="bg-[var(--Bleu)] p-8 rounded-3xl border-4 border-[var(--Violet)] shadow-xl transform transition-transform duration-300 hover:scale-105 hover:shadow-2xl flex flex-col items-center justify-center">
+        <i class="fas fa-book-open text-4xl text-white mb-2"></i> <!-- Icon ajoutée -->
         <p class="text-white text-lg font-semibold mb-2">Cours</p>
         <p class="text-white text-4xl font-bold">{{ courseCount }}</p>
       </div>
-    </div>
+    </a>
+
   </div>
+
+</div>
+
+
+
+
+
+
   

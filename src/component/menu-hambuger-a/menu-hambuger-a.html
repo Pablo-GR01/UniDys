@@ -3,18 +3,13 @@
 <!-- Menu utilisateur -->
 <div class="flex items-center gap-3 relative 2xl:-mr-45">
 
-  <!-- Initiales ou icône admin -->
-  <div
-    class="absolute bg-violet-700 flex items-center justify-center rounded-full font-black text-white
-           2xl:mt-0 2xl:-ml-15 2xl:w-12 2xl:h-12 2xl:text-xl
-           md:-mt-7 md:ml-114 md:w-10 md:h-10 md:text-md">
-    <ng-container *ngIf="userService.getUser()?.role === 'admin'; else initiales">
-      <i class="fa-solid fa-crown text-white text-2xl"></i>
-    </ng-container>
-    <ng-template #initiales>
-      {{ userService.getInitiales() }}
-    </ng-template>
-  </div>
+  <!-- Icône admin -->
+<div
+class="border-4 border-[var(--Violet)] w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-[var(--Blanc)] text-sm sm:text-md 2xl:text-lg">
+<i class="fas fa-crown text-lg sm:text-xl 2xl:text-2xl"></i>
+</div>
+
+
 
   <!-- Mon Espace (desktop) -->
   <div class="hidden md:flex items-center gap-1 cursor-pointer" role="button" tabindex="0"
