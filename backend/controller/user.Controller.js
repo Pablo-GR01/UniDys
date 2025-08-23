@@ -1,6 +1,7 @@
 const User = require('../../schema/user');
+const Cours = require('../../schema/cours');
 
-// Inscription
+// -------------------- INSCRIPTION --------------------
 exports.registerUser = async (req, res) => {
   try {
     const { nom, prenom, email, password, role, codeProf } = req.body;
@@ -17,7 +18,7 @@ exports.registerUser = async (req, res) => {
   }
 };
 
-// Récupérer un utilisateur par email
+// -------------------- RÉCUPÉRER UN UTILISATEUR --------------------
 exports.getUserByEmail = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.params.email });
@@ -28,7 +29,7 @@ exports.getUserByEmail = async (req, res) => {
   }
 };
 
-// Supprimer un utilisateur
+// -------------------- SUPPRIMER UN UTILISATEUR --------------------
 exports.deleteUserById = async (req, res) => {
   try {
     const deleted = await User.findByIdAndDelete(req.params.id);
@@ -39,7 +40,7 @@ exports.deleteUserById = async (req, res) => {
   }
 };
 
-// Ajouter XP
+// -------------------- AJOUTER XP --------------------
 exports.addXP = async (req, res) => {
   try {
     const { xp } = req.body;
@@ -54,10 +55,10 @@ exports.addXP = async (req, res) => {
   }
 };
 
-// Récupérer tous les utilisateurs
+// -------------------- RÉCUPÉRER TOUS LES UTILISATEURS --------------------
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find(); // récupère tous les utilisateurs
+    const users = await User.find();
     res.status(200).json(users);
   } catch (error) {
     console.error('Erreur lors de la récupération des utilisateurs :', error);
@@ -65,28 +66,44 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-
-// ✅ Modifier un utilisateur par ID
+// -------------------- MODIFIER UN UTILISATEUR --------------------
 exports.updateUser = async (req, res) => {
   try {
-    const { id } = req.params; // Récupère l'ID de l'URL
-    const updates = req.body;  // Récupère les nouvelles infos envoyées par Angular
+    const { id } = req.params;
+    const updates = req.body;
 
-    // Mise à jour dans MongoDB
-    const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
+    // Récupérer l'utilisateur existant
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ message: "Utilisateur non trouvé" });
 
-    if (!updatedUser) {
-      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    const ancienNom = user.nom;
+    const ancienPrenom = user.prenom;
+
+    // Mettre à jour les champs
+    user.nom = updates.nom ?? user.nom;
+    user.prenom = updates.prenom ?? user.prenom;
+    user.email = updates.email ?? user.email;
+    user.role = updates.role ?? user.role;
+    user.codeProf = updates.codeProf ?? user.codeProf;
+    await user.save();
+
+    // 🔄 Mettre à jour tous les cours si le nom/prénom a changé
+    if (updates.nom || updates.prenom) {
+      const nouveauNomProf = `${user.prenom} ${user.nom}`.trim();
+      await Cours.updateMany(
+        { utilisateurId: user._id },
+        { $set: { nomProf: nouveauNomProf } }
+      );
     }
 
-    res.json(updatedUser);
+    res.json(user);
   } catch (err) {
     console.error("Erreur updateUser:", err);
     res.status(500).json({ message: "Erreur lors de la modification de l'utilisateur" });
   }
 };
 
-// Changer le mot de passe
+// -------------------- CHANGER LE MOT DE PASSE --------------------
 exports.changePassword = async (req, res) => {
   try {
     const { id } = req.params;
@@ -95,17 +112,41 @@ exports.changePassword = async (req, res) => {
     const user = await User.findById(id);
     if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
 
-    // Vérifier l'ancien mot de passe
-    if (user.password !== oldPassword) { // ⚠️ Pour production, hash avec bcrypt !
+    // ⚠️ Pour prod : hasher les mots de passe avec bcrypt
+    if (user.password !== oldPassword) {
       return res.status(400).json({ message: 'Ancien mot de passe incorrect' });
     }
 
-    user.password = newPassword; // ⚠️ hash le mot de passe en prod
+    user.password = newPassword;
     await user.save();
 
     res.json({ message: 'Mot de passe mis à jour avec succès' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Erreur lors de la modification du mot de passe' });
+  }
+};
+
+exports.updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updates = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
+    if (!updatedUser) return res.status(404).json({ message: "Utilisateur non trouvé" });
+
+    // Si le prénom ou nom change, mettre à jour le nomProf dans les cours
+    if (updates.firstName || updates.lastName) {
+      const nomProfComplet = `${updatedUser.firstName} ${updatedUser.lastName}`.trim();
+      await Cours.updateMany(
+        { utilisateurId: id },
+        { $set: { nomProf: nomProfComplet } }
+      );
+    }
+
+    res.json(updatedUser);
+  } catch (err) {
+    console.error("Erreur updateUser:", err);
+    res.status(500).json({ message: "Erreur lors de la modification de l'utilisateur" });
   }
 };
