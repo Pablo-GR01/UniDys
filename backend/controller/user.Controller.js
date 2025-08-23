@@ -64,3 +64,48 @@ exports.getAllUsers = async (req, res) => {
     res.status(500).json({ message: 'Erreur serveur' });
   }
 };
+
+
+// ✅ Modifier un utilisateur par ID
+exports.updateUser = async (req, res) => {
+  try {
+    const { id } = req.params; // Récupère l'ID de l'URL
+    const updates = req.body;  // Récupère les nouvelles infos envoyées par Angular
+
+    // Mise à jour dans MongoDB
+    const updatedUser = await User.findByIdAndUpdate(id, updates, { new: true });
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "Utilisateur non trouvé" });
+    }
+
+    res.json(updatedUser);
+  } catch (err) {
+    console.error("Erreur updateUser:", err);
+    res.status(500).json({ message: "Erreur lors de la modification de l'utilisateur" });
+  }
+};
+
+// Changer le mot de passe
+exports.changePassword = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { oldPassword, newPassword } = req.body;
+
+    const user = await User.findById(id);
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+    // Vérifier l'ancien mot de passe
+    if (user.password !== oldPassword) { // ⚠️ Pour production, hash avec bcrypt !
+      return res.status(400).json({ message: 'Ancien mot de passe incorrect' });
+    }
+
+    user.password = newPassword; // ⚠️ hash le mot de passe en prod
+    await user.save();
+
+    res.json({ message: 'Mot de passe mis à jour avec succès' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erreur lors de la modification du mot de passe' });
+  }
+};

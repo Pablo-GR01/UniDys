@@ -45,11 +45,11 @@ export class DPE implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        alert('Erreur lors de la mise à jour du profil.');
+        alert(err.error.message || 'Erreur lors de la mise à jour du profil.');
       }
     });
   }
-
+  
   updatePassword() {
     if (!this.oldPassword || !this.newPassword) {
       alert('Veuillez remplir les champs du mot de passe.');
@@ -64,8 +64,8 @@ export class DPE implements OnInit {
       },
       error: (err) => {
         console.error(err);
-        alert('Erreur lors du changement de mot de passe.');
+        alert(err.error.message || 'Erreur lors du changement de mot de passe.');
       }
     });
   }
-}
+}  

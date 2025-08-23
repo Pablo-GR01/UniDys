@@ -1,34 +1,86 @@
-<div class="pt-10 min-h-screen px-6 flex flex-col items-center">
-    <h1 class="text-3xl font-bold mb-8 text-[var(--Blanc)] text-center">Liste des Utilisateurs</h1>
+<!-- ================= CARDS LISTE UTILISATEURS ================= -->
+<div class="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div *ngFor="let user of users"
+        class="bg-gradient-to-r from-purple-700 to-indigo-800 text-white rounded-2xl shadow-xl p-6 flex flex-col justify-between min-h-[250px]">
+
+        <!-- Header card -->
+        <div class="flex items-center gap-4">
+            <!-- Avatar avec initiales -->
+            <div
+                class="border-4 border-white w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg">
+                {{ user.prenom.charAt(0) }}{{ user.nom.charAt(0) }}
+            </div>
+            <div>
+                <h2 class="text-lg font-semibold">{{ user.prenom }} {{ user.nom }}</h2>
+                <p class="text-sm text-gray-200">{{ user.email }}</p>
+            </div>
+        </div>
+
+        <!-- Infos bas de carte -->
+        <div class="mt-4">
+            <span class="text-sm bg-purple-500 px-3 py-1 rounded-full">{{ user.role }}</span>
+        </div>
+
+        <!-- Boutons -->
+        <div class="flex justify-between mt-5">
+            <button (click)="editUser(user)"
+                class="px-4 py-2 bg-yellow-500 text-black font-semibold rounded-lg hover:bg-yellow-600">
+                Modifier
+            </button>
+            <button (click)="deleteUser(user._id)"
+                class="px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700">
+                Supprimer
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- ================= MODAL EDIT ================= -->
+<div *ngIf="showEditModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-70 z-50">
+    <div class="bg-white w-[400px] p-6 rounded-xl shadow-xl">
+      <h2 class="text-xl font-bold mb-4 text-center">Modifier l’utilisateur</h2>
   
-    <!-- Grille 6 colonnes sur grand écran -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-20 justify-center">
-      <div *ngFor="let user of users" 
-           class="bg-[var(--Bleu-Foncé)] p-6 w-64 h-80 rounded-3xl border-4 border-[var(--Violet)] shadow-2xl flex flex-col items-center justify-between transform transition-transform duration-300 hover:scale-105 hover:shadow-3xl">
-  
-        <!-- Icône ou initiales -->
-        <div class="w-16 h-16 rounded-full bg-[var(--Violet)] flex items-center justify-center text-white font-bold text-xl mt-4">
-          <i *ngIf="user.role === 'eleve'" class="fas fa-user-graduate"></i>
-          <i *ngIf="user.role === 'prof'" class="fas fa-chalkboard-teacher"></i>
-          <i *ngIf="user.role === 'admin'" class="fas fa-crown"></i>
-          <span *ngIf="user.role !== 'admin' && user.role !== 'eleve' && user.role !== 'prof'">
-            {{ user.nom.charAt(0) }}{{ user.prenom.charAt(0) }}
-          </span>
+      <form>
+        <div class="mb-3">
+          <label class="block text-sm font-medium mb-1">Prénom</label>
+          <input [(ngModel)]="selectedUser.prenom" name="prenom"
+            class="w-full border rounded-lg px-3 py-2" />
         </div>
   
-        <div class="flex flex-col items-center text-center mt-4">
-          <p class="text-white font-semibold text-lg mb-1">{{ user.prenom }} {{ user.nom }}</p>
-          <p class="text-white text-sm mb-1">{{ user.email }}</p>
-          <p class="text-white text-sm mb-1">Role: {{ user.role }}</p>
-          <p *ngIf="user.xp !== undefined" class="text-white text-sm mb-1">XP: {{ user.xp }}</p>
-          <p *ngIf="user.level !== undefined" class="text-white text-sm">Level: {{ user.level }}</p>
+        <div class="mb-3">
+          <label class="block text-sm font-medium mb-1">Nom</label>
+          <input [(ngModel)]="selectedUser.nom" name="nom"
+            class="w-full border rounded-lg px-3 py-2" />
         </div>
   
-        <button (click)="deleteUser(user._id)" class="mb-4 px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-          Supprimer
-        </button>
+        <div class="mb-3">
+          <label class="block text-sm font-medium mb-1">Email</label>
+          <input [(ngModel)]="selectedUser.email" name="email"
+            class="w-full border rounded-lg px-3 py-2" />
+        </div>
   
-      </div>
+        <div class="mb-3">
+          <label class="block text-sm font-medium mb-1">Rôle</label>
+          <select [(ngModel)]="selectedUser.role" name="role"
+            class="w-full border rounded-lg px-3 py-2">
+            <option value="eleve">Élève</option>
+            <option value="prof">Professeur</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+  
+       <!-- Bouton valider modifications -->
+        <div class="flex justify-end mt-5">
+            <button type="button" (click)="updateUser()"
+                class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+                Valider
+            </button>
+            <button type="button" (click)="closeModal()"
+                class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 ml-2">
+                Fermer
+            </button>
+        </div>
+      </form>
     </div>
   </div>
   

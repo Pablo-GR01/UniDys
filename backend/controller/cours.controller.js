@@ -107,6 +107,28 @@ exports.getAllCourses = async (req, res) => {
   }
 };
 
+
+// ✅ Modifier un cours par ID
+exports.updateCours = async (req, res) => {
+  try {
+    const { id } = req.params;  // Récupère l'ID passé dans l'URL
+    const updates = req.body;   // Récupère les champs envoyés par Angular
+
+    const updatedCours = await Cours.findByIdAndUpdate(id, updates, { new: true });
+
+    if (!updatedCours) {
+      return res.status(404).json({ message: "Cours non trouvé" });
+    }
+
+    res.json(updatedCours);
+  } catch (err) {
+    console.error("❌ Erreur updateCours:", err);
+    res.status(500).json({ message: "Erreur lors de la modification du cours" });
+  }
+};
+
+
+
 // Autres méthodes : listerCoursParProf, supprimerCours, modifierPdfCours ...
 
 exports.creerCours = async (req, res) => { /* ... */ }

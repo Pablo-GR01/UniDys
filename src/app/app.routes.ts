@@ -16,6 +16,8 @@ import { CoursDetailE} from '../component-page/Eleve/page-cour/cours-detail-e/co
 import { ClassementE } from '../component-page/Eleve/page-monespace/classement-e/classement-e';
 import { ClassementG } from '../page/page-user/eleve/classement-g/classement-g';
 import { User } from '../page/page-user/admin/user/user';
+import { ListeCoursA } from '../component-page/Admin/liste-cours-a/liste-cours-a';
+import { Cours } from '../page/page-user/admin/cours/cours';
 
 
 
@@ -31,6 +33,7 @@ export const routes: Routes = [
   // route page admin
   {path: 'accueilA', component: AccueilA},
   {path: 'userA', component: User},
+  {path: 'coursA', component: Cours},
 
 
 

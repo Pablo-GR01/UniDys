@@ -9,6 +9,8 @@ router.post('/users', userController.registerUser);
 router.post('/login', authController.login);
 router.get('/users/:email', userController.getUserByEmail);
 router.delete('/users/:id', userController.deleteUserById);
+// ✅ Modifier un utilisateur par ID
+router.put('/users/:id', userController.updateUser);
 router.get('/unidys/users', userController.getAllUsers);
 // Route pour ajouter XP
 router.post('/users/:id/ajouterXP', async (req, res) => {
@@ -29,5 +31,8 @@ router.post('/users/:id/ajouterXP', async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 });
+
+router.put('/:id', userController.updateUser);
+router.put('/:id/password', userController.changePassword);
 
 module.exports = router;
