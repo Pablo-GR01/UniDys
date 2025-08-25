@@ -1,20 +1,9 @@
-const mongoose = require('mongoose');
+const Avis = require('../../schema/avis');
 
-// Schema Newsletter / Avis
-const newsletterSchema = new mongoose.Schema({
-  nom: { type: String, required: true },
-  prenom: { type: String, required: true },
-  message: { type: String, required: true },
-  date: { type: Date, default: Date.now }
-});
-
-// Modèle basé sur la collection 'newsletters'
-//const Newsletter = mongoose.model('Newsletter', newsletterSchema, 'newsletters');
-
-// GET /api/newsletters
+// GET /api/avis
 exports.getAvis = async (req, res) => {
   try {
-    const avisList = await Newsletter.find().sort({ date: -1 }).limit(4);
+    const avisList = await Avis.find().sort({ date: -1 }).limit(10); // dernier 10 avis
     res.json(avisList);
   } catch (error) {
     console.error(error);
@@ -22,14 +11,14 @@ exports.getAvis = async (req, res) => {
   }
 };
 
-// POST /api/newsletters
+// POST /api/avis
 exports.postAvis = async (req, res) => {
   try {
     const { nom, prenom, message } = req.body;
     if (!nom || !prenom || !message) {
       return res.status(400).json({ message: 'Tous les champs sont obligatoires' });
     }
-    const nouvelAvis = new Newsletter({ nom, prenom, message });
+    const nouvelAvis = new Avis({ nom, prenom, message });
     await nouvelAvis.save();
     res.status(201).json(nouvelAvis);
   } catch (error) {

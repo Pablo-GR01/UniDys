@@ -1,20 +1,39 @@
-import { Component } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ProfileService } from '../../services/userService/Profile.Service';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink, NavigationEnd } from '@angular/router';
 import { Icon } from '../icon/icon';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-menu-hambuger-a',
-  standalone: true,            // Il manque ça, sinon Angular ne sait pas que c’est un standalone
-  imports: [CommonModule, RouterLink,Icon],
+  standalone: true,
+  imports: [CommonModule, RouterLink, Icon],
   templateUrl: './menu-hambuger-a.html',
-  styleUrls: ['./menu-hambuger-a.css'], // il faut écrire styleUrls (au pluriel)
+  styleUrls: ['./menu-hambuger-a.css'],
 })
-export class MenuHambugerA {
+export class MenuHamburgerA implements OnInit, OnDestroy {
   menuOuvert = false;
   mobileMenu = false;
-  constructor(public userprofil: ProfileService) { }
+  private routerSub!: Subscription;
+
+  constructor(
+    public userprofil: ProfileService,
+    private router: Router
+  ) {}
+
+  ngOnInit() {
+    // 🔹 Fermer automatiquement quand on change de page
+    this.routerSub = this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.fermerMenus();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.routerSub) this.routerSub.unsubscribe();
+  }
 
   toggleMenu() {
     this.menuOuvert = !this.menuOuvert;
@@ -26,4 +45,18 @@ export class MenuHambugerA {
     this.menuOuvert = false;
   }
 
+  fermerMenus() {
+    this.menuOuvert = false;
+    this.mobileMenu = false;
+  }
+
+  // 🔹 Fermer si on clique en dehors
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    const target = event.target as HTMLElement;
+    const insideMenu = target.closest('app-menu-hambuger-a'); // vérifie si le clic est dans le menu
+    if (!insideMenu) {
+      this.fermerMenus();
+    }
+  }
 }

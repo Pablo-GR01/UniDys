@@ -6,6 +6,8 @@ import { Icon } from '../../../../component/icon/icon';
 import { ProfileService } from '../../../../services/userService/Profile.Service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
+
 
 interface Cours {
   _id: string;
@@ -32,7 +34,7 @@ interface Qcm {
   templateUrl: './section5-p.html',
   styleUrls: ['./section5-p.css'],
   standalone: true,
-  imports: [Icon, FormsModule, CommonModule]
+  imports: [Icon, FormsModule, CommonModule, RouterLink]
 })
 export class Section5P implements OnInit, OnDestroy {
 

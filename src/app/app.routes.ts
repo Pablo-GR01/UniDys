@@ -13,11 +13,11 @@ import { CoursDetailP } from '../component-page/Prof/page-monespace/cours-detail
 import { ClasseCPP } from '../page/page-user/prof/classe-cp/classe-cp';
 import { ClasseCPE } from '../page/page-user/eleve/classe-cp/classe-cp';
 import { CoursDetailE} from '../component-page/Eleve/page-cour/cours-detail-e/cours-detail-e';
-import { ClassementE } from '../component-page/Eleve/page-monespace/classement-e/classement-e';
-import { ClassementG } from '../page/page-user/eleve/classement-g/classement-g';
 import { User } from '../page/page-user/admin/user/user';
-import { ListeCoursA } from '../component-page/Admin/liste-cours-a/liste-cours-a';
 import { Cours } from '../page/page-user/admin/cours/cours';
+import { ClassementG } from '../page/page-user/prof/classement-g/classement-g';
+import { ClassementGE } from '../page/page-user/eleve/classement-g/classement-g';
+import { CoursdetailP } from '../component-page/Prof/page-cour/cours-detail-p/cours-detail-p';
 
 
 
@@ -41,15 +41,16 @@ export const routes: Routes = [
   {path: 'accueilP', component: AccueilP},
   {path: 'aproposP', component: AproposP},
   {path: 'monespaceP', component: MonespaceP},
-  {path: 'coursdetail/:id', component: CoursDetailP},
+  {path: 'coursdetail/:id', component: CoursdetailP},
   {path: 'coursP', component: ClasseCPP},
+  {path: 'classementP', component: ClassementG},
 
 
   // route page eleve
   {path: 'accueilE', component: AccueilE},
   {path: 'aproposE', component: AproposE},
   {path: 'monespaceE', component: MonEspaceE},
-  {path: 'classementE', component: ClassementG},
+  {path: 'classementE', component: ClassementGE},
 
   {path: 'InfoE', component: InformationE},
   {path: 'coursE', component: ClasseCPE},

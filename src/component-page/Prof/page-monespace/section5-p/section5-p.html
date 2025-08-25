@@ -1,48 +1,62 @@
 <app-icon></app-icon>
 
 <!-- SECTION UTILISATEUR -->
-<div class="ml-30 mr-30 flex flex-wrap items-center justify-between gap-4 px-4 py-6 border-4 border-[#8002FF] bg-[#0A072E] text-white rounded-xl max-w-7xl mx-auto mt-5">
+<div class="w-full px-4 py-6 flex flex-col items-center justify-center 
+            border-4 border-[#8002FF] bg-[#0A072E] text-white rounded-xl 
+            max-w-7xl mx-auto mt-5 space-y-6">
 
-  <!-- Initiales -->
-  <div class="flex items-center justify-center border-2 border-[#8002FF] rounded-full font-black w-12 h-12 text-lg sm:w-14 sm:h-14 sm:text-xl lg:w-16 lg:h-16 lg:text-2xl">
-    {{ getInitiales() }}
-  </div>
+  <!-- Initiales + Bonjour + Boutons -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 w-full">
 
-  <!-- Bonjour + nom -->
-  <div class="font-bold text-lg sm:text-xl lg:text-2xl">
-    Bonjour {{ getNomComplet() }}
-  </div>
+    <!-- Initiales -->
+    <div class="flex items-center justify-center border-2 border-[#8002FF] 
+                rounded-full font-black w-16 h-16 sm:w-20 sm:h-20 text-xl sm:text-2xl mx-auto sm:mx-0">
+      {{ getInitiales() }}
+    </div>
 
-  <!-- BOUTONS -->
-  <div class="flex flex-wrap gap-4 justify-center">
+    <!-- Bonjour + nom -->
+    <div class="font-bold text-center sm:text-left text-lg sm:text-xl lg:text-2xl flex-1">
+      Bonjour {{ getNomComplet() }}
+    </div>
 
-    <!-- Bouton Créer un cours -->
-    <button (click)="ouvrirPopupCours()"
-      class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
-             bg-gradient-to-r from-[#8002FF] to-[#3F0255] shadow-lg hover:scale-105 hover:shadow-purple-500/50
-             transition transform duration-300 relative overflow-hidden">
-      <i class="fas fa-book-open text-lg"></i> Créer un cours
-      <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
-    </button>
+    <!-- BOUTONS -->
+    <div class="flex flex-wrap gap-4 justify-center sm:justify-end w-full sm:w-auto">
+      <!-- Bouton Créer un cours -->
+      <button (click)="ouvrirPopupCours()"
+        class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
+               bg-gradient-to-r from-[#8002FF] to-[#3F0255] shadow-lg hover:scale-105 hover:shadow-purple-500/50
+               transition transform duration-300 relative overflow-hidden">
+        <i class="fas fa-book-open text-lg"></i> Créer un cours
+        <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
+      </button>
 
-    <!-- Bouton Laisser un avis -->
-    <button (click)="ouvrirPopup()"
-      class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
-             border-4 border-purple-600 shadow-md hover:bg-purple-700 hover:scale-105 transition transform duration-300 relative overflow-hidden">
-      <i class="fas fa-comment-dots text-lg"></i> Laisser un avis
-      <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
-    </button>
+      <!-- Bouton Laisser un avis -->
+      <button (click)="ouvrirPopup()"
+        class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
+               border-4 border-purple-600 shadow-md hover:bg-purple-700 hover:scale-105 transition transform duration-300 relative overflow-hidden">
+        <i class="fas fa-comment-dots text-lg"></i> Laisser un avis
+        <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
+      </button>
 
-    <!-- Bouton Explication cours -->
-    <button (click)="ouvrirPopupexplique()"
-      class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
-             border-4 border-purple-600 shadow-md hover:bg-purple-700 hover:scale-105 transition transform duration-300 relative overflow-hidden">
-      <i class="fa-solid fa-circle-info text-lg"></i> Explication cours
-      <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
-    </button>
+      <!-- Bouton Explication cours -->
+      <button (click)="ouvrirPopupexplique()"
+        class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
+               border-4 border-purple-600 shadow-md hover:bg-purple-700 hover:scale-105 transition transform duration-300 relative overflow-hidden">
+        <i class="fa-solid fa-circle-info text-lg"></i> Explication cours
+        <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
+      </button>
 
+      <!-- Bouton Explication classement -->
+      <a routerLink="/classementP"><button
+        class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
+               border-4 border-purple-600 shadow-md hover:bg-purple-700 hover:scale-105 transition transform duration-300 relative overflow-hidden">
+        <i class="fa-solid fa-trophy"></i> Classement élève
+        <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
+      </button></a>
+    </div>
   </div>
 </div>
+
 
 <!-- -------------------- POPUP EXPLICATIF -------------------- -->
 <div *ngIf="showPopupExplique" 

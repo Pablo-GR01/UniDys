@@ -33,6 +33,8 @@ export class CoursdetailP implements OnInit {
   loading = true;
   showPopup = false;
 
+  isProf: boolean = true; // <-- ici on simule que c’est un prof
+
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
@@ -72,36 +74,38 @@ export class CoursdetailP implements OnInit {
   }
 
   validerQCM(): void {
-  for (let i = 0; i < this.qcm.length; i++) {
-    if (this.reponsesUtilisateur[i] === null) {
-      alert(`Réponds à la question ${i + 1}`);
-      return;
+    if (this.isProf) return; // les profs ne peuvent pas valider
+
+    for (let i = 0; i < this.qcm.length; i++) {
+      if (this.reponsesUtilisateur[i] === null) {
+        alert(`Réponds à la question ${i + 1}`);
+        return;
+      }
     }
-  }
 
-  let score = 0;
-  let xpTotal = 0;
+    let score = 0;
+    let xpTotal = 0;
 
-  this.qcm.forEach((q, i) => {
-    if (this.reponsesUtilisateur[i] === q.bonneReponse) {
-      score++;
-      xpTotal += q.xp || 0;
+    this.qcm.forEach((q, i) => {
+      if (this.reponsesUtilisateur[i] === q.bonneReponse) {
+        score++;
+        xpTotal += q.xp || 0;
+      }
+    });
+
+    this.resultat = score;
+    this.xp = xpTotal;
+
+    if (score === this.qcm.length) {
+      this.message = '🎉 Bravo ! Toutes les réponses sont correctes.';
+    } else if (score === 0) {
+      this.message = '❌ Perdu ! Aucune bonne réponse.';
+    } else {
+      this.message = '👍 Bien essayé, mais tu peux faire mieux !';
     }
-  });
 
-  this.resultat = score;
-  this.xp = xpTotal;
-
-  if (score === this.qcm.length) {
-    this.message = '🎉 Bravo ! Toutes les réponses sont correctes.';
-  } else if (score === 0) {
-    this.message = '❌ Perdu ! Aucune bonne réponse.';
-  } else {
-    this.message = '👍 Bien essayé, mais tu peux faire mieux !';
+    this.showPopup = true;
   }
-
-  this.showPopup = true; // ← affiche la popup
-}
 
   questionEstJuste(indexQ: number): boolean {
     if (this.resultat === null) return false;

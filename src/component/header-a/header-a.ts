@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { MenuHambugerA } from '../menu-hambuger-a/menu-hambuger-a';
+import {MenuHamburgerA } from '../menu-hambuger-a/menu-hambuger-a';
 import { Logo } from '../logo/logo';
 import { Icon } from '../icon/icon';
 import { RouterLink } from '@angular/router';
@@ -7,7 +7,7 @@ import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-header-a',
-  imports: [MenuHambugerA, Logo, Icon, RouterLink],
+  imports: [Logo, Icon, RouterLink, MenuHamburgerA],
   templateUrl: './header-a.html',
   styleUrl: './header-a.css'
 })
