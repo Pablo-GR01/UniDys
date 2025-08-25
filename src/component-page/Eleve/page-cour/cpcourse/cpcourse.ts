@@ -28,6 +28,11 @@ export class CPCOURSE implements OnInit {
   lienYoutubeModifie: string = '';
   pdfUrlSanitized: SafeResourceUrl | null = null;
 
+  // Pagination
+  currentPage: number = 1;
+  itemsPerPage: number = 8;
+  totalPages: number = 1;
+
   constructor(
     private coursService: CoursService,
     private sanitizer: DomSanitizer,
@@ -39,7 +44,7 @@ export class CPCOURSE implements OnInit {
       next: (data) => {
         console.log('Cours reçus :', data);
         this.cours = data;
-        this.coursFiltres = [...this.cours];
+        this.filtrerCours();
       },
       error: (err) => {
         console.error('Erreur de chargement :', err);
@@ -68,6 +73,27 @@ export class CPCOURSE implements OnInit {
         : true;
       return parNiveau && parMatiere;
     });
+
+    this.currentPage = 1; 
+    this.totalPages = Math.ceil(this.coursFiltres.length / this.itemsPerPage);
+  }
+
+  getCoursPage(): Cours[] {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.coursFiltres.slice(startIndex, endIndex);
+  }
+
+  pageSuivante() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  pagePrecedente() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
   }
 
   ouvrirPopup(cours: Cours): void {
