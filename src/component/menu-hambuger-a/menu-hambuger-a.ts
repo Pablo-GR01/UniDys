@@ -59,4 +59,10 @@ export class MenuHamburgerA implements OnInit, OnDestroy {
       this.fermerMenus();
     }
   }
+
+  deconnecter() {
+    localStorage.removeItem('token');
+    this.userprofil.clearProfile();
+    this.router.navigate(['/connexion']);
+  }
 }

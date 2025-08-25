@@ -6,7 +6,7 @@ import { RouterLink } from '@angular/router';
 @Component({
   selector: 'app-user',
   standalone: true,
-  imports: [CommonModule, HttpClientModule,RouterLink],
+  imports: [CommonModule, HttpClientModule, RouterLink],
   templateUrl: './user.html',
   styleUrls: ['./user.css']
 })
@@ -14,20 +14,31 @@ export class User implements OnInit {
   userCount: number = 0;
   courseCount: number = 0;
 
+  // Ajout des tableaux pour les rôles
+  eleves: any[] = [];
+  profs: any[] = [];
+
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
-    // ✅ Appel au controller User → getAllUsers
     this.http.get<any[]>('http://localhost:3000/api/unidys/users')
       .subscribe({
         next: users => {
           console.log("Réponse API Users:", users);
-          this.userCount = Array.isArray(users) ? users.length : 0;
+  
+          // On ne garde que les 'eleve' et 'prof'
+          const filteredUsers = Array.isArray(users) ? users.filter(u => u.role === 'eleve' || u.role === 'prof') : [];
+  
+          this.userCount = filteredUsers.length;
+  
+          // Filtrer séparément
+          this.eleves = filteredUsers.filter(u => u.role === 'eleve');
+          this.profs = filteredUsers.filter(u => u.role === 'prof');
         },
         error: err => console.error('Erreur API utilisateurs:', err)
       });
-
-    // ✅ Appel au controller Cours → getAllCourses
+  
+    // Récupération des cours
     this.http.get<any[]>('http://localhost:3000/api/unidys/cours')
       .subscribe({
         next: courses => {
@@ -37,4 +48,4 @@ export class User implements OnInit {
         error: err => console.error('Erreur API cours:', err)
       });
   }
-}
+}  

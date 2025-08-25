@@ -10,10 +10,9 @@ interface Cours {
   description: string;
   niveau: string;
   matiere: string;
-  professeur?: string;     // côté UI
+  professeur?: string;
   imageMatiere?: string;
   lienYoutube?: string;
-  // nomProf?: string;      // existe peut-être côté backend
 }
 
 @Component({
@@ -25,8 +24,14 @@ interface Cours {
 })
 export class ListeCoursA implements OnInit {
   cours: Cours[] = [];
+  coursGroupedByProf: { [professeur: string]: Cours[] } = {};
   showEditModal = false;
   isSaving = false;
+
+  Object = Object; // Pour Object.keys() dans le template
+
+  // Pour gérer ouverture/fermeture des dossiers
+  dossierOuvert: { [professeur: string]: boolean } = {};
 
   selectedCours: Cours = {
     _id: '',
@@ -39,84 +44,90 @@ export class ListeCoursA implements OnInit {
     lienYoutube: ''
   };
 
+  // Modal des dossiers
+  modalProfOuvert: boolean = false;
+  profSelectionneModal: string = '';
+
   constructor(private http: HttpClient) {}
 
   ngOnInit(): void {
     this.loadCours();
   }
 
-  // Charger tous les cours
   loadCours(): void {
     this.http.get<any[]>('http://localhost:3000/api/unidys/cours')
       .subscribe({
         next: data => {
           const arr = Array.isArray(data) ? data : [];
-          // Normaliser pour l’UI : professeur = professeur || nomProf
           this.cours = arr.map((c: any) => {
-            const professeur = c.professeur ?? c.nomProf ?? '';
+            const professeur = c.professeur ?? c.nomProf ?? 'Inconnu';
             const imageMatiere = c.imageMatiere ?? this.getImageParMatiere(c.matiere || '');
             return { ...c, professeur, imageMatiere } as Cours;
           });
+          this.groupCoursByProf();
         },
         error: err => console.error('Erreur API cours:', err)
       });
   }
 
-  // Supprimer un cours
+  private groupCoursByProf(): void {
+    this.coursGroupedByProf = this.cours.reduce((acc, c) => {
+      const prof = c.professeur || 'Inconnu';
+      if (!acc[prof]) acc[prof] = [];
+      acc[prof].push(c);
+      return acc;
+    }, {} as { [professeur: string]: Cours[] });
+  }
+
+  // Ouvrir/fermer un dossier inline
+  toggleDossier(prof: string) {
+    this.dossierOuvert[prof] = !this.dossierOuvert[prof];
+  }
+
   deleteCours(coursId: string): void {
     if (!confirm('Êtes-vous sûr de vouloir supprimer ce cours ?')) return;
-
     this.http.delete(`http://localhost:3000/api/unidys/cours/${coursId}`)
       .subscribe({
         next: () => {
           this.cours = this.cours.filter(c => c._id !== coursId);
+          this.groupCoursByProf();
           console.log('Cours supprimé avec succès');
         },
         error: err => console.error('Erreur lors de la suppression:', err)
       });
   }
 
-  // Ouvrir modal pour modifier
   editCours(cours: Cours): void {
     this.selectedCours = { ...cours };
     this.showEditModal = true;
   }
 
-  // Fermer modal
-  closeModal(): void {
+  closeEditModal(): void {  // Renommé pour éviter conflit
     this.showEditModal = false;
   }
 
-  // Modifier un cours (gère { message, cours } ou l'objet direct)
   updateCours(): void {
     if (!this.selectedCours._id || this.isSaving) return;
 
-    // Mapper le champ UI -> backend si votre schéma attend nomProf
     const payload: any = { ...this.selectedCours };
-    if (payload.professeur) {
-      payload.nomProf = payload.professeur; // <-- backend
-    }
-    delete payload.professeur; // éviter un champ inconnu côté backend
-    // Optionnel: éviter d'envoyer l'_id dans le body
+    if (payload.professeur) payload.nomProf = payload.professeur;
+    delete payload.professeur;
     delete payload._id;
 
     this.isSaving = true;
     this.http.put<any>(`http://localhost:3000/api/unidys/cours/${this.selectedCours._id}`, payload)
       .subscribe({
-        next: (resp) => {
-          // Certains contrôleurs renvoient { message, cours }, d’autres renvoient directement l’objet
+        next: resp => {
           const updated: any = resp?.cours ?? resp;
-
-          // Normaliser pour l’UI
           const normalized: Cours = {
             ...updated,
             professeur: updated.professeur ?? updated.nomProf ?? this.selectedCours.professeur,
             imageMatiere: updated.imageMatiere ?? this.getImageParMatiere(updated.matiere || '')
           };
-
           this.cours = this.cours.map(c => c._id === normalized._id ? normalized : c);
+          this.groupCoursByProf();
           this.isSaving = false;
-          this.closeModal();
+          this.closeEditModal();
           console.log('Cours mis à jour avec succès');
         },
         error: err => {
@@ -127,7 +138,6 @@ export class ListeCoursA implements OnInit {
       });
   }
 
-  // Générer image par défaut si aucune image
   getImageParMatiere(matiere: string): string {
     switch ((matiere || '').toLowerCase()) {
       case 'maths': return 'assets/coursmaths.png';
@@ -139,4 +149,15 @@ export class ListeCoursA implements OnInit {
   }
 
   trackById(_index: number, item: Cours) { return item._id; }
+
+  // Modal des dossiers du prof
+  openProfModal(prof: string) {
+    this.profSelectionneModal = prof;
+    this.modalProfOuvert = true;
+  }
+
+  closeProfModal() {
+    this.modalProfOuvert = false;
+    this.profSelectionneModal = '';
+  }
 }

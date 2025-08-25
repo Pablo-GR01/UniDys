@@ -216,7 +216,6 @@ router.get('/complet/:id', async (req, res) => {
 });
 
 // --- GET tous les cours ---
-// Récupérer tous les cours
 router.get('/', async (req, res) => {
   try {
     const cours = await Cours.find();
@@ -226,5 +225,27 @@ router.get('/', async (req, res) => {
   }
 });
 
+// --- UPDATE nomProf quand un user change son nom/prenom ---
+router.put('/updateByProf/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+
+    const nouveauNomProf = `${user.prenom} ${user.nom}`.trim();
+
+    // Mettre à jour tous les cours de ce prof
+    const result = await Cours.updateMany(
+      { utilisateurId: userId },
+      { $set: { nomProf: nouveauNomProf } }
+    );
+
+    res.json({ success: true, nouveauNomProf, result });
+  } catch (err) {
+    console.error('Erreur update nomProf:', err);
+    res.status(500).json({ error: 'Erreur lors de la mise à jour des cours' });
+  }
+});
 
 module.exports = router;

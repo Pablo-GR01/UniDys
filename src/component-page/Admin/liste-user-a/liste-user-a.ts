@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { FormsModule } from '@angular/forms'; // ⬅️ important pour ngModel
+import { FormsModule } from '@angular/forms';
 
 interface User {
   _id: string;
@@ -14,25 +14,36 @@ interface User {
   level?: number;
 }
 
+// ================= PIPE FILTER ROLE =================
+@Pipe({ name: 'filterRole', standalone: true })
+export class FilterRolePipe implements PipeTransform {
+  transform(users: User[], role: string): User[] {
+    if (!role) return users;
+    return users.filter(u => u.role === role);
+  }
+}
+
 @Component({
   selector: 'app-liste-user-a',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, RouterLink, FormsModule],
+  imports: [CommonModule, HttpClientModule, RouterLink, FormsModule, FilterRolePipe],
   templateUrl: './liste-user-a.html',
   styleUrls: ['./liste-user-a.css']
 })
 export class ListeUserA implements OnInit {
   users: User[] = [];
+  groupedUsers: { [key: string]: User[] } = {};
+  groupedUsersKeys: string[] = [];
+  roleFilter: string = '';
 
-  // ✅ pour la modification
+  // Filtre pour le modal
+  groupRoleFilter: string = '';
+
+  // Modals
   showEditModal = false;
-  selectedUser: User = {
-    _id: '',
-    nom: '',
-    prenom: '',
-    email: '',
-    role: 'eleve'
-  };
+  selectedUser: User = { _id: '', nom: '', prenom: '', email: '', role: 'eleve' };
+  showGroupModal = false;
+  currentGroup = '';
 
   constructor(private http: HttpClient) {}
 
@@ -40,13 +51,15 @@ export class ListeUserA implements OnInit {
     this.loadUsers();
   }
 
-  // Charger les utilisateurs
+  // ================= LOAD USERS =================
   loadUsers(): void {
     this.http.get<User[]>('http://localhost:3000/api/unidys/users')
       .subscribe({
         next: users => {
           if (Array.isArray(users)) {
             this.users = users.filter(u => u.role === 'eleve' || u.role === 'prof');
+            this.users.sort((a, b) => a.nom.localeCompare(b.nom));
+            this.groupUsers();
           } else {
             this.users = [];
           }
@@ -55,7 +68,76 @@ export class ListeUserA implements OnInit {
       });
   }
 
-  // Supprimer
+  // ================= GROUPE PAR PREMIERE LETTRE =================
+  groupUsers(): void {
+    const filtered = this.roleFilter ? this.users.filter(u => u.role === this.roleFilter) : this.users;
+    this.groupedUsers = {};
+    filtered.forEach(u => {
+      const letter = u.nom.charAt(0).toUpperCase();
+      if (!this.groupedUsers[letter]) this.groupedUsers[letter] = [];
+      this.groupedUsers[letter].push(u);
+    });
+    this.groupedUsersKeys = Object.keys(this.groupedUsers).sort();
+  }
+
+  applyFilter(): void {
+    this.groupUsers();
+  }
+
+  applyGroupFilter(): void {
+    // Pas besoin de manipuler groupedUsers ici, le pipe filterRole gère déjà
+  }
+
+  // ================= MODAL GROUPE =================
+  openGroupModal(group: string): void {
+    this.currentGroup = group;
+    this.groupRoleFilter = ''; // reset filtre à l'ouverture
+    this.showGroupModal = true;
+  }
+
+  closeGroupModal(): void {
+    this.showGroupModal = false;
+  }
+
+  // ================= MODAL EDIT =================
+  editUser(user: User): void {
+    this.selectedUser = { ...user };
+    this.showEditModal = true;
+  }
+
+  closeModal(): void {
+    this.showEditModal = false;
+  }
+
+  updateUser(): void {
+    if (!this.selectedUser._id) return;
+  
+    this.http.put(`http://localhost:3000/api/unidys/users/${this.selectedUser._id}`, this.selectedUser)
+      .subscribe({
+        next: (updatedUser: any) => {
+          // 1. Mettre à jour la liste locale
+          this.users = this.users.map(u => u._id === updatedUser._id ? updatedUser : u);
+          this.groupUsers();
+  
+          // 2. Construire le nouveau nom complet du prof
+          const nouveauNomProf = `${updatedUser.prenom} ${updatedUser.nom}`;
+  
+          // 3. Appeler une API pour mettre à jour tous ses cours
+          this.http.put(`http://localhost:3000/api/unidys/cours/updateByProf/${updatedUser._id}`, {
+            nomProf: nouveauNomProf
+          }).subscribe({
+            next: () => console.log(`✅ Cours mis à jour pour ${nouveauNomProf}`),
+            error: err => console.error('Erreur lors de la mise à jour des cours:', err)
+          });
+  
+          // 4. Fermer la modal
+          this.closeModal();
+        },
+        error: err => console.error('Erreur lors de la modification:', err)
+      });
+  }
+  
+
   deleteUser(userId: string): void {
     if (!confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) return;
 
@@ -63,52 +145,9 @@ export class ListeUserA implements OnInit {
       .subscribe({
         next: () => {
           this.users = this.users.filter(u => u._id !== userId);
-          console.log('Utilisateur supprimé avec succès');
+          this.groupUsers();
         },
         error: err => console.error('Erreur lors de la suppression:', err)
       });
-  }
-
-  // ✅ Ouvrir modal modification
-  editUser(user: User): void {
-    this.selectedUser = { ...user }; // clone l'objet pour éviter de modifier en direct
-    this.showEditModal = true;
-  }
-
-  // ✅ Fermer modal
-  closeModal(): void {
-    this.showEditModal = false;
-  }
-
-  // ✅ Enregistrer modification
-  updateUser(): void {
-    this.http.put(`http://localhost:3000/api/unidys/users/${this.selectedUser._id}`, this.selectedUser)
-      .subscribe({
-        next: (updatedUser: any) => {
-          // Mettre à jour localement la liste
-          this.users = this.users.map(u =>
-            u._id === updatedUser._id ? updatedUser : u
-          );
-
-          this.closeModal();
-          console.log('Utilisateur mis à jour avec succès');
-        },
-        error: err => console.error('Erreur lors de la modification:', err)
-      });
-  }
-
-
-  // ✅ Sauvegarde automatique quand on change un champ
-  saveUser() {
-    if (this.selectedUser && this.selectedUser._id) {
-      this.http.put(`http://localhost:3000/api/unidys/users/${this.selectedUser._id}`, this.selectedUser)
-        .subscribe({
-          next: () => {
-            console.log("✅ Modifications sauvegardées avec succès !");
-            this.closeModal();
-          },
-          error: err => console.error("❌ Erreur lors de la sauvegarde :", err)
-        });
-    }
   }
 }
