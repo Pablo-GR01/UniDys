@@ -1,15 +1,38 @@
 <app-header-e></app-header-e>
 
 <div class="max-w-5xl mx-auto p-6 bg-[var(--Bleu)] text-[var(--Blanc)] rounded-2xl shadow-2xl mt-8 border border-[var(--Violet)]">
-  <h2 class="text-4xl font-extrabold mb-8 text-center text-[var(--Violet)] drop-shadow-lg">
+
+  <h2 class="text-4xl font-extrabold mb-4 text-center text-[var(--Violet)] drop-shadow-lg">
     📚 Détail du cours
   </h2>
 
+<!-- Contrôle taille du texte avec Font Awesome -->
+<div class="flex justify-center items-center gap-4 mb-6">
+  
+  <!-- Moins -->
+  <button (click)="diminuerTexte()"
+          class="p-2 pl-3 pr-3 bg-[var(--Violet)] rounded-full text-[var(--Blanc)] hover:bg-[var(--Violet-Foncé)] transition">
+    <i class="fas fa-minus"></i>
+  </button>
+
+  <span class="text-[var(--Blanc)] font-semibold">Taille du texte : {{ texteTaille }}px</span>
+
+  <!-- Plus -->
+  <button (click)="augmenterTexte()"
+          class="p-2 pl-3 pr-3 bg-[var(--Violet)] rounded-full text-[var(--Blanc)] hover:bg-[var(--Violet-Foncé)] transition">
+    <i class="fas fa-plus"></i>
+  </button>
+
+</div>
+
+
   <!-- Contenu HTML du cours -->
-  <section *ngIf="contenuHtml" [innerHTML]="contenuHtml" class="prose prose-invert max-w-none leading-relaxed
+  <section *ngIf="contenuHtml" [innerHTML]="contenuHtml"
+           [ngStyle]="{'font-size.px': texteTaille}"
+           class="prose prose-invert max-w-none leading-relaxed
                   [&_img]:mx-auto [&_img]:my-4 [&_img]:rounded-xl [&_img]:shadow-md
                   [&_p]:text-justify [&_h1]:text-3xl [&_h2]:text-2xl [&_ul]:list-disc [&_ul]:pl-6"
-    aria-label="Contenu du cours">
+           aria-label="Contenu du cours">
   </section>
 
   <div *ngIf="loading" class="flex justify-center items-center p-8">
@@ -23,8 +46,8 @@
 
   <!-- Section QCM -->
   <section *ngIf="qcm.length > 0"
-    class="mt-12 p-6 bg-[var(--Bleu-Foncé)] rounded-xl shadow-xl border border-[var(--Violet)] transition-all duration-300"
-    aria-label="Questionnaire à choix multiple">
+           class="mt-12 p-6 bg-[var(--Bleu-Foncé)] rounded-xl shadow-xl border border-[var(--Violet)] transition-all duration-300"
+           aria-label="Questionnaire à choix multiple">
 
     <div class="flex justify-between items-center mb-4">
       <h3 class="text-xl font-semibold text-[#FFD700]">📝 QCM associé</h3>
@@ -34,8 +57,8 @@
     </div>
 
     <form (ngSubmit)="validerQCM()" #qcmForm="ngForm" novalidate class="space-y-6">
-
-      <fieldset *ngFor="let question of qcm; let questionIndex = index" [ngClass]="{
+      <fieldset *ngFor="let question of qcm; let questionIndex = index"
+                [ngClass]="{
                   'bg-green-900/20 border-l-4 border-green-500 shadow-md': resultat !== null && questionEstJuste(questionIndex),
                   'bg-red-900/20 border-l-4 border-red-500 shadow-md': resultat !== null && !questionEstJuste(questionIndex),
                   'bg-[var(--Bleu)] border border-[var(--Violet)]/40': resultat === null
@@ -57,14 +80,13 @@
         <ul class="space-y-3">
           <li *ngFor="let reponse of question.reponses; let reponseIndex = index">
             <label class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer"
-              [ngClass]="{
+                   [ngClass]="{
                      'bg-green-400/80 text-green-900 font-semibold': resultat !== null && isBonneReponse(question, reponseIndex),
                      'bg-red-400/80 text-red-900 line-through': resultat !== null && !questionEstJuste(questionIndex) && estCoche(questionIndex, reponseIndex) && !isBonneReponse(question, reponseIndex),
                      'bg-white/10 text-[var(--Blanc)] hover:bg-white/20': !(resultat !== null && isBonneReponse(question, reponseIndex)) && !(resultat !== null && !questionEstJuste(questionIndex) && estCoche(questionIndex, reponseIndex) && !isBonneReponse(question, reponseIndex))
                    }">
               <input type="radio" name="qcm_{{ questionIndex }}" [value]="reponseIndex"
-                [(ngModel)]="reponsesUtilisateur[questionIndex]" [disabled]="qcmDejaFait || resultat !== null" />
-
+                     [(ngModel)]="reponsesUtilisateur[questionIndex]" [disabled]="qcmDejaFait || resultat !== null" />
               <span>{{ reponse }}</span>
             </label>
           </li>
@@ -98,8 +120,7 @@
         {{ message }}
       </p>
       <p class="text-[#00FFC2] text-lg">
-        Résultat : <strong>{{ resultat }} / {{ qcm?.length }}</strong> bonne{{ resultat > 1 ? 's' : '' }} réponse{{
-        resultat > 1 ? 's' : '' }}.
+        Résultat : <strong>{{ resultat }} / {{ qcm?.length }}</strong> bonne{{ resultat > 1 ? 's' : '' }} réponse{{ resultat > 1 ? 's' : '' }}.
       </p>
       <p class="text-[#FFD700] text-lg mt-2 font-medium">
         Tu gagnes <strong>{{ xp }}</strong> XP !

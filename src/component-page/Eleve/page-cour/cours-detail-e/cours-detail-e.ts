@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Renderer2 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
@@ -39,13 +39,17 @@ export class CoursDetailE implements OnInit, OnDestroy {
   qcmDejaFait = false;
 
   private apiBase = 'http://localhost:3000/api';
-  private refreshSub: Subscription | null = null; // 🔥 Ajout pour l'auto-refresh
+  private refreshSub: Subscription | null = null;
+
+  // --- contrôle taille du texte ---
+  texteTaille = 16;
 
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
     private sanitizer: DomSanitizer,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private renderer: Renderer2
   ) {}
 
   ngOnInit() {
@@ -60,10 +64,9 @@ export class CoursDetailE implements OnInit, OnDestroy {
 
     this.chargerCoursEtQcm();
 
-    // Un seul rafraîchissement automatique après 5 secondes
-  setTimeout(() => {
-    this.chargerCoursEtQcm();
-  }, 0);
+    setTimeout(() => {
+      this.chargerCoursEtQcm();
+    }, 0);
   }
 
   ngOnDestroy(): void {
@@ -81,12 +84,9 @@ export class CoursDetailE implements OnInit, OnDestroy {
         next: ({ html, qcm = [] }) => {
           this.contenuHtml = this.sanitizer.bypassSecurityTrustHtml(html);
           this.qcm = qcm;
-          if (!this.qcmDejaFait) {
-            this.reponsesUtilisateur = qcm.map(() => null);
-          }
+          if (!this.qcmDejaFait) this.reponsesUtilisateur = qcm.map(() => null);
           this.loading = false;
 
-          // Vérifie si l'utilisateur a déjà fait le QCM
           if (this.userId && this.qcm.length > 0) {
             this.http
               .get<any>(`${this.apiBase}/qcm/resultats/${this.idCours}/${this.userId}`)
@@ -109,6 +109,15 @@ export class CoursDetailE implements OnInit, OnDestroy {
           this.loading = false;
         },
       });
+  }
+
+  // --- contrôle taille texte ---
+  augmenterTexte() {
+    if (this.texteTaille < 38) this.texteTaille += 2;
+  }
+
+  diminuerTexte() {
+    if (this.texteTaille > 22) this.texteTaille -= 2;
   }
 
   estCoche(indexQ: number, indexR: number): boolean {
@@ -160,7 +169,6 @@ export class CoursDetailE implements OnInit, OnDestroy {
         .subscribe({
           next: (res) => {
             console.log('✅ XP ajoutée serveur:', res.updatedXP);
-            // Met à jour localStorage
             const user = this.profileService.getUser();
             if (user) {
               user.xp = res.updatedXP;
