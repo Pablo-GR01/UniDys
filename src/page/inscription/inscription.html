@@ -1,6 +1,5 @@
 <app-icon></app-icon>
 
-
 <!-- Logo à gauche -->
 <div class="flex-shrink-0 2xl:ml-1 mt-3">
   <a routerLink="/accueil">
@@ -10,43 +9,37 @@
   </a>
 </div>
 
-
-
+<!-- Message succès -->
 @if(message){
 <div class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
          flex flex-col items-center
          text-lg md:text-xl 2xl:text-2xl
-         md:ml-[225px] md:mt-[120px] md:pt-[20px] md:pb-[10px] md:pl-[50px] md:pr-[50px]
-         xl:ml-[480px] xl:mt-[120px] xl:pt-[20px] xl:pb-[10px] xl:pl-[50px] xl:pr-[50px]
-         2xl:ml-[780px] 2xl:-mt-[20px] 2xl:pt-[20px] 2xl:pb-[10px] 2xl:pl-[50px] 2xl:pr-[50px]">
+         md:ml-[225px] md:mt-[120px]
+         xl:ml-[480px] xl:mt-[120px]
+         2xl:ml-[780px] 2xl:-mt-[20px]">
   <p class="mb-2">{{ message }}</p>
 </div>
 }
-
-
 
 <div class="min-h-screen flex items-center justify-center px-4 -mt-15">
   <div class="bg-[var(--Bleu-Foncé)] rounded-2xl p-8 pt-1 w-full max-w-md shadow-xl border-6 border-[var(--Violet)] relative">
 
     <!-- Inscription -->
     <h2 class="text-center text-xl font-bold text-[var(--Violet)] mb-6 mt-3
-    2xl:text-4xl
-    xl:text-3xl
-    md:text-3xl
-    ">S'inscrire</h2>
+    2xl:text-4xl xl:text-3xl md:text-3xl">
+      S'inscrire
+    </h2>
 
     <!-- Choix profil -->
     <div class="flex justify-center gap-4 mb-4">
-      <button (click)="activerProf()" [ngClass]="{
-          'bg-[var(--Violet)]': actif === 'prof',
-          'bg-transparent': actif !== 'prof'
-        }" class="text-white px-4 py-1 rounded-full font-semibold border border-white">
+      <button (click)="activerProf()" 
+        [ngClass]="{ 'bg-[var(--Violet)]': actif === 'prof', 'bg-transparent': actif !== 'prof' }"
+        class="text-white px-4 py-1 rounded-full font-semibold border border-white">
         Prof
       </button>
-      <button (click)="activerEleve()" [ngClass]="{
-          'bg-[var(--Violet)]': actif === 'eleve',
-          'bg-transparent': actif !== 'eleve'
-        }" class="text-white px-4 py-1 rounded-full font-semibold border border-white">
+      <button (click)="activerEleve()" 
+        [ngClass]="{ 'bg-[var(--Violet)]': actif === 'eleve', 'bg-transparent': actif !== 'eleve' }"
+        class="text-white px-4 py-1 rounded-full font-semibold border border-white">
         Élève
       </button>
     </div>
@@ -58,57 +51,73 @@
       <div class="mb-4">
         <label class="text-[var(--Blanc)] text-sm">Nom</label>
         <input type="text" [(ngModel)]="inscriptionData.nom" name="nom"
-          class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)]] border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-md outline-none"
+          class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] 
+                 text-[var(--Blanc)] rounded-md outline-none"
           placeholder="Votre nom" required />
+        @if(formSubmitted && !inscriptionData.nom){
+          <p class="text-red-400 text-sm mt-1">⚠️ Le nom est requis</p>
+        }
       </div>
 
       <!-- Prénom -->
       <div class="mb-4">
         <label class="text-[var(--Blanc)] text-sm">Prénom</label>
         <input type="text" [(ngModel)]="inscriptionData.prenom" name="prenom"
-          class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)]] border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-md outline-none"
+          class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] 
+                 text-[var(--Blanc)] rounded-md outline-none"
           placeholder="Votre prénom" required />
+        @if(formSubmitted && !inscriptionData.prenom){
+          <p class="text-red-400 text-sm mt-1">⚠️ Le prénom est requis</p>
+        }
       </div>
 
       <!-- Mail -->
       <div class="mb-4">
         <label class="text-[var(--Blanc)] text-sm">Adresse mail</label>
-        <div class="flex items-center bg-[var(--Bleu)]] border-2 border-[var(--Violet)] px-3 py-2 rounded-md mt-1">
+        <div class="flex items-center bg-[var(--Bleu)] border-2 border-[var(--Violet)] px-3 py-2 rounded-md mt-1">
           <i class="fa-solid fa-envelope text-[var(--Blanc)] mr-2"></i>
           <input type="email" [(ngModel)]="inscriptionData.email" name="email"
             class="bg-transparent outline-none text-[var(--Blanc)] w-full" placeholder="Adresse mail" required />
         </div>
+        @if(formSubmitted && !isEmailValid(inscriptionData.email)){
+          <p class="text-red-400 text-sm mt-1">⚠️ Email invalide</p>
+        }
       </div>
 
       <!-- Mot de passe -->
       <div class="mb-4">
         <label class="text-[var(--Blanc)] text-sm">Mot de passe</label>
-        <div class="flex items-center bg-[var(--Bleu)]] border-2 border-[var(--Violet)] px-3 py-2 rounded-md mt-1 relative">
+        <div class="flex items-center bg-[var(--Bleu)] border-2 border-[var(--Violet)] px-3 py-2 rounded-md mt-1 relative">
           <i class="fa-solid fa-lock text-white mr-2"></i>
           <input [type]="passwordVisible ? 'text' : 'password'" [(ngModel)]="inscriptionData.password" name="password"
             class="bg-transparent outline-none text-white w-full pr-10" placeholder="Mot de passe" required />
-          <button type="button" class="absolute right-3 text-white" (click)="togglePasswordVisibility()"
-            aria-label="Afficher / masquer mot de passe" tabindex="-1">
+          <button type="button" class="absolute right-3 text-white" (click)="togglePasswordVisibility()">
             <i class="fa" [ngClass]="passwordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
           </button>
         </div>
+        @if(formSubmitted && (!inscriptionData.password || inscriptionData.password.length < 6)){
+          <p class="text-red-400 text-sm mt-1">⚠️ Mot de passe trop court (min. 6 caractères)</p>
+        }
       </div>
 
       <!-- Code (prof uniquement) -->
-
       @if(actif === 'prof'){
-      <div class="mb-4">
-        <label class="text-[var(--Blanc)] text-sm">Code professeur</label>
-        <input type="password" [(ngModel)]="inscriptionData.codeProf" name="codeProf"
-          class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)]] border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-md outline-none"
-          placeholder="Code professeur" required />
-      </div>
+        <div class="mb-4">
+          <label class="text-[var(--Blanc)] text-sm">Code professeur</label>
+          <input type="password" [(ngModel)]="inscriptionData.codeProf" name="codeProf"
+            class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] 
+                   text-[var(--Blanc)] rounded-md outline-none"
+            placeholder="Code professeur" />
+          @if(formSubmitted && inscriptionData.codeProf !== CODE_PROF){
+            <p class="text-red-400 text-sm mt-1">⚠️ Code professeur incorrect</p>
+          }
+        </div>
       }
 
-
       <!-- Valider -->
-      <button type="submit" [disabled]="!formulaireValide()"
-        class="bg-[#8002FF] text-[var(--Blanc)] w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255] disabled:opacity-50 disabled:cursor-not-allowed">
+      <button type="submit"
+        class="bg-[#8002FF] text-[var(--Blanc)] w-full py-2 rounded-md font-bold text-lg 
+               hover:bg-[#3F0255]">
         Valider
       </button>
     </form>
@@ -116,7 +125,7 @@
     <!-- Lien vers connexion -->
     <p class="text-center text-sm text-gray-300 mt-6">
       Vous avez déjà un compte ?
-      <a routerLink="/connexion" class="text-[var(--Violet)] font-semibold hover:underline transition duration-200">
+      <a routerLink="/connexion" class="text-[var(--Violet)] font-semibold hover:underline">
         Se connecter
       </a>
     </p>
