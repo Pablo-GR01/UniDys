@@ -13,7 +13,7 @@
 <div class="bg-[var(--Bleu-Foncé)]">
   <div class="min-h-screen flex flex-col items-center justify-center px-4 -mt-20">
 
-    <!-- Message de bienvenue au-dessus de la boîte de connexion -->
+    <!-- Message de bienvenue -->
     @if (message) {
     <div class="border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
                   text-lg md:text-xl 2xl:text-2xl px-10 py-5 mb-6 bg-[var(--Bleu)]">
@@ -26,26 +26,23 @@
 
       <!-- Titre -->
       <h2 class="text-center font-black text-[var(--Violet)] mb-6
-      2xl:text-4xl
-      xl:text-3xl
-      md:text-3xl
-      sm:text-2xl
-      text-xl
-      ">
+      2xl:text-4xl xl:text-3xl md:text-3xl sm:text-2xl text-xl">
         Connexion
       </h2>
 
-      <!-- Formulaire de connexion -->
+      <!-- Formulaire -->
       <form (ngSubmit)="valider()" #connexionForm="ngForm">
+
         <!-- Email -->
         <div class="mb-4">
           <label class="text-[var(--Blanc)] text-sm" for="email">Adresse mail</label>
           <div class="flex items-center border-4 border-[var(--Violet)] px-3 py-2 rounded mt-1">
             <i class="fa-solid fa-envelope text-[var(--Blanc)] mr-2"></i>
-            <input type="email" id="email" name="email" class="bg-transparent outline-none text-[var(--Blanc)] w-full"
+            <input type="email" id="email" name="email"
+              class="bg-transparent outline-none text-[var(--Blanc)] w-full"
               placeholder="Adresse mail" required [(ngModel)]="connexionData.email" #email="ngModel" />
           </div>
-          @if (email.invalid && email.touched) {
+          @if (formSubmitted && email.invalid) {
           <div class="text-[var(--Rouge)] text-xs mt-1">
             Email invalide.
           </div>
@@ -65,17 +62,17 @@
               <i class="fa" [ngClass]="passwordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
             </button>
           </div>
-          @if (password.invalid && password.touched) {
+          @if (formSubmitted && password.invalid) {
           <div class="text-[var(--Rouge)] text-xs mt-1">
             Le mot de passe doit contenir au moins 6 caractères.
           </div>
           }
         </div>
 
-        <!-- Bouton de validation -->
-        <button (click)="valider()" [disabled]="!formulaireValide() || isLoading" class="flex items-center justify-center gap-2 bg-[var(--Violet)] text-white font-semibold rounded hover:bg-[var(--Violet-Foncé)] disabled:opacity-50 transition-all duration-300
-       w-full min-w-[250px] py-2 
-       px-6 sm:px-10 md:px-20 lg:px-28 xl:px-36 2xl:px-40">
+        <!-- Bouton valider -->
+        <button type="submit" [disabled]="!formulaireValide() || isLoading"
+          class="flex items-center justify-center gap-2 bg-[var(--Violet)] text-white font-semibold rounded hover:bg-[var(--Violet-Foncé)] disabled:opacity-50 transition-all duration-300
+       w-full min-w-[250px] py-2 px-6 sm:px-10 md:px-20 lg:px-28 xl:px-36 2xl:px-40">
           <span class="inline-block">
             {{ isLoading ? 'Connexion...' : 'Valider' }}
           </span>
