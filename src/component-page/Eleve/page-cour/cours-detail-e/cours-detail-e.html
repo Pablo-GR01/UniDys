@@ -46,12 +46,12 @@
 
   <!-- Section QCM -->
   <section *ngIf="qcm.length > 0"
-           class="mt-12 p-6 bg-[var(--Bleu-Foncé)] rounded-xl shadow-xl border border-[var(--Violet)] transition-all duration-300"
+           class="mt-12 p-6 bg-gradient-to-b from-[var(--Bleu)] to-[var(--Violet)] rounded-xl shadow-xl border border-[var(--Violet)] transition-all duration-300"
            aria-label="Questionnaire à choix multiple">
 
     <div class="flex justify-between items-center mb-4">
-      <h3 class="text-xl font-semibold text-[#FFD700]">📝 QCM associé</h3>
-      <span class="text-[#FFD700] font-semibold text-lg">
+      <h3 class="text-2xl font-semibold text-[var(--Violet)]">📝 QCM associé</h3>
+      <span class="text-[var(--Violet)] font-semibold text-2xl">
         XP total : {{ xptotal }} XP
       </span>
     </div>
@@ -59,8 +59,8 @@
     <form (ngSubmit)="validerQCM()" #qcmForm="ngForm" novalidate class="space-y-6">
       <fieldset *ngFor="let question of qcm; let questionIndex = index"
                 [ngClass]="{
-                  'bg-green-900/20 border-l-4 border-green-500 shadow-md': resultat !== null && questionEstJuste(questionIndex),
-                  'bg-red-900/20 border-l-4 border-red-500 shadow-md': resultat !== null && !questionEstJuste(questionIndex),
+                  'bg-green-900/20 border-l-4 border-[var(--Vert)] shadow-md': resultat !== null && questionEstJuste(questionIndex),
+                  'bg-red-900/20 border-l-4 border-[var(--Rouge)] shadow-md': resultat !== null && !questionEstJuste(questionIndex),
                   'bg-[var(--Bleu)] border border-[var(--Violet)]/40': resultat === null
                 }" class="rounded-xl p-6 transition-all duration-300 hover:scale-[1.01] relative">
 
@@ -69,9 +69,9 @@
             <span class="px-3 py-1 bg-[var(--Violet)] rounded-full text-sm font-medium">
               {{ questionIndex + 1 }}/{{ qcm.length }}
             </span>
-            <span class="text-[#00FFC2]">{{ question.question || 'Question sans titre' }}</span>
+            <span class="text-[#FFD410]">{{ question.question || 'Question sans titre' }}</span>
           </div>
-          <span class="absolute text-[#FFD410] font-semibold text-2xl whitespace-nowrap"
+          <span class="absolute text-[var(--Violet)] font-semibold text-2xl whitespace-nowrap"
             style="right: 1rem; top: 0.5rem;">
             {{ question.xp || 0 }} XP
           </span>
@@ -101,7 +101,7 @@
         </button>
 
         <button *ngIf="qcmDejaFait" type="button" (click)="showPopup = true"
-          class="px-8 py-3 bg-[#FFD700] text-[var(--Bleu)] font-semibold rounded-full shadow-lg hover:bg-[#FFC400] active:scale-95 transition duration-200">
+          class="px-8 py-3 border-4 border-[var(--Bleu-Foncé)] text-[var(--Bleu-Foncé)] font-semibold rounded-full shadow-lg hover:bg-[var(--Violet)] hover:text-[var(--Blanc)] active:scale-95 transition duration-200">
           Voir mes résultats
         </button>
       </div>
@@ -110,16 +110,16 @@
   </section>
 
   <!-- Popup résultats -->
-  <div *ngIf="showPopup && resultat !== null" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+  <div *ngIf="showPopup && resultat !== null" class="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
     <div class="bg-[var(--Bleu)] p-6 rounded-xl border border-[var(--Violet)] max-w-md text-center text-[var(--Blanc)] shadow-lg">
       <p class="text-2xl font-bold mb-4" [ngClass]="{
-           'text-green-400': resultat === (qcm?.length ?? 0),
+           'text-[var(--Vert)]': resultat === (qcm?.length ?? 0),
            'text-yellow-400': resultat > 0 && resultat < (qcm?.length ?? 0),
-           'text-red-400': resultat === 0
+           'text-[var(--Rouge)]': resultat === 0
          }">
         {{ message }}
       </p>
-      <p class="text-[#00FFC2] text-lg">
+      <p class="text-[var(--Vert)] text-lg">
         Résultat : <strong>{{ resultat }} / {{ qcm?.length }}</strong> bonne{{ resultat > 1 ? 's' : '' }} réponse{{ resultat > 1 ? 's' : '' }}.
       </p>
       <p class="text-[#FFD700] text-lg mt-2 font-medium">
