@@ -20,10 +20,6 @@ import { ClassementGE } from '../page/page-user/eleve/classement-g/classement-g'
 import { CoursdetailP } from '../component-page/Prof/page-cour/cours-detail-p/cours-detail-p';
 
 
-
-
-
-
 export const routes: Routes = [
   {path: 'connexion', component: Connexion },
   {path: '', redirectTo: 'connexion', pathMatch: 'full' },

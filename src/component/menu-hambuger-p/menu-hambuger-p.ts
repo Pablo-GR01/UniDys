@@ -1,41 +1,26 @@
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink, NavigationEnd } from '@angular/router';
+
 import { HttpClientModule } from '@angular/common/http';
 import { Icon } from '../icon/icon';
-import { Subscription } from 'rxjs';
 
 import { ProfileService } from '../../services/userService/Profile.Service';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-menu-hambuger-p',
-  standalone: true, // ⚡ important sinon Angular ne sait pas que c’est un standalone
-  imports: [CommonModule, RouterLink, HttpClientModule, Icon],
+  imports: [CommonModule,RouterLink,HttpClientModule,Icon],
   templateUrl: './menu-hambuger-p.html',
-  styleUrls: ['./menu-hambuger-p.css'] // ⚡ attention : c’est "styleUrls" au pluriel
+  styleUrl: './menu-hambuger-p.css'
 })
-export class MenuHamburgerP implements OnInit, OnDestroy {
+export class MenuHamburgerP {
   menuOuvert = false;
   mobileMenu = false;
-  private routerSub!: Subscription;
 
   constructor(
     public userprofil: ProfileService,
     private router: Router
-  ) {}
-
-  ngOnInit() {
-    // 🔹 Fermer automatiquement quand on change de page
-    this.routerSub = this.router.events.subscribe(event => {
-      if (event instanceof NavigationEnd) {
-        this.fermerMenus();
-      }
-    });
-  }
-
-  ngOnDestroy() {
-    if (this.routerSub) this.routerSub.unsubscribe();
-  }
+  ) { }
 
   toggleMenu() {
     this.menuOuvert = !this.menuOuvert;
@@ -52,20 +37,11 @@ export class MenuHamburgerP implements OnInit, OnDestroy {
     this.mobileMenu = false;
   }
 
-  // 🔹 Fermer si on clique en dehors
-  @HostListener('document:click', ['$event'])
-  onClickOutside(event: Event) {
-    const target = event.target as HTMLElement;
-    const insideMenu = target.closest('app-menu-hambuger-p'); // vérifie si le clic est dans le menu
-    if (!insideMenu) {
-      this.fermerMenus();
-    }
-  }
-
   deconnecter() {
-    localStorage.removeItem('token');       // supprime token
-    localStorage.removeItem('nomProf');     // supprime nom du professeur
-    this.userprofil.clearProfile();         // vide le profil
-    this.router.navigate(['/connexion']);   // redirige vers connexion
+    localStorage.removeItem('token');
+    localStorage.removeItem('nomProf');
+    this.userprofil.clearProfile();
+    this.fermerMenus();
+    this.router.navigate(['/connexion']);
   }
 }

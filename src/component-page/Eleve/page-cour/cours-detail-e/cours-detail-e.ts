@@ -140,7 +140,7 @@ export class CoursDetailE implements OnInit, OnDestroy {
   }
 
   diminuerTexte() {
-    if (this.texteTaille > 12) {
+    if (this.texteTaille > 22) {
       this.texteTaille -= 2;
       localStorage.setItem('texteTaille', this.texteTaille.toString());
     }
