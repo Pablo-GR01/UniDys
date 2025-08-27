@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HeaderE } from '../../../../component/header-e/header-e';
 import { ProfileService } from '../../../../services/userService/Profile.Service';
-import { interval, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 interface QcmQuestion {
   question: string;
@@ -44,6 +44,19 @@ export class CoursDetailE implements OnInit, OnDestroy {
   // --- contrôle taille du texte ---
   texteTaille = 16;
 
+  // --- contrôle police ---
+  policeTexte = 'Arial';
+  policesDisponibles: string[] = [
+    'Arial',
+    'Times New Roman',
+    'Georgia',
+    'Verdana',
+    'Courier New',
+    'Trebuchet MS',
+    'Roboto',
+    'Open Sans'
+  ];
+
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
@@ -56,6 +69,13 @@ export class CoursDetailE implements OnInit, OnDestroy {
     this.idCours = this.route.snapshot.paramMap.get('id');
     const user = this.profileService.getUser();
     this.userId = user?._id || null;
+
+    // 🔹 Restaurer préférences sauvegardées
+    const savedTaille = localStorage.getItem('texteTaille');
+    if (savedTaille) this.texteTaille = parseInt(savedTaille, 10);
+
+    const savedPolice = localStorage.getItem('policeTexte');
+    if (savedPolice) this.policeTexte = savedPolice;
 
     if (!this.idCours) {
       this.loading = false;
@@ -113,11 +133,22 @@ export class CoursDetailE implements OnInit, OnDestroy {
 
   // --- contrôle taille texte ---
   augmenterTexte() {
-    if (this.texteTaille < 38) this.texteTaille += 2;
+    if (this.texteTaille < 38) {
+      this.texteTaille += 2;
+      localStorage.setItem('texteTaille', this.texteTaille.toString());
+    }
   }
 
   diminuerTexte() {
-    if (this.texteTaille > 22) this.texteTaille -= 2;
+    if (this.texteTaille > 12) {
+      this.texteTaille -= 2;
+      localStorage.setItem('texteTaille', this.texteTaille.toString());
+    }
+  }
+
+  // --- sauvegarde police ---
+  changerPolice() {
+    localStorage.setItem('policeTexte', this.policeTexte);
   }
 
   estCoche(indexQ: number, indexR: number): boolean {
