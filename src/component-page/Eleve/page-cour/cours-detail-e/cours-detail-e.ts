@@ -15,6 +15,12 @@ interface QcmQuestion {
   xp: number;
 }
 
+interface Cours {
+  titre: string;
+  niveau: string;
+  matiere: string;
+}
+
 @Component({
   selector: 'app-cours-detail-e',
   templateUrl: './cours-detail-e.html',
@@ -25,6 +31,7 @@ interface QcmQuestion {
 export class CoursDetailE implements OnInit, OnDestroy {
   contenuHtml: SafeHtml | null = null;
   qcm: QcmQuestion[] = [];
+  cours: Cours | null = null; // informations du cours
   reponsesUtilisateur: (number | null)[] = [];
   reponsesSauvegardees: number[] = [];
 
@@ -42,19 +49,13 @@ export class CoursDetailE implements OnInit, OnDestroy {
   private refreshSub: Subscription | null = null;
 
   // --- contrôle taille du texte ---
-  texteTaille = 16;
+  texteTaille = 22;
 
   // --- contrôle police ---
   policeTexte = 'Arial';
   policesDisponibles: string[] = [
-    'Arial',
-    'Times New Roman',
-    'Georgia',
-    'Verdana',
-    'Courier New',
-    'Trebuchet MS',
-    'Roboto',
-    'Open Sans'
+    'Arial', 'Times New Roman', 'Georgia', 'Verdana',
+    'Courier New', 'Trebuchet MS', 'Roboto', 'Open Sans'
   ];
 
   constructor(
@@ -70,7 +71,7 @@ export class CoursDetailE implements OnInit, OnDestroy {
     const user = this.profileService.getUser();
     this.userId = user?._id || null;
 
-    // 🔹 Restaurer préférences sauvegardées
+    // Restaurer préférences texte
     const savedTaille = localStorage.getItem('texteTaille');
     if (savedTaille) this.texteTaille = parseInt(savedTaille, 10);
 
@@ -83,10 +84,6 @@ export class CoursDetailE implements OnInit, OnDestroy {
     }
 
     this.chargerCoursEtQcm();
-
-    setTimeout(() => {
-      this.chargerCoursEtQcm();
-    }, 0);
   }
 
   ngOnDestroy(): void {
@@ -96,42 +93,40 @@ export class CoursDetailE implements OnInit, OnDestroy {
   private chargerCoursEtQcm(): void {
     this.loading = true;
 
-    this.http
-      .get<{ html: string; qcm: QcmQuestion[] }>(
-        `${this.apiBase}/cours/complet/${this.idCours}`
-      )
-      .subscribe({
-        next: ({ html, qcm = [] }) => {
-          this.contenuHtml = this.sanitizer.bypassSecurityTrustHtml(html);
-          this.qcm = qcm;
-          if (!this.qcmDejaFait) this.reponsesUtilisateur = qcm.map(() => null);
-          this.loading = false;
+    this.http.get<{ html: string; qcm: QcmQuestion[]; coursInfo: Cours }>(
+      `${this.apiBase}/cours/complet/${this.idCours}`
+    ).subscribe({
+      next: ({ html, qcm = [], coursInfo }) => {
+        this.contenuHtml = this.sanitizer.bypassSecurityTrustHtml(html);
+        this.qcm = qcm;
+        this.cours = coursInfo;
+        if (!this.qcmDejaFait) this.reponsesUtilisateur = qcm.map(() => null);
+        this.loading = false;
 
-          if (this.userId && this.qcm.length > 0) {
-            this.http
-              .get<any>(`${this.apiBase}/qcm/resultats/${this.idCours}/${this.userId}`)
-              .subscribe({
-                next: (res) => {
-                  if (res) {
-                    this.qcmDejaFait = true;
-                    this.reponsesSauvegardees = res.reponses || [];
-                    this.resultat = res.score ?? 0;
-                    this.xp = res.xpGagne ?? 0;
-                    this.reponsesUtilisateur = this.reponsesSauvegardees.map((r) => r);
-                  }
-                },
-                error: () => {},
-              });
-          }
-        },
-        error: (err) => {
-          console.error(err);
-          this.loading = false;
-        },
-      });
+        // Vérifier si l'utilisateur a déjà répondu
+        if (this.userId && this.qcm.length > 0) {
+          this.http.get<any>(`${this.apiBase}/qcm/resultats/${this.idCours}/${this.userId}`)
+            .subscribe({
+              next: (res) => {
+                if (res) {
+                  this.qcmDejaFait = true;
+                  this.reponsesSauvegardees = res.reponses || [];
+                  this.resultat = res.score ?? 0;
+                  this.xp = res.xpGagne ?? 0;
+                  this.reponsesUtilisateur = this.reponsesSauvegardees.map(r => r);
+                }
+              },
+              error: () => {}
+            });
+        }
+      },
+      error: (err) => {
+        console.error('Erreur chargement cours:', err);
+        this.loading = false;
+      }
+    });
   }
 
-  // --- contrôle taille texte ---
   augmenterTexte() {
     if (this.texteTaille < 38) {
       this.texteTaille += 2;
@@ -146,7 +141,6 @@ export class CoursDetailE implements OnInit, OnDestroy {
     }
   }
 
-  // --- sauvegarde police ---
   changerPolice() {
     localStorage.setItem('policeTexte', this.policeTexte);
   }
@@ -179,34 +173,25 @@ export class CoursDetailE implements OnInit, OnDestroy {
     this.resultat = score;
     this.xp = xpTotal;
     this.message =
-      score === this.qcm.length
-        ? '🎉 Bravo ! Toutes les réponses sont correctes.'
-        : score === 0
-        ? '❌ Perdu ! Aucune bonne réponse.'
-        : '👍 Bien essayé, mais tu peux faire mieux !';
+      score === this.qcm.length ? '🎉 Bravo ! Toutes les réponses sont correctes.' :
+      score === 0 ? '❌ Perdu ! Aucune bonne réponse.' :
+      '👍 Bien essayé, mais tu peux faire mieux !';
 
     this.qcmDejaFait = true;
-    this.reponsesSauvegardees = this.reponsesUtilisateur.filter(
-      (r): r is number => r !== null
-    );
+    this.reponsesSauvegardees = this.reponsesUtilisateur.filter((r): r is number => r !== null);
     this.showPopup = true;
 
     if (this.userId && this.xp > 0) {
-      this.http
-        .post<{ updatedXP: number }>(
-          `${this.apiBase}/users/${this.userId}/ajouterXP`,
-          { xp: this.xp }
-        )
+      this.http.post<{ updatedXP: number }>(`${this.apiBase}/users/${this.userId}/ajouterXP`, { xp: this.xp })
         .subscribe({
           next: (res) => {
-            console.log('✅ XP ajoutée serveur:', res.updatedXP);
             const user = this.profileService.getUser();
             if (user) {
               user.xp = res.updatedXP;
               localStorage.setItem('user', JSON.stringify(user));
             }
           },
-          error: (err) => console.error('❌ Erreur ajout XP serveur', err),
+          error: (err) => console.error(err)
         });
     }
 
@@ -218,18 +203,16 @@ export class CoursDetailE implements OnInit, OnDestroy {
 
     const reponsesFinales = this.reponsesUtilisateur.filter((r): r is number => r !== null);
 
-    this.http
-      .post(`${this.apiBase}/qcm/resultats`, {
-        userId: this.userId,
-        qcmId: this.idCours,
-        score: this.resultat,
-        reponses: reponsesFinales,
-        xpGagne: this.xp,
-      })
-      .subscribe({
-        next: () => console.log('✅ Résultats QCM sauvegardés'),
-        error: (err) => console.error('❌ Erreur sauvegarde QCM', err),
-      });
+    this.http.post(`${this.apiBase}/qcm/resultats`, {
+      userId: this.userId,
+      qcmId: this.idCours,
+      score: this.resultat,
+      reponses: reponsesFinales,
+      xpGagne: this.xp,
+    }).subscribe({
+      next: () => console.log('✅ Résultats QCM sauvegardés'),
+      error: (err) => console.error(err)
+    });
   }
 
   get xptotal(): number {

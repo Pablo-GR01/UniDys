@@ -187,14 +187,19 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
-// --- GET cours complet (HTML + QCM) ---
+// --- Récupérer le cours complet par ID ---
 router.get('/complet/:id', async (req, res) => {
   try {
     const cours = await Cours.findById(req.params.id);
-    if (!cours) return res.status(404).json({ message: 'Cours non trouvé' });
+    if (!cours) {
+      return res.status(404).json({ message: 'Cours non trouvé' });
+    }
 
-    const pdfPath = path.join(uploadDir, cours.fichierPdf);
-    if (!fs.existsSync(pdfPath)) return res.status(404).json({ message: 'Fichier PDF non trouvé' });
+    // --- Lecture du PDF et conversion en HTML ---
+    const pdfPath = path.join(uploadDir, cours.fichierPdf || '');
+    if (!fs.existsSync(pdfPath)) {
+      return res.status(404).json({ message: 'Fichier PDF non trouvé' });
+    }
 
     const dataBuffer = fs.readFileSync(pdfPath);
     const data = await pdfParse(dataBuffer);
@@ -204,14 +209,24 @@ router.get('/complet/:id', async (req, res) => {
       .map(line => `<p>${line.trim()}</p>`)
       .join('');
 
+    // --- Renvoyer toutes les infos pour Angular ---
     res.json({
-      html: htmlSimple,
-      qcm: cours.qcms || [],
-      dysTypes: cours.dysTypes || []
+      html: htmlSimple,                   // contenu du PDF converti en HTML
+      qcm: cours.qcms || [],              // QCM associés
+      coursInfo: {                        // infos générales du cours
+        titre: cours.titre || 'Titre non défini',
+        niveau: cours.niveau || 'Niveau non défini',
+        matiere: cours.matiere || 'Matière non définie'
+      },
+      dysTypes: cours.dysTypes || []      // types DYS concernés
     });
+
   } catch (err) {
     console.error('Erreur récupération cours complet:', err);
-    res.status(500).json({ message: 'Erreur serveur lors de la récupération du cours complet', error: err.message });
+    res.status(500).json({
+      message: 'Erreur serveur lors de la récupération du cours complet',
+      error: err.message
+    });
   }
 });
 
