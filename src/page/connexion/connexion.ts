@@ -20,7 +20,7 @@ export class Connexion {
   message: string | null = null;
   errorMessage: string | null = null;
   redirectionApresConnexion: string | null = null;
-  formSubmitted = false; // ✅ n’affiche les erreurs qu’après clic
+  formSubmitted = false; // n’affiche les erreurs qu’après clic
 
   connexionData = {
     email: '',
@@ -43,11 +43,9 @@ export class Connexion {
   }
 
   valider(): void {
-    this.formSubmitted = true; // ✅ active l’affichage des erreurs
+    this.formSubmitted = true; // active l’affichage des erreurs
 
-    if (!this.formulaireValide()) {
-      return; // ne lance pas l’API si le formulaire est invalide
-    }
+    if (!this.formulaireValide()) return; // stop si formulaire invalide
 
     this.isLoading = true;
     const { email, password } = this.connexionData;
@@ -55,9 +53,7 @@ export class Connexion {
     this.http.post('http://localhost:3000/api/unidys/login', { email, password }).subscribe({
       next: (user: any) => {
         if (!user.initiale && user.prenom && user.nom) {
-          user.initiale =
-            (user.prenom[0] ?? '').toUpperCase() +
-            (user.nom[0] ?? '').toUpperCase();
+          user.initiale = (user.prenom[0] ?? '').toUpperCase() + (user.nom[0] ?? '').toUpperCase();
         }
 
         this.authService.setUser(user);
