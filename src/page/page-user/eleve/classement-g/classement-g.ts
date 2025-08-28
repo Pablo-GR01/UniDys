@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { HeaderE } from '../../../../component/header-e/header-e';
 import { HeaderP } from '../../../../component/header-p/header-p'; // 🔹 header prof
 import { Tableau } from "../../../../component-page/Eleve/page-classement/tableau/tableau";
+import { FooterE } from "../../../../component/footer-e/footer-e";
 
 @Component({
   selector: 'app-classement-g',
   standalone: true,
-  imports: [HeaderE, HeaderP, Tableau],
+  imports: [HeaderE, HeaderP, Tableau, FooterE],
   templateUrl: './classement-g.html',
   styleUrls: ['./classement-g.css']
 })

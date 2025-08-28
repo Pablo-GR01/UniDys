@@ -1,43 +1,44 @@
-<div class="w-full mt-7 mx-auto px-4 sm:px-8 py-6" *ngIf="!isLoading && user">
-  <div class="flex flex-col sm:flex-row items-center justify-between gap-6 sm:gap-10 
-              bg-gradient-to-r from-[#2A013D] to-[#8002FF] border border-purple-700 rounded-3xl shadow-2xl
-              relative overflow-visible">
+<div class="flex justify-center mt-12 px-4 sm:px-8" *ngIf="!isLoading && user">
+  <div class="flex flex-col sm:flex-row items-center justify-center gap-10
+              bg-gradient-to-r from-[#2A013D] to-[#8002FF] border border-purple-600
+              rounded-3xl shadow-[0_0_30px_rgba(128,2,255,0.7)] p-6 sm:p-12 relative overflow-visible">
 
     <!-- Badge Niveau -->
-    <div class="flex-shrink-0 relative group z-10">
-      <div class="absolute inset-0 rounded-full bg-purple-700/30 blur-3xl animate-pulse z-0"></div>
+    <div class="relative group flex-shrink-0 z-10">
+      <div class="absolute inset-0 rounded-full bg-purple-700/30 blur-3xl animate-pulseGlow z-0"></div>
       <img 
         [src]="'assets/Level-' + level + '.png'" 
         [alt]="'Level ' + level" 
-        class="w-64 h-64 sm:w-72 sm:h-72 object-contain select-none drop-shadow-2xl
-               transition-transform duration-500 group-hover:scale-110
-               -mt-28 -mb-28 -ml-20 relative z-10"
+        class="w-64 h-64 sm:w-72 sm:h-72 object-contain select-none drop-shadow-[0_0_20px_rgba(168,85,247,0.8)]
+               transition-transform duration-500 group-hover:scale-110 relative z-10"
       />
     </div>
 
     <!-- XP + Level -->
-    <div class="-ml-10 flex flex-col items-center flex-1 mx-4 w-full">
-      <h2 class="text-white text-3xl sm:text-4xl font-extrabold drop-shadow-lg tracking-wide text-center neon-text
+    <div class="flex flex-col items-center flex-1 text-center mx-4 w-full">
+      <h2 class="text-white text-3xl sm:text-5xl font-extrabold tracking-wide neon-text
                  transition-transform duration-300 group-hover:scale-105">
         {{ user.xp }} XP
       </h2>
 
-      <span class="px-6 py-2 rounded-full text-lg sm:text-xl font-semibold text-purple-50 
-                   bg-gradient-to-r from-purple-600 to-purple-900 shadow-lg mt-4 text-center
-                   transition-all duration-300 hover:scale-105 hover:shadow-purple-500/50">
-       Level : {{ level }}
+      <span class="px-8 py-3 rounded-full text-lg sm:text-2xl font-semibold text-purple-50 
+                   bg-gradient-to-r from-purple-600 to-purple-900 shadow-lg mt-5
+                   transition-all duration-300 hover:scale-110 hover:shadow-[0_0_25px_rgba(168,85,247,0.6)]">
+        Level : {{ level }}
       </span>
 
       <!-- Barre de progression -->
-      <div class="w-full bg-gray-900/70 rounded-full h-5 overflow-hidden mt-6 shadow-inner relative">
+      <div class="w-full bg-gray-900/70 rounded-full h-6 overflow-hidden mt-7 shadow-inner relative">
         <div [style.width.%]="progression"
-             class="h-5 rounded-full transition-all duration-500"
-             [ngStyle]="{'background': 'linear-gradient(90deg, #8002ff, #c084fc, #8002ff)',
-                         'background-size': '200% 100%',
-                         'animation': 'gradientMove 3s linear infinite',
-                         'box-shadow': '0 0 15px #a855f7'}">
+             class="h-6 rounded-full transition-all duration-500"
+             [ngStyle]="{
+               'background': 'linear-gradient(90deg, #8002ff, #c084fc, #8002ff)',
+               'background-size': '200% 100%',
+               'animation': 'gradientMove 3s linear infinite',
+               'box-shadow': '0 0 20px #a855f7'
+             }">
         </div>
-        <span class="absolute right-2 top-0 text-white font-bold text-xs sm:text-sm h-full flex items-center">
+        <span class="absolute right-3 top-0 text-white font-bold text-sm h-full flex items-center justify-end">
           {{ progression | number:'1.0-0' }}%
         </span>
       </div>
@@ -45,14 +46,13 @@
 
     <!-- Prochain objectif -->
     <div class="flex flex-col items-center justify-center flex-shrink-0 mt-6 sm:mt-0">
-      <span class="text-white text-sm sm:text-base font-semibold mt-3 text-center">
+      <span class="text-white text-base sm:text-lg font-semibold mt-3 neon-text">
         {{ xpRestant }} XP restants
       </span>
     </div>
 
   </div>
 </div>
-
 
 <style>
 @keyframes gradientMove {
@@ -62,13 +62,27 @@
 
 @keyframes pulseGlow {
   0%, 100% { transform: scale(1); opacity: 0.35; }
-  50% { transform: scale(1.1); opacity: 0.6; }
+  50% { transform: scale(1.15); opacity: 0.65; }
 }
-.animate-pulse {
+
+.animate-pulseGlow {
   animation: pulseGlow 2s infinite;
 }
 
 .neon-text {
-  text-shadow: 0 0 8px #a855f7, 0 0 18px #9333ea;
+  text-shadow:
+    0 0 5px #a855f7,
+    0 0 10px #9333ea,
+    0 0 20px #8002ff,
+    0 0 30px #c084fc;
+  transition: text-shadow 0.3s;
+}
+
+.group:hover .neon-text {
+  text-shadow:
+    0 0 10px #a855f7,
+    0 0 20px #9333ea,
+    0 0 30px #8002ff,
+    0 0 40px #c084fc;
 }
 </style>

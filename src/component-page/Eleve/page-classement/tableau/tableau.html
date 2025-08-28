@@ -1,17 +1,10 @@
 <div class="border-2 border-[var(--Violet)] mt-20 bg-gradient-to-b from-[var(--Bleu)] to-[var(--Violet-Foncé)] 
-            pt-12 pb-12 px-12 mx-12 rounded-3xl shadow-2xl">
+            pt-12 pb-24 mb-20 px-12 mx-auto max-w-7xl rounded-3xl shadow-2xl">
 
   <!-- Titre -->
-  <h2 class="text-white text-3xl sm:text-5xl font-extrabold mb-6 text-center tracking-wider drop-shadow-xl">
+  <h2 class="text-white text-3xl sm:text-5xl font-extrabold mb-10 text-center tracking-wider drop-shadow-xl">
     Classement des élèves
   </h2>
-
-  <!-- Compteur avant remise à zéro des XP -->
-  <div class="flex justify-center mb-8">
-    <div class="bg-yellow-400 text-purple-900 font-bold px-6 py-3 rounded-full shadow-lg animate-pulse">
-      Remise à zéro des XP dans : {{ countdown.days }}j {{ countdown.hours }}h {{ countdown.minutes }}m {{ countdown.seconds }}s
-    </div>
-  </div>
 
   <!-- Tableau des élèves -->
   <div class="overflow-x-auto rounded-3xl shadow-inner">
@@ -30,13 +23,13 @@
               'bg-[var(--Violet-Foncé)] hover:bg-[var(--Violet)]': eleve._id !== currentUserId,
               'bg-green-600 hover:bg-green-500': eleve._id === currentUserId
             }"
-            class="cursor-pointer odd:bg-[var(--Violet-Foncé)] even:bg-[var(--Bleu-Foncé)]">
+            class="cursor-pointer transition-colors duration-300 odd:bg-[var(--Violet-Foncé)] even:bg-[var(--Bleu-Foncé)]">
 
           <!-- Rang avec médaille -->
-          <td class="p-4 font-semibold text-xl flex items-center justify-center gap-3 transition-colors duration-300">
-            <span *ngIf="i === 0" class="text-yellow-400 transform hover:scale-125"><i class="fas fa-medal"></i></span>
-            <span *ngIf="i === 1" class="text-gray-300 transform hover:scale-125"><i class="fas fa-medal"></i></span>
-            <span *ngIf="i === 2" class="text-orange-500 transform hover:scale-125"><i class="fas fa-medal"></i></span>
+          <td class="p-4 font-semibold text-xl flex items-center justify-center gap-3 transition-transform duration-300 hover:scale-105">
+            <span *ngIf="i === 0" class="text-yellow-400 shadow-lg animate-pulse"><i class="fas fa-medal"></i></span>
+            <span *ngIf="i === 1" class="text-gray-300 shadow-lg animate-pulse"><i class="fas fa-medal"></i></span>
+            <span *ngIf="i === 2" class="text-orange-500 shadow-lg animate-pulse"><i class="fas fa-medal"></i></span>
             <span>#{{ i + 1 }}</span>
           </td>
 
@@ -46,19 +39,15 @@
           <!-- XP -->
           <td class="p-4 font-bold text-yellow-300">{{ eleve.xp }}</td>
 
-          <!-- Level avec image -->
-          <td class="p-4">
-            <img [src]="getLevelImage(eleve.level)" 
-                 alt="Level {{ eleve.level }}" 
-                 class="mx-auto h-14 w-14 transform transition duration-300 hover:scale-125 hover:rotate-3">
-          </td>
+          <!-- Level en texte -->
+          <td class="p-4 font-semibold text-white">Level {{ eleve.level }}</td>
         </tr>
       </tbody>
     </table>
   </div>
 
-  <!-- Message motivant pour les élèves avec peu d'XP -->
-  <div class="text-center text-[var(--Blanc)] mt-8 text-lg italic font-light tracking-wide">
-    Pas de panique si tu n’avez pas beaucoup d’XP pour l’instant ! Chaque progrès compte, continue à apprendre à ton rythme.
+  <!-- Message motivant -->
+  <div class="text-center text-[var(--Blanc)] mt-10 text-lg italic font-medium tracking-wide bg-[var(--Violet-Foncé)] rounded-2xl py-4 px-6 shadow-inner">
+    Pas de panique si tu n’as pas beaucoup d’XP pour l’instant ! Chaque progrès compte, continue à apprendre à ton rythme.
   </div>
 </div>

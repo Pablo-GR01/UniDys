@@ -1,65 +1,69 @@
 <!-- -------------------- BARRE / SECTION UTILISATEUR -------------------- -->
-  <div class="mb-6 w-full max-w-7xl mx-auto">
-    <app-icon></app-icon>
-    <div class="flex flex-col sm:flex-row flex-wrap items-center justify-between gap-4 px-4 py-6
-                border-4 border-[#8002FF] bg-[#0A072E] text-white rounded-xl shadow-lg">
+<div class="mb-6 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <app-icon></app-icon>
+  <div class="flex flex-col sm:flex-row flex-wrap items-center justify-between gap-4 px-4 py-6
+              border-4 border-[#8002FF] bg-[#0A072E] text-white rounded-xl shadow-lg">
 
-      <!-- Initiales -->
-      <div class="flex items-center justify-center border-2 border-[#8002FF] rounded-full font-black
-                  w-12 h-12 text-lg sm:w-14 sm:h-14 sm:text-xl lg:w-16 lg:h-16 lg:text-2xl flex-shrink-0">
-        {{ getInitiales() }}
-      </div>
+    <!-- Initiales -->
+    <div class="flex items-center justify-center border-2 border-[#8002FF] rounded-full font-black
+                w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 text-lg sm:text-xl lg:text-2xl flex-shrink-0">
+      {{ getInitiales() }}
+    </div>
 
-      <!-- Bonjour + nom -->
-      <div class="font-bold text-lg sm:text-xl lg:text-2xl text-center sm:text-left flex-1 min-w-[150px]">
-        Bonjour {{ getNomComplet() }}
-      </div>
+    <!-- Bonjour + nom -->
+    <div class="font-bold text-lg sm:text-xl lg:text-2xl text-center sm:text-left flex-1 min-w-[150px]">
+      Bonjour {{ getNomComplet() }}
+    </div>
 
-      <!-- Boutons -->
-      <div class="flex flex-wrap gap-4 justify-center w-full sm:w-auto">
-        <a routerLink="/classementE">
-          <button
-            class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
-                   border-4 border-purple-600 shadow-md hover:bg-purple-700 hover:scale-105 transition-transform duration-300 relative overflow-hidden">
-            
-            <!-- Icône de trophée -->
-            <i class="fas fa-trophy text-lg"></i> 
-            Voir ton classement
-        
-            <!-- Effet overlay -->
-            <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
-          </button>
-        </a>
-        
-        <button (click)="ouvrirPopup()"
-          class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
-                 border-4 border-purple-600 shadow-md hover:bg-purple-700 hover:scale-105 transition-transform duration-300 relative overflow-hidden">
-          <i class="fas fa-comment-dots text-lg"></i> Laisser un avis
+    <!-- Boutons -->
+    <div class="flex flex-wrap gap-3 justify-center w-full sm:w-auto">
+      <a routerLink="/classementE" class="w-full sm:w-auto">
+        <button
+          class="flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-5 py-2 sm:py-3 text-white text-sm sm:text-base font-semibold rounded-xl
+                 border-4 border-purple-600 shadow-md hover:bg-purple-700 hover:scale-105 transition-transform duration-300 relative overflow-hidden w-full sm:w-auto">
+          <i class="fas fa-trophy text-lg"></i> Voir ton classement
           <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
         </button>
-      </div>
-    </div>
-  </div>
+      </a>
 
-
-
-
-<!-- -------------------- POPUP AVIS -------------------- -->
-<div *ngIf="popupOuvert" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-  <div class="relative bg-[#020118] text-white border-4 border-[#8002FF] rounded-xl shadow-xl w-full max-w-4xl p-6 flex flex-col md:flex-row gap-8 max-h-[90vh] overflow-auto">
-    <button (click)="fermerPopup()" class="absolute top-2 right-4 text-white hover:text-red-600 text-3xl leading-none z-50">&times;</button>
-    <div class="flex items-center justify-center md:w-1/2">
-      <img src="/assets/LOGO.png" alt="Logo UniDys" class="max-w-[200px] h-auto" />
-    </div>
-    <div class="md:w-1/2">
-      <h2 class="text-2xl font-bold mb-6 text-center md:text-left">Laisser un avis</h2>
-      <input type="text" [(ngModel)]="prenom" placeholder="Prénom" class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400" />
-      <input type="text" [(ngModel)]="nom" placeholder="Nom" class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400" />
-      <textarea [(ngModel)]="avisMessage" placeholder="Votre message" rows="4" class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400 resize-none"></textarea>
-      <div class="flex justify-end">
-        <button (click)="validerAvis()" class="bg-[#8002FF] px-4 py-2 rounded-lg hover:bg-[#3F0255] transition duration-200">Valider</button>
-      </div>
+      <button (click)="ouvrirPopup()" class="flex items-center justify-center gap-2 sm:gap-3 px-4 sm:px-5 py-2 sm:py-3 text-white text-sm sm:text-base font-semibold rounded-xl
+              border-4 border-purple-600 shadow-md hover:bg-purple-700 hover:scale-105 transition-transform duration-300 relative overflow-hidden w-full sm:w-auto">
+        <i class="fas fa-comment-dots text-lg"></i> Laisser un avis
+        <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
+      </button>
     </div>
   </div>
 </div>
 
+<!-- -------------------- POPUP AVIS -------------------- -->
+<div *ngIf="popupOuvert" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+  <div class="relative bg-[#020118] text-white border-4 border-[#8002FF] rounded-xl shadow-xl
+              w-full max-w-4xl p-6 flex flex-col md:flex-row gap-6 md:gap-8 max-h-[90vh] overflow-auto">
+
+    <!-- Bouton fermer -->
+    <button (click)="fermerPopup()"
+            class="absolute top-2 right-4 text-white hover:text-red-600 text-3xl leading-none z-50">&times;</button>
+
+    <!-- Logo -->
+    <div class="flex items-center justify-center md:w-1/2">
+      <img src="/assets/LOGO.png" alt="Logo UniDys" class="max-w-[180px] sm:max-w-[200px] h-auto" />
+    </div>
+
+    <!-- Formulaire avis -->
+    <div class="md:w-1/2 flex flex-col">
+      <h2 class="text-2xl sm:text-3xl font-bold mb-4 sm:mb-6 text-center md:text-left">Laisser un avis</h2>
+      <input type="text" [(ngModel)]="prenom" placeholder="Prénom"
+             class="w-full border-2 border-[#8002FF] p-3 mb-3 sm:mb-4 rounded-lg bg-transparent text-white placeholder-gray-400" />
+      <input type="text" [(ngModel)]="nom" placeholder="Nom"
+             class="w-full border-2 border-[#8002FF] p-3 mb-3 sm:mb-4 rounded-lg bg-transparent text-white placeholder-gray-400" />
+      <textarea [(ngModel)]="avisMessage" placeholder="Votre message" rows="4"
+                class="w-full border-2 border-[#8002FF] p-3 mb-3 sm:mb-4 rounded-lg bg-transparent text-white placeholder-gray-400 resize-none"></textarea>
+      <div class="flex justify-end">
+        <button (click)="validerAvis()"
+                class="bg-[#8002FF] px-4 py-2 rounded-lg hover:bg-[#3F0255] transition duration-200">
+          Valider
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

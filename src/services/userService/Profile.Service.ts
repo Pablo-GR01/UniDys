@@ -36,8 +36,19 @@ export class ProfileService {
   }
 
   // -------------------------------
-  // Ajout de la méthode clearProfile
+  // Vide les infos locales
   clearProfile() {
-    this.authService.setUser(null); // vide l'utilisateur dans AuthService
+    this.authService.setUser(null);
   }
+
+  // -------------------------------
+  // Suppression complète du compte
+  deleteAccount() {
+    // Ici, tu peux ajouter un appel API pour supprimer le compte côté serveur
+    // Exemple : return this.http.delete('/api/user/delete')
+    this.clearProfile();
+    console.log('Compte et données utilisateur supprimés définitivement.');
+  }
+
+  
 }
