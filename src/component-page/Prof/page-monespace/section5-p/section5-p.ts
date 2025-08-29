@@ -129,7 +129,7 @@ export class Section5P implements OnInit, OnDestroy {
     this.nouvelleQuestion = '';
     this.nouvellesReponses = ['', ''];
     this.xpMin = 10;
-    this.xpMax = 100;
+    this.xpMax = 50;
   }
 
   onPdfSelected(event: any) {
@@ -194,7 +194,7 @@ export class Section5P implements OnInit, OnDestroy {
     this.nouvellesReponses = ['', ''];
     this.bonneReponse = [false, false]; // <-- réinitialisation des bonnes réponses
     this.xpMin = 10;
-    this.xpMax = 100;
+    this.xpMax = 50;
   }
   
 
@@ -276,7 +276,4 @@ export class Section5P implements OnInit, OnDestroy {
   choisirBonneReponse(index: number) {
     this.bonneReponse = this.nouvellesReponses.map((_, j) => j === index);
   }
-
-  
-  
 }

@@ -1,15 +1,15 @@
 <app-icon></app-icon>
 
 <!-- SECTION UTILISATEUR -->
-<div class="w-full px-4 py-6 flex flex-col items-center justify-center 
-            border-4 border-[#8002FF] bg-[#0A072E] text-white rounded-xl 
+<div class="w-full px-4 py-6 flex flex-col items-center justify-center
+            border-4 border-[var(--Violet)] bg-[var(--Bleu)] text-[var(--Blanc)] rounded-xl 
             max-w-7xl mx-auto mt-5 space-y-6">
 
   <!-- Initiales + Bonjour + Boutons -->
   <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 w-full">
 
     <!-- Initiales -->
-    <div class="flex items-center justify-center border-2 border-[#8002FF] 
+    <div class="flex items-center justify-center border-2 border-[var(--Violet)] 
                 rounded-full font-black w-16 h-16 sm:w-20 sm:h-20 text-xl sm:text-2xl mx-auto sm:mx-0">
       {{ getInitiales() }}
     </div>
@@ -22,212 +22,323 @@
     <!-- BOUTONS -->
     <div class="flex flex-wrap gap-4 justify-center sm:justify-end w-full sm:w-auto">
       <!-- Bouton Créer un cours -->
-      <button (click)="ouvrirPopupCours()"
-        class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
-               bg-gradient-to-r from-[#8002FF] to-[#3F0255] shadow-lg hover:scale-105 hover:shadow-purple-500/50
+      <button (click)="ouvrirPopupCours()" class="flex items-center gap-3 px-5 py-3 text-[var(--Blanc)] text-sm sm:text-base font-semibold rounded-xl
+               bg-gradient-to-t from-[var(--Violet)] to-[var(--Violet-Foncé)] shadow-lg hover:scale-105 hover:shadow-purple-500/50
                transition transform duration-300 relative overflow-hidden">
         <i class="fas fa-book-open text-lg"></i> Créer un cours
-        <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
+        <span class="absolute inset-0 bg-[var(--Blanc)] opacity-10 rounded-xl pointer-events-none"></span>
       </button>
 
       <!-- Bouton Laisser un avis -->
       <button (click)="ouvrirPopup()"
-        class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
-               border-4 border-purple-600 shadow-md hover:bg-purple-700 hover:scale-105 transition transform duration-300 relative overflow-hidden">
+        class="flex items-center gap-3 px-5 py-3 text-[var(--Blanc)] text-sm sm:text-base font-semibold rounded-xl
+               border-4 border-[var(--Violet)] shadow-md hover:bg-[var(--Violet-Foncé)] hover:scale-105 transition transform duration-300 relative overflow-hidden">
         <i class="fas fa-comment-dots text-lg"></i> Laisser un avis
-        <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
+        <span class="absolute inset-0 bg-[var(--Blanc)] opacity-10 rounded-xl pointer-events-none"></span>
       </button>
 
       <!-- Bouton Explication cours -->
       <button (click)="ouvrirPopupexplique()"
-        class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
-               border-4 border-purple-600 shadow-md hover:bg-purple-700 hover:scale-105 transition transform duration-300 relative overflow-hidden">
+        class="flex items-center gap-3 px-5 py-3 text-[var(--Blanc)] text-sm sm:text-base font-semibold rounded-xl
+               border-4 border-[var(--Violet)] shadow-md hover:bg-[var(--Violet-Foncé)] hover:scale-105 transition transform duration-300 relative overflow-hidden">
         <i class="fa-solid fa-circle-info text-lg"></i> Explication cours
-        <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
+        <span class="absolute inset-0 bg-[var(--Blanc)] opacity-10 rounded-xl pointer-events-none"></span>
       </button>
 
       <!-- Bouton Explication classement -->
       <a routerLink="/classementP"><button
-        class="flex items-center gap-3 px-5 py-3 text-white text-sm sm:text-base font-semibold rounded-xl
-               border-4 border-purple-600 shadow-md hover:bg-purple-700 hover:scale-105 transition transform duration-300 relative overflow-hidden">
-        <i class="fa-solid fa-trophy"></i> Classement élève
-        <span class="absolute inset-0 bg-white opacity-10 rounded-xl pointer-events-none"></span>
-      </button></a>
+          class="flex items-center gap-3 px-5 py-3 text-[var(--Blanc)] text-sm sm:text-base font-semibold rounded-xl
+               border-4 border-[var(--Violet)] shadow-md hover:bg-[var(--Violet-Foncé)] hover:scale-105 transition transform duration-300 relative overflow-hidden">
+          <i class="fa-solid fa-trophy"></i> Classement élève
+          <span class="absolute inset-0 bg-[var(--Blanc)] shadow-md hover:bg-[var(--Violet-Foncé)] opacity-10 rounded-xl pointer-events-none"></span>
+        </button></a>
     </div>
   </div>
 </div>
 
 
-<!-- -------------------- POPUP EXPLICATIF -------------------- -->
-<div *ngIf="showPopupExplique" 
-     class="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 px-4 transition-opacity duration-300">
+<!-- -------------------- POPUP EXPLICATIF PREMIUM -------------------- -->
+<div *ngIf="showPopupExplique"
+  class="fixed inset-0 flex items-center justify-center bg-black/70 backdrop-blur-md z-50 px-4">
 
-  <div class="bg-gradient-to-b from-[#0A072E] to-[#020118] border-4 border-purple-700 rounded-3xl shadow-2xl w-[500px] h-[400px] p-6 relative flex flex-col">
+  <div
+    class="bg-gradient-to-b from-[var(--Violet)] to-[var(--Bleu-Foncé)] border border-[var(--Violet)] rounded-3xl shadow-2xl w-full max-w-lg p-6 flex flex-col relative">
+
+    <!-- Icône en haut -->
+    <div class="absolute -top-8 left-1/2 -translate-x-1/2">
+      <div
+        class="w-16 h-16 flex items-center justify-center rounded-full bg-[var(--Bleu-Foncé)] shadow-lg border-4 border-[var(--Violet)]">
+        <i class="fa fa-lightbulb text-[var(--Blanc)] text-2xl"></i>
+      </div>
+    </div>
 
     <!-- Titre -->
-    <h3 class="text-2xl font-extrabold mb-4 text-purple-400 text-center drop-shadow-md">💡 Explication</h3>
+    <h3 class="text-2xl font-extrabold mt-10 mb-6 text-[var(--Blanc)] text-center drop-shadow-md tracking-wide">
+      Explication
+    </h3>
 
-    <!-- Onglets -->
-    <div class="flex justify-around mb-4">
-      <button (click)="activeTab='cours'" 
-              [class]="activeTab === 'cours' ? 'bg-[#8002FF] text-white font-bold px-4 py-2 rounded-lg transition-all duration-300' : 'bg-transparent text-white font-bold px-4 py-2 rounded-lg hover:bg-purple-700 transition-all duration-300'">
-        📚 Cours
+    <!-- Onglets stylisés -->
+    <div class="flex justify-center space-x-3 mb-6">
+      <button (click)="activeTab='cours'"
+        [ngClass]="activeTab === 'cours' 
+                ? 'bg-[var(--Violet)] text-[var(--Blanc)] font-bold px-5 py-2 rounded-full shadow-md scale-105 transition-all duration-300' 
+                : 'bg-transparent border border-[var(--Violet)] text-[var(--Blanc)] font-bold px-5 py-2 rounded-full hover:bg-text-[var(--Violet-Foncé)] transition-all duration-300'">
+        <i class="fa fa-book mr-2"></i> Cours
       </button>
-      <button (click)="activeTab='qcm'" 
-              [class]="activeTab === 'qcm' ? 'bg-[#8002FF] text-white font-bold px-4 py-2 rounded-lg transition-all duration-300' : 'bg-transparent text-white font-bold px-4 py-2 rounded-lg hover:bg-purple-700 transition-all duration-300'">
-        📝 QCM
+
+      <button (click)="activeTab='qcm'"
+        [ngClass]="activeTab === 'qcm' 
+                ? 'bg-[var(--Violet)] text-[var(--Blanc)] font-bold px-5 py-2 rounded-full shadow-md scale-105 transition-all duration-300' 
+                : 'bg-transparent border border-[var(--Violet)] text-[var(--Blanc)] font-bold px-5 py-2 rounded-full hover:bg-text-[var(--Violet-Foncé)] transition-all duration-300'">
+        <i class="fa fa-pen-to-square mr-2"></i> QCM
       </button>
-      <button (click)="activeTab='autre'" 
-              [class]="activeTab === 'autre' ? 'bg-[#8002FF] text-white font-bold px-4 py-2 rounded-lg transition-all duration-300' : 'bg-transparent text-white font-bold px-4 py-2 rounded-lg hover:bg-purple-700 transition-all duration-300'">
-        ⚠️ Autre
+
+      <button (click)="activeTab='autre'"
+        [ngClass]="activeTab === 'autre' 
+                ? 'bg-purple-600 text-white font-bold px-5 py-2 rounded-full shadow-md scale-105 transition-all duration-300' 
+                : 'bg-transparent border border-[var(--Violet)] text-[var(--Blanc)] font-bold px-5 py-2 rounded-full hover:bg-text-[var(--Violet-Foncé)] transition-all duration-300'">
+        <i class="fa fa-triangle-exclamation mr-2"></i> Autre
       </button>
     </div>
 
-    <!-- Contenu Onglets -->
-    <div class="flex-1 overflow-auto space-y-4">
-      <!-- Cours -->
-      <div *ngIf="activeTab === 'cours'" class="p-5 bg-[#11102a] rounded-xl shadow-inner shadow-purple-900/30">
-        <p class="text-white text-base leading-relaxed">
-          Veuillez remplir tous les champs et joindre un fichier PDF obligatoire. 
-          Dans ce PDF, précisez le public ciblé pour ce cours : dyslexique, 
-          tout public ou autre. Pour le moment, les images ne s’affichent pas directement, 
-          mais vous pouvez télécharger le cours avec toutes les images incluses.
-        </p>
-      </div>
+    <!-- Contenu stable -->
+    <div class="flex-1 flex items-center justify-center">
+      <div class="w-full min-h-[160px] flex items-center justify-center">
 
-      <!-- QCM -->
-      <div *ngIf="activeTab === 'qcm'" class="p-5 bg-[#11102a] rounded-xl shadow-inner shadow-purple-900/30">
-        <p class="text-white text-base leading-relaxed">
-          Créez autant de QCM que nécessaire. Attribuez entre 10 et 50 XP par question.
-        </p>
-      </div>
+        <!-- Cours -->
+        <div *ngIf="activeTab === 'cours'"
+          class="p-6 w-full text-center bg-[var(--Bleu)] border border-[var(--Violet)] rounded-2xl shadow-inner shadow-purple-900/40 animate-fadeIn">
+          <p class="text-white text-base leading-relaxed">
+            Remplissez tous les champs et joignez un fichier PDF obligatoire.
+            Dans ce PDF, précisez le public ciblé : <span class="text-[var(--Violet)] font-semibold">DYS</span>,
+            <span class="text-[var(--Violet)] font-semibold">tout public</span> ou <span
+              class="text-[var(--Violet)] font-semibold">autre</span>.
+          </p>
+        </div>
 
-      <!-- Autre -->
-      <div *ngIf="activeTab === 'autre'" class="p-5 bg-[#11102a] rounded-xl shadow-inner shadow-purple-900/30">
-        <p class="text-white text-base leading-relaxed">
-          Veuillez respecter le format requis afin d’éviter toute erreur et de garantir la bonne lecture du cours et des QCM.
-        </p>
+        <!-- QCM -->
+        <div *ngIf="activeTab === 'qcm'"
+          class="p-6 w-full text-center bg-[var(--Bleu)] border border-[var(--Violet)] rounded-2xl shadow-inner shadow-purple-900/40 animate-fadeIn">
+          <p class="text-[var(--Blanc)] text-base leading-relaxed">
+            Créez autant de QCM que nécessaire et attribuez
+            <span class="text-[var(--Violet)] font-semibold">entre 10 et 50 XP</span> par question.
+          </p>
+        </div>
+
+        <!-- Autre -->
+        <div *ngIf="activeTab === 'autre'"
+          class="p-6 w-full text-center bg-[var(--Bleu)] border border-[var(--Violet)] rounded-2xl shadow-inner shadow-purple-900/40 animate-fadeIn">
+          <p class="text-[var(--Blanc)]text-base leading-relaxed">
+            Respectez le format requis pour garantir une
+            <span class="text-[var(--Violet)] font-semibold">lecture optimale</span> du cours et des QCM.
+          </p>
+        </div>
+
       </div>
     </div>
 
     <!-- Bouton Fermer -->
-    <div class="mt-4 flex justify-end">
-      <button (click)="fermerPopupexplique()" class="bg-purple-500 text-white px-6 py-2 rounded-2xl">
-        OK, compris !
+    <div class="mt-6 flex justify-center">
+      <button (click)="fermerPopupexplique()"
+        class="bg-gradient-to-r from-[var(--Violet)] to-[var(--Violet-Foncé)] hover:from-[var(--Violet)] hover:to-[var(--Violet-Foncé)] text-white px-10 py-3 rounded-full font-semibold transition-all duration-300 shadow-lg hover:scale-105">
+        ✅ OK, compris !
       </button>
     </div>
 
   </div>
 </div>
-
 
 
 
 <!-- -------------------- POPUP AVIS -------------------- -->
 <div *ngIf="popupOuvert" class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-  <div class="relative bg-[#020118] text-white border-4 border-[#8002FF] rounded-xl shadow-xl w-full max-w-4xl p-6 flex flex-col md:flex-row gap-8 max-h-[90vh] overflow-auto">
-    <button (click)="fermerPopup()" class="absolute top-2 right-4 text-white hover:text-red-600 text-3xl leading-none z-50">&times;</button>
+  <div
+    class="relative bg-[#020118] text-white border-4 border-[#8002FF] rounded-xl shadow-xl w-full max-w-4xl p-6 flex flex-col md:flex-row gap-8 max-h-[90vh] overflow-auto">
+    <button (click)="fermerPopup()"
+      class="absolute top-2 right-4 text-white hover:text-red-600 text-3xl leading-none z-50">&times;</button>
     <div class="flex items-center justify-center md:w-1/2">
       <img src="/assets/LOGO.png" alt="Logo UniDys" class="max-w-[200px] h-auto" />
     </div>
     <div class="md:w-1/2">
       <h2 class="text-2xl font-bold mb-6 text-center md:text-left">Laisser un avis</h2>
-      <input type="text" [(ngModel)]="prenom" placeholder="Prénom" class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400" />
-      <input type="text" [(ngModel)]="nom" placeholder="Nom" class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400" />
-      <textarea [(ngModel)]="avisMessage" placeholder="Votre message" rows="4" class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400 resize-none"></textarea>
+      <input type="text" [(ngModel)]="prenom" placeholder="Prénom"
+        class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400" />
+      <input type="text" [(ngModel)]="nom" placeholder="Nom"
+        class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400" />
+      <textarea [(ngModel)]="avisMessage" placeholder="Votre message" rows="4"
+        class="w-full border-2 border-[#8002FF] p-3 mb-4 rounded-lg bg-transparent text-white placeholder-gray-400 resize-none"></textarea>
       <div class="flex justify-end">
-        <button (click)="validerAvis()" class="bg-[#8002FF] px-4 py-2 rounded-lg hover:bg-[#3F0255] transition duration-200">Valider</button>
+        <button (click)="validerAvis()"
+          class="bg-[#8002FF] px-4 py-2 rounded-lg hover:bg-[#3F0255] transition duration-200">Valider</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- -------------------- POPUP CRÉATION DE COURS -------------------- -->
-<div *ngIf="popupCoursOuvert" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-  <div class="bg-[#020118] rounded-2xl shadow-xl text-white w-full max-w-5xl flex flex-col md:flex-row max-h-[90vh] overflow-hidden border-4 border-[#8002FF]">
-    <div class="w-full md:w-1/3 flex items-center justify-center rounded-t-2xl md:rounded-l-2xl md:rounded-tr-none p-6">
-      <img src="/assets/LOGO.png" alt="Logo UniDys" class="max-w-full max-h-[200px] object-contain" />
+<!-- -------------------- POPUP CRÉATION DE COURS (UI/UX + FontAwesome) -------------------- -->
+<div *ngIf="popupCoursOuvert"
+  class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+
+  <div
+    class="bg-gradient-to-b from-[#0A072E] to-[#020118] rounded-3xl shadow-2xl text-white w-full max-w-6xl flex flex-col md:flex-row max-h-[92vh] overflow-hidden border border-purple-600">
+
+    <!-- Sidebar gauche -->
+    <div class="w-full md:w-1/3 flex flex-col items-center justify-center bg-[#11102a] p-8 relative">
+      <!-- Bouton Fermer -->
+      <button (click)="fermerPopupCours()"
+        class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-3xl transition">
+        <i class="fas fa-times-circle"></i>
+      </button>
+
+      <img src="/assets/LOGO.png" alt="Logo UniDys"
+        class="max-w-[220px] max-h-[220px] object-contain drop-shadow-lg mb-6" />
+
+      <h3 class="text-xl font-bold text-purple-400 text-center flex items-center gap-2">
+        <i class="fas fa-wand-magic-sparkles"></i> Crée ton cours facilement
+      </h3>
+      <p class="text-sm text-gray-400 text-center mt-2">
+        Complète les champs, ajoute ton <i class="fas fa-file-pdf text-red-500"></i> et crée tes <i
+          class="fas fa-list-check text-green-500"></i> en quelques clics.
+      </p>
     </div>
 
-    <div class="w-full md:w-2/3 p-4 md:p-6 flex flex-col overflow-y-auto">
-      <div class="flex justify-between items-center mb-4">
-        <h2 class="text-lg sm:text-xl font-bold">Nouveau cours</h2>
-        <button (click)="fermerPopupCours()" class="text-white hover:text-red-600 text-3xl leading-none">&times;</button>
+    <!-- Formulaire -->
+    <div class="w-full md:w-2/3 p-6 flex flex-col overflow-y-auto">
+
+      <!-- Titre -->
+      <h2 class="text-2xl font-bold mb-6 border-b border-purple-700 pb-3 flex items-center gap-2">
+        <i class="fas fa-book-open text-purple-400"></i> Nouveau cours
+      </h2>
+
+      <!-- Image matière si dispo -->
+      <div *ngIf="imageMatiere" class="mb-4 flex justify-center">
+        <img [src]="imageMatiere" alt="Image matière"
+          class="w-20 h-20 object-cover rounded-xl border border-purple-600 shadow-lg" />
       </div>
 
-      <div *ngIf="imageMatiere" class="mb-4">
-        <img [src]="imageMatiere" alt="Image matière" class="w-16 h-16 object-cover rounded" />
+      <!-- Champs -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- Titre du cours -->
+        <div class="relative">
+          <i class="fas fa-heading absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <input [(ngModel)]="titreCours" type="text" placeholder="Titre du cours"
+            class="pl-10 w-full bg-[#0A072E] border border-purple-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 outline-none placeholder-gray-400" />
+        </div>
+
+        <!-- Nom du prof -->
+        <div class="relative">
+          <i class="fas fa-user-tie absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
+          <input [(ngModel)]="nomProf" type="text" placeholder="Nom du professeur"
+            class="pl-10 w-full bg-[#1a1835] border border-purple-600 rounded-xl px-4 py-3 text-gray-400 cursor-not-allowed"
+            readonly />
+        </div>
+
+        <!-- Niveau -->
+        <div class="relative">
+          <i class="fas fa-layer-group absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <select [(ngModel)]="niveau"
+            class="pl-10 w-full bg-[#0A072E] border border-purple-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-purple-500 outline-none">
+            <option value="" disabled selected>Niveau</option>
+            <option>CP</option>
+            <option>CE1</option>
+            <option>CE2</option>
+            <option>CM1</option>
+            <option>CM2</option>
+          </select>
+        </div>
+
+        <!-- Matière -->
+        <div class="relative">
+          <i class="fas fa-graduation-cap absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+          <select [(ngModel)]="matiere" (change)="mettreAJourImage()"
+            class="pl-10 w-full bg-[#0A072E] border border-purple-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-purple-500 outline-none">
+            <option value="" disabled selected>Matière</option>
+            <option>Français</option>
+            <option>Maths</option>
+            <option>Histoire</option>
+            <option>Sciences</option>
+          </select>
+        </div>
+
+        <!-- Lien Youtube -->
+        <div class="relative col-span-1 md:col-span-2">
+          <i class="fab fa-youtube absolute left-3 top-1/2 -translate-y-1/2 text-red-500"></i>
+          <input [(ngModel)]="lienYoutube" type="text" placeholder="Lien Youtube (optionnel)"
+            class="pl-10 w-full bg-[#0A072E] border border-purple-600 rounded-xl px-4 py-3 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 outline-none" />
+        </div>
+
+        <!-- PDF -->
+        <div class="col-span-1 md:col-span-2">
+          <label class="flex items-center gap-2 mb-2 text-sm text-gray-300">
+            <i class="fas fa-file-pdf text-red-500"></i> Fichier PDF obligatoire
+          </label>
+          <input type="file" (change)="onPdfSelected($event)"
+            class="w-full bg-[#0A072E] border border-purple-600 rounded-xl px-4 py-3 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700" />
+          <p *ngIf="messageErreurPdf" class="text-red-500 text-sm mt-2">{{ messageErreurPdf }}</p>
+          <p *ngIf="fichierPdf" class="text-sm mt-1 text-gray-300"><i class="fas fa-check-circle text-green-500"></i> {{
+            fichierPdf.name }}</p>
+        </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <input [(ngModel)]="titreCours" type="text" placeholder="Titre du cours" class="border-2 border-[#8002FF] rounded px-2 py-2" />
-        <input [(ngModel)]="nomProf" type="text" placeholder="Nom du professeur" class="border-2 border-[#8002FF] rounded px-2 py-2 text-gray-600" readonly />
-
-        <select [(ngModel)]="niveau" class="bg-[#020118] border-2 text-white border-[#8002FF] rounded px-2 py-2">
-          <option value="" disabled>Niveau</option>
-          <option>CP</option>
-          <option>CE1</option>
-          <option>CE2</option>
-          <option>CM1</option>
-          <option>CM2</option>
-        </select>
-
-        <select [(ngModel)]="matiere" (change)="mettreAJourImage()" class="bg-[#020118] border-2 border-[#8002FF] rounded px-2 py-2 text-white">
-          <option value="" disabled>Matière</option>
-          <option>Français</option>
-          <option>Maths</option>
-          <option>Histoire</option>
-          <option>Sciences</option>
-        </select>
-        
-
-        <input [(ngModel)]="lienYoutube" type="text" placeholder="Lien Youtube (optionnel)" class="col-span-1 md:col-span-2 border-2 border-[#8002FF] rounded px-2 py-2" />
-
-        <p *ngIf="messageErreurPdf" class="text-red-500 text-sm mt-2 col-span-2">{{ messageErreurPdf }}</p>
-        <input type="file" (change)="onPdfSelected($event)" class="col-span-1 md:col-span-2 border-2 border-[#8002FF] rounded px-2 py-2" />
-        <p *ngIf="fichierPdf" class="text-sm col-span-2">📄 Fichier : {{ fichierPdf.name }}</p>
-      </div>
-
-      <div class="mt-2 flex items-center gap-2">
-        <button *ngIf="qcms.length > 0" class="bg-green-800 text-white px-3 py-1 rounded-full text-sm cursor-default hover:scale-105 transition duration-200">
-          {{ qcms.length }} QCM créé{{ qcms.length > 1 ? 's' : '' }}
+      <!-- QCM badge -->
+      <div class="mt-4">
+        <button *ngIf="qcms.length > 0"
+          class="bg-green-700 text-white px-4 py-1.5 rounded-full text-sm cursor-default shadow-md flex items-center gap-2 hover:scale-105 transition duration-200">
+          <i class="fas fa-list-check"></i> {{ qcms.length }} QCM créé{{ qcms.length > 1 ? 's' : '' }}
         </button>
       </div>
 
-      <div class="mt-4 flex gap-2">
-        <button (click)="ouvrirQCMDepuisCours()" 
-                class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 flex items-center gap-2">
-          <i class="fas fa-plus-circle"></i> Ajouter QCM
+      <!-- Boutons -->
+      <div class="mt-6 flex flex-wrap gap-3">
+        <button (click)="ouvrirQCMDepuisCours()"
+          class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl font-medium flex items-center gap-2 transition shadow-lg hover:scale-105">
+          <i class="fas fa-plus-circle"></i> Ajouter un QCM
         </button>
 
-        <button (click)="validerCours()" class="bg-[#8002FF] hover:bg-[#3F0255] px-6 py-2 rounded">Valider le cours</button>
+        <button (click)="validerCours()"
+          class="bg-[#8002FF] hover:bg-purple-700 text-white px-8 py-3 rounded-xl font-semibold flex items-center gap-2 transition shadow-lg hover:scale-105">
+          <i class="fas fa-rocket"></i> Valider le cours
+        </button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- -------------------- POPUP CRÉATION QCM -------------------- -->
-<div *ngIf="popupQcmOuvert" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-  <div class="bg-gradient-to-br from-[#1C0B3A] to-[#2A0C55] rounded-3xl shadow-2xl text-white w-full max-w-5xl p-6 flex flex-col gap-6 border-4 border-[#8002FF]">
+
+
+<!-- -------------------- POPUP CRÉATION QCM (UI/UX amélioré avec icônes) -------------------- -->
+<div *ngIf="popupQcmOuvert"
+  class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+  
+  <div
+    class="bg-gradient-to-br from-[#1E0B3A] to-[#2D0C55] rounded-3xl shadow-2xl text-white w-full max-w-5xl p-8 flex flex-col gap-8 border border-purple-600 animate-fadeIn">
 
     <!-- Header -->
-    <div class="flex justify-between items-center">
-      <h2 class="text-3xl font-extrabold text-[#8002FF] flex items-center gap-3">
-        <i class="fas fa-pencil-alt"></i> Crée ton QCM
+    <div class="flex justify-between items-center border-b border-[#8002FF] pb-4">
+      <h2 class="text-3xl font-extrabold text-[#FFCC00] flex items-center gap-3 drop-shadow-lg">
+        <i class="fas fa-tasks"></i> Crée ton QCM
       </h2>
-      <button (click)="fermerPopupQCM()" 
-              class="text-white hover:text-red-500 text-4xl font-bold transition-transform duration-300 transform hover:scale-125">&times;</button>
+      <button (click)="fermerPopupQCM()"
+        class="text-gray-400 hover:text-red-500 text-4xl font-bold transition-transform duration-300 transform hover:scale-125">
+        <i class="fas fa-times-circle"></i>
+      </button>
     </div>
 
     <!-- XP -->
-    <div class="flex flex-row items-center gap-4">
+    <div class="flex flex-col gap-3">
       <label class="font-bold text-[#FFCC00] text-lg flex items-center gap-2">
-        <i class="fas fa-star"></i> XP
+        <i class="fas fa-star"></i> Points XP attribués
       </label>
-      <div class="flex items-center gap-3">
-        <button (click)="decrementXp()" class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-3xl font-bold transition-transform duration-300 transform hover:scale-110">-</button>
-        <span class="w-20 text-center text-white font-mono text-lg">{{xpMin}}</span>
-        <button (click)="incrementXp()" class="bg-purple-600 hover:bg-purple-700 text-white px-5 py-2 rounded-3xl font-bold transition-transform duration-300 transform hover:scale-110">+</button>
+      <div class="flex items-center gap-4">
+        <button (click)="decrementXp()"
+          class="bg-purple-700 hover:bg-purple-800 text-white px-5 py-2 rounded-full font-bold transition-transform duration-300 transform hover:scale-110">
+          <i class="fas fa-minus"></i>
+        </button>
+        <span class="w-20 text-center text-2xl font-mono text-[#FFCC00]">{{xpMin}}</span>
+        <button (click)="incrementXp()"
+          class="bg-purple-700 hover:bg-[#3F0255] text-white px-5 py-2 rounded-full font-bold transition-transform duration-300 transform hover:scale-110">
+          <i class="fas fa-plus"></i>
+        </button>
       </div>
     </div>
 
@@ -237,54 +348,49 @@
         <i class="fas fa-question-circle"></i> Question
       </label>
       <textarea [(ngModel)]="nouvelleQuestion" placeholder="Écris ta question ici..." rows="2"
-        class="w-full border-2 border-[#8002FF] p-3 rounded-3xl bg-[#020118] placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-[#FFCC00] text-lg transition-all resize-none"></textarea>
+        class="w-full border border-[#8002FF] p-4 rounded-2xl bg-[#020118] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FFCC00] text-lg transition-all resize-none shadow-inner"></textarea>
     </div>
 
     <!-- Réponses -->
-    <!-- Réponses -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-  <div *ngFor="let rep of nouvellesReponses; let i = index; trackBy: trackByIndex"
-       class="flex items-center gap-3 p-3 rounded-3xl bg-gradient-to-r from-[#8002FF] to-[#3F0255] shadow-lg transition-transform duration-300 transform hover:scale-105 hover:shadow-[#FFCC00]/50">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div *ngFor="let rep of nouvellesReponses; let i = index; trackBy: trackByIndex"
+        class="flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-r from-[#8002FF] to-[#3F0255] shadow-md transition-transform duration-300 transform hover:scale-105 hover:shadow-[#FFCC00]/50">
 
-    <div class="flex-shrink-0 text-3xl text-white">
-      <i class="fas fa-lightbulb"></i>
+        <!-- Icône -->
+        <div class="flex-shrink-0 text-2xl text-yellow-300">
+          <i class="fas fa-lightbulb"></i>
+        </div>
+
+        <!-- Réponse -->
+        <textarea [(ngModel)]="nouvellesReponses[i]" placeholder="Réponse {{i+1}}" rows="1"
+          class="flex-1 border border-purple-600 p-3 rounded-xl bg-[#020118] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FFCC00] text-base transition-all resize-none"></textarea>
+
+        <!-- Actions -->
+        <div class="flex flex-col items-center gap-2">
+          <label class="flex items-center gap-1 text-white cursor-pointer">
+            <input type="radio" name="bonneReponse" [checked]="bonneReponse[i]" (change)="choisirBonneReponse(i)"
+              class="accent-[#FFCC00] w-5 h-5" />
+            <i class="fas fa-check-circle text-[#FFCC00]"></i>
+          </label>
+
+          <button (click)="supprimerReponsePopup(i)"
+            class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded-full text-white font-semibold transition-transform duration-300 transform hover:scale-110">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+      </div>
     </div>
-
-    <textarea [(ngModel)]="nouvellesReponses[i]" placeholder="Réponse {{i+1}}" rows="1"
-      class="flex-1 border-2 border-[#8002FF] p-2 rounded-2xl bg-[#020118] placeholder-gray-300 focus:outline-none focus:ring-4 focus:ring-[#FFCC00] text-base transition-all resize-none"></textarea>
-
-    <div class="flex flex-col items-center gap-1">
-      <label class="flex items-center gap-1 text-white cursor-pointer">
-        <!-- Radio au lieu de checkbox -->
-        <input 
-          type="radio" 
-          name="bonneReponse" 
-          [checked]="bonneReponse[i]" 
-          (change)="choisirBonneReponse(i)" 
-          class="accent-[#FFCC00] w-5 h-5"/>
-
-        Correcte
-      </label>
-
-      <button (click)="supprimerReponsePopup(i)"
-              class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded-2xl text-white font-semibold transition-transform duration-300 transform hover:scale-110">
-        <i class="fas fa-trash-alt text-sm"></i>
-      </button>
-    </div>
-  </div>
-</div>
-
 
     <!-- Ajouter réponse -->
     <button (click)="ajouterReponsePopup()"
-      class="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-3xl w-full font-bold transition-shadow duration-300 shadow-md hover:shadow-green-400/50 text-base flex items-center justify-center gap-2">
+      class="bg-green-600 hover:bg-green-700 px-5 py-3 rounded-2xl w-full font-bold transition-all duration-300 shadow-md hover:shadow-green-400/50 text-lg flex items-center justify-center gap-2">
       <i class="fas fa-plus-circle"></i> Ajouter une réponse
     </button>
 
     <!-- Valider QCM -->
     <button (click)="validerQCM()"
-      class="bg-gradient-to-r from-[#FFCC00] to-[#FFAA00] hover:from-[#FFAA00] hover:to-[#FFCC00] px-5 py-3 rounded-3xl w-full font-bold text-lg transition-shadow duration-300 shadow-lg hover:shadow-yellow-400/50 flex items-center justify-center gap-2">
-      <i class="fas fa-check"></i> Valider QCM
+      class="bg-gradient-to-r from-[#FFCC00] to-[#FFAA00] hover:from-[#FFAA00] hover:to-[#FFCC00] px-6 py-4 rounded-2xl w-full font-extrabold text-lg transition-all duration-300 shadow-lg hover:shadow-yellow-400/50 flex items-center justify-center gap-3">
+      <i class="fas fa-check"></i> Valider le QCM
     </button>
 
   </div>
