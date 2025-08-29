@@ -7,9 +7,11 @@ const utilisateurSchema = new mongoose.Schema({
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['prof', 'eleve', 'admin'], default: 'eleve' },
-  codeProf: String,
-  initiale: String,
+  codeProf: { type: String },
+  initiale: { type: String },
   xp: { type: Number, default: 0 },
+  // ✅ Nouveau champ pour savoir si l'utilisateur a validé les CGU
+  cguValide: { type: Boolean, default: true }
 });
 
 // Génération des initiales
@@ -32,7 +34,7 @@ utilisateurSchema.pre('save', async function (next) {
   }
 });
 
-// Vérification mot de passe
+// Vérification du mot de passe
 utilisateurSchema.methods.comparePassword = function (password) {
   return bcrypt.compare(password, this.password);
 };

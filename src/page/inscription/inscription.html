@@ -1,17 +1,15 @@
 <app-icon></app-icon>
 
-<!-- Logo à gauche -->
+<!-- Logo -->
 <div class="flex-shrink-0 2xl:ml-1 mt-3">
   <a routerLink="/accueil">
     <img src="assets/LOGO.png" alt="Logo UniDys"
-      class="hover:scale-105 transition-transform duration-300
-      w-30 sm:w-34 xl:w-38 2xl:w-42"/>
+      class="hover:scale-105 transition-transform duration-300 w-30 sm:w-34 xl:w-38 2xl:w-42"/>
   </a>
 </div>
 
 <!-- Message succès -->
-@if(message){
-<div class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
+<div *ngIf="message" class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
          flex flex-col items-center
          text-lg md:text-xl 2xl:text-2xl
          md:ml-[225px] md:mt-[120px]
@@ -19,14 +17,12 @@
          2xl:ml-[780px] 2xl:-mt-[20px]">
   <p class="mb-2">{{ message }}</p>
 </div>
-}
 
 <div class="min-h-screen flex items-center justify-center px-4 -mt-15">
   <div class="bg-[var(--Bleu-Foncé)] rounded-2xl p-8 pt-1 w-full max-w-md shadow-xl border-2 border-[var(--Violet)] relative">
 
     <!-- Inscription -->
-    <h2 class="text-center text-xl font-bold text-[var(--Violet)] mb-6 mt-3
-    2xl:text-4xl xl:text-3xl md:text-3xl">
+    <h2 class="text-center text-xl font-bold text-[var(--Violet)] mb-6 mt-3 2xl:text-4xl xl:text-3xl md:text-3xl">
       S'inscrire
     </h2>
 
@@ -45,89 +41,102 @@
     </div>
 
     <!-- Formulaire -->
-    <form (ngSubmit)="valider()">
+    <form (ngSubmit)="valider()" #inscriptionForm="ngForm">
 
       <!-- Nom -->
       <div class="mb-4">
         <label class="text-[var(--Blanc)] text-sm">Nom</label>
-        <input type="text" [(ngModel)]="inscriptionData.nom" name="nom"
+        <input type="text" [(ngModel)]="inscriptionData.nom" name="nom" required
           class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] 
                  text-[var(--Blanc)] rounded-md outline-none"
-          placeholder="Votre nom" required />
-        @if(formSubmitted && !inscriptionData.nom){
-          <p class="text-red-400 text-sm mt-1">⚠️ Le nom est requis</p>
-        }
+          placeholder="Votre nom"/>
+        <p *ngIf="formSubmitted && !inscriptionData.nom" class="text-red-400 text-sm mt-1">
+          ⚠️ Le nom est requis
+        </p>
       </div>
 
       <!-- Prénom -->
       <div class="mb-4">
         <label class="text-[var(--Blanc)] text-sm">Prénom</label>
-        <input type="text" [(ngModel)]="inscriptionData.prenom" name="prenom"
+        <input type="text" [(ngModel)]="inscriptionData.prenom" name="prenom" required
           class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] 
                  text-[var(--Blanc)] rounded-md outline-none"
-          placeholder="Votre prénom" required />
-        @if(formSubmitted && !inscriptionData.prenom){
-          <p class="text-red-400 text-sm mt-1">⚠️ Le prénom est requis</p>
-        }
+          placeholder="Votre prénom"/>
+        <p *ngIf="formSubmitted && !inscriptionData.prenom" class="text-red-400 text-sm mt-1">
+          ⚠️ Le prénom est requis
+        </p>
       </div>
 
-      <!-- Mail -->
+      <!-- Email -->
       <div class="mb-4">
         <label class="text-[var(--Blanc)] text-sm">Adresse mail</label>
-        <div class="flex items-center bg-[var(--Bleu)] border-2 border-[var(--Violet)] px-3 py-2 rounded-md mt-1">
-          <i class="fa-solid fa-envelope text-[var(--Blanc)] mr-2"></i>
-          <input type="email" [(ngModel)]="inscriptionData.email" name="email"
-            class="bg-transparent outline-none text-[var(--Blanc)] w-full" placeholder="Adresse mail" required />
-        </div>
-        @if(formSubmitted && !isEmailValid(inscriptionData.email)){
-          <p class="text-red-400 text-sm mt-1">⚠️ Email invalide</p>
-        }
+        <input type="email" [(ngModel)]="inscriptionData.email" name="email" required
+          class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] 
+                 text-[var(--Blanc)] rounded-md outline-none"
+          placeholder="Adresse mail"/>
+        <p *ngIf="formSubmitted && !isEmailValid(inscriptionData.email)" class="text-red-400 text-sm mt-1">
+          ⚠️ Email invalide
+        </p>
       </div>
 
       <!-- Mot de passe -->
       <div class="mb-4">
         <label class="text-[var(--Blanc)] text-sm">Mot de passe</label>
         <div class="flex items-center bg-[var(--Bleu)] border-2 border-[var(--Violet)] px-3 py-2 rounded-md mt-1 relative">
-          <i class="fa-solid fa-lock text-white mr-2"></i>
-          <input [type]="passwordVisible ? 'text' : 'password'" [(ngModel)]="inscriptionData.password" name="password"
-            class="bg-transparent outline-none text-white w-full pr-10" placeholder="Mot de passe" required />
+          <input [type]="passwordVisible ? 'text' : 'password'" [(ngModel)]="inscriptionData.password" name="password" required
+            class="bg-transparent outline-none text-white w-full pr-10"
+            placeholder="Mot de passe"/>
           <button type="button" class="absolute right-3 text-white" (click)="togglePasswordVisibility()">
             <i class="fa" [ngClass]="passwordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
           </button>
         </div>
-        @if(formSubmitted && (!inscriptionData.password || inscriptionData.password.length < 6)){
-          <p class="text-red-400 text-sm mt-1">⚠️ Mot de passe trop court (min. 6 caractères)</p>
-        }
+        <p *ngIf="formSubmitted && (!inscriptionData.password || inscriptionData.password.length < 6)" class="text-red-400 text-sm mt-1">
+          ⚠️ Mot de passe trop court (min. 6 caractères)
+        </p>
       </div>
 
-      <!-- Code (prof uniquement) -->
-      @if(actif === 'prof'){
-        <div class="mb-4">
-          <label class="text-[var(--Blanc)] text-sm">Code professeur</label>
-          <input type="password" [(ngModel)]="inscriptionData.codeProf" name="codeProf"
-            class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] 
-                   text-[var(--Blanc)] rounded-md outline-none"
-            placeholder="Code professeur" />
-          @if(formSubmitted && inscriptionData.codeProf !== CODE_PROF){
-            <p class="text-red-400 text-sm mt-1">⚠️ Code professeur incorrect</p>
-          }
-        </div>
-      }
+      <!-- Code prof -->
+      <div *ngIf="actif === 'prof'" class="mb-4">
+        <label class="text-[var(--Blanc)] text-sm">Code professeur</label>
+        <input type="password" [(ngModel)]="inscriptionData.codeProf" name="codeProf"
+          class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] 
+                 text-[var(--Blanc)] rounded-md outline-none"
+          placeholder="Code professeur"/>
+        <p *ngIf="formSubmitted && inscriptionData.codeProf !== CODE_PROF" class="text-red-400 text-sm mt-1">
+          ⚠️ Code professeur incorrect
+        </p>
+      </div>
 
-      <!-- Valider -->
-      <button type="submit"
-        class="bg-[#8002FF] text-[var(--Blanc)] w-full py-2 rounded-md font-bold text-lg 
-               hover:bg-[#3F0255]">
+      <!-- CGU -->
+      <div class="flex items-center mb-4">
+        <input type="checkbox" [(ngModel)]="cguAccepte" name="cgu" id="cguCheckbox"
+               (ngModelChange)="inscriptionData.cguValide = cguAccepte"/>
+        <label for="cguCheckbox" class="ml-2 text-sm text-gray-300">
+          J’accepte les 
+          <a routerLink="/cgu" class="text-[var(--Violet)] font-semibold hover:underline" target="_blank">
+            CGU
+          </a>
+        </label>
+      </div>
+      <p *ngIf="formSubmitted && !cguAccepte" class="text-red-400 text-sm mt-1">
+        ⚠️ Vous devez accepter les conditions pour continuer
+      </p>
+
+      <!-- Bouton valider -->
+      <button type="submit" 
+              [disabled]="!cguAccepte"
+              class="bg-[#8002FF] text-[var(--Blanc)] w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255] disabled:opacity-50 disabled:cursor-not-allowed">
         Valider
       </button>
     </form>
 
-    <!-- Lien vers connexion -->
+    <!-- Lien connexion -->
     <p class="text-center text-sm text-gray-300 mt-6">
       Vous avez déjà un compte ?
       <a routerLink="/connexion" class="text-[var(--Violet)] font-semibold hover:underline">
         Se connecter
       </a>
     </p>
+
   </div>
 </div>

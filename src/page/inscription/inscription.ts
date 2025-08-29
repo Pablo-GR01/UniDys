@@ -15,6 +15,7 @@ interface InscriptionData {
   codeProf?: string;
   role: 'prof' | 'eleve' | 'admin';
   initiale?: string;
+  cguValide?: boolean;
 }
 
 @Component({
@@ -35,11 +36,13 @@ export class Inscription implements OnInit, OnDestroy {
     codeProf: '',
     role: 'eleve',
     initiale: '',
+    cguValide: false,
   };
 
   passwordVisible = false;
   formSubmitted = false;
   message: string | null = null;
+  cguAccepte = false;
 
   constructor(private http: HttpClient, private router: Router, private authService: AuthService) {}
 
@@ -77,22 +80,35 @@ export class Inscription implements OnInit, OnDestroy {
     if (!this.isEmailValid(email)) return false;
     if (!password || password.length < 6) return false;
     if (role === 'prof' && codeProf !== this.CODE_PROF) return false;
+    if (!this.cguAccepte) return true;
     return true;
+  }
+
+  // 🔹 Mise à jour automatique cguValide
+  onCguChange(event: Event) {
+    const checkbox = event.target as HTMLInputElement;
+    this.cguAccepte = checkbox.checked;
+    this.inscriptionData.cguValide = checkbox.checked;
   }
 
   valider(): void {
     this.formSubmitted = true;
 
-    if (!this.formulaireValide()) {
-      return; // Erreurs affichées mais pas d’envoi
-    }
+    if (!this.formulaireValide()) return;
 
     const initiale =
       (this.inscriptionData.prenom[0] ?? '').toUpperCase() +
       (this.inscriptionData.nom[0] ?? '').toUpperCase();
 
-    const payload = { ...this.inscriptionData, initiale };
+    const payload: InscriptionData = {
+      ...this.inscriptionData,
+      initiale,
+      cguValide: this.cguAccepte
+    };
+
     if (payload.role !== 'prof') delete payload.codeProf;
+
+    console.log('Payload envoyé à l’API :', payload);
 
     this.http.post('http://localhost:3000/api/unidys/users', payload).subscribe({
       next: (res: any) => {
