@@ -18,12 +18,14 @@ import { Cours } from '../page/page-user/admin/cours/cours';
 import { ClassementG } from '../page/page-user/prof/classement-g/classement-g';
 import { ClassementGE } from '../page/page-user/eleve/classement-g/classement-g';
 import { CoursdetailP } from '../component-page/Prof/page-cour/cours-detail-p/cours-detail-p';
+import { CGU } from '../page/cgu/cgu';
 
 
 export const routes: Routes = [
   {path: 'connexion', component: Connexion },
   {path: '', redirectTo: 'connexion', pathMatch: 'full' },
   {path: 'inscription', component: Inscription },
+  {path: 'cgu',component: CGU},
 
   
   // route page admin

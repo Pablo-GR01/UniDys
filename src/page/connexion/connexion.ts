@@ -20,7 +20,7 @@ export class Connexion {
   message: string | null = null;
   errorMessage: string | null = null;
   redirectionApresConnexion: string | null = null;
-  formSubmitted = false; // n’affiche les erreurs qu’après clic
+  formSubmitted = false;
 
   connexionData = {
     email: '',
@@ -43,9 +43,9 @@ export class Connexion {
   }
 
   valider(): void {
-    this.formSubmitted = true; // active l’affichage des erreurs
+    this.formSubmitted = true;
 
-    if (!this.formulaireValide()) return; // stop si formulaire invalide
+    if (!this.formulaireValide()) return;
 
     this.isLoading = true;
     const { email, password } = this.connexionData;
@@ -87,7 +87,7 @@ export class Connexion {
         }, 1200);
       },
       error: (err) => {
-        this.errorMessage = err.error?.message || 'Erreur serveur';
+        this.errorMessage = err.error?.message || 'Email ou mot de passe incorrect';
         this.isLoading = false;
         console.error('Erreur de connexion :', err);
       },

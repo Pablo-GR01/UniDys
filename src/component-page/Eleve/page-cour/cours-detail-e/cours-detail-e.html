@@ -31,7 +31,7 @@
     <div class="flex items-center gap-3">
       <label class="text-[var(--Blanc)] font-semibold">Police :</label>
       <select [(ngModel)]="policeTexte" (change)="changerPolice()"
-              class="p-2 rounded-lg bg-[var(--Violet)] text-[var(--Blanc)] hover:bg-[var(--Violet-Foncé)] transition cursor-pointer">
+              class="p-2 border-2 border-[var(--Violet)] rounded-lg bg-gradient-to-l from-[var(--Violet-Foncé)] via-[var(--Violet)] to-[var(--Bleu-Foncé)] text-[var(--Blanc)] hover:bg-[var(--Violet-Foncé)] transition cursor-pointer">
         <option *ngFor="let font of policesDisponibles" [value]="font">{{ font }}</option>
       </select>
     </div>
@@ -55,7 +55,7 @@
       <span class="ml-3 text-[var(--Blanc)]">Chargement du contenu...</span>
     </div>
 
-    <div *ngIf="!loading && !contenuHtml" class="text-center p-8 text-gray-400">
+    <div *ngIf="!loading && !contenuHtml" class="text-center p-8 text-[var(--Blanc)]">
       Aucun contenu disponible
     </div>
 

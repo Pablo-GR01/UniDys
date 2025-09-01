@@ -76,11 +76,13 @@ export class Inscription implements OnInit, OnDestroy {
 
   formulaireValide(): boolean {
     const { nom, prenom, email, password, role, codeProf } = this.inscriptionData;
+
     if (!nom || !prenom) return false;
     if (!this.isEmailValid(email)) return false;
     if (!password || password.length < 6) return false;
     if (role === 'prof' && codeProf !== this.CODE_PROF) return false;
-    if (!this.cguAccepte) return true;
+    if (!this.cguAccepte) return false;
+
     return true;
   }
 
@@ -103,7 +105,7 @@ export class Inscription implements OnInit, OnDestroy {
     const payload: InscriptionData = {
       ...this.inscriptionData,
       initiale,
-      cguValide: this.cguAccepte
+      cguValide: this.cguAccepte,
     };
 
     if (payload.role !== 'prof') delete payload.codeProf;

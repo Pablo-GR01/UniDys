@@ -1,90 +1,93 @@
-<!-- Logo et icône -->
 <app-icon></app-icon>
 
-<!-- Logo à gauche -->
+<!-- Logo -->
 <div class="flex-shrink-0 2xl:ml-1 mt-3">
   <a routerLink="/accueil">
     <img src="assets/LOGO.png" alt="Logo UniDys"
-      class="hover:scale-105 transition-transform duration-300 w-30 sm:w-34 xl:w-38 2xl:w-42" />
+         class="hover:scale-105 transition-transform duration-300 w-30 sm:w-34 xl:w-38 2xl:w-42" />
   </a>
 </div>
 
-<!-- Fond principal -->
-<div class="bg-[var(--Bleu-Foncé)]">
-  <div class="min-h-screen flex flex-col items-center justify-center px-4 -mt-20">
+<div class="min-h-screen flex items-center justify-center px-4 -mt-20">
+  <div class="w-full max-w-md">
 
-    <!-- Message de bienvenue -->
-    <div *ngIf="message" class="border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
-                  text-lg md:text-xl 2xl:text-2xl px-10 py-5 mb-6 bg-[var(--Bleu)]">
-      <p class="mb-0">{{ message }}</p>
+    <!-- Message de bienvenue amélioré -->
+    <div *ngIf="message" 
+         class="relative border-2 border-[var(--Violet)] rounded-3xl shadow-2xl text-center font-semibold
+                text-lg md:text-xl 2xl:text-2xl px-8 py-4 mb-4
+                bg-gradient-to-r from-[var(--Bleu-Foncé)] to-[var(--Bleu)] 
+                text-[var(--Blanc)] animate-fade-in
+                ring-1 ring-[var(--Violet)] ring-opacity-30
+                backdrop-blur-sm">
+      {{ message }}
     </div>
 
-    <!-- Message d'erreur serveur -->
-    <div *ngIf="errorMessage" class="border-2 border-[var(--Rouge)] text-[var(--Rouge)] rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
-                  text-sm md:text-base px-6 py-3 mb-4 bg-[var(--Bleu-Foncé)]">
-      <p class="mb-0">{{ errorMessage }}</p>
-    </div>
-
-    <!-- Boîte de connexion -->
-    <div class="bg-[var(--Bleu-Foncé)] rounded-2xl p-8 w-full max-w-md shadow-xl border-3 border-[var(--Violet)] relative">
+    <!-- Formulaire -->
+    <div class="bg-[var(--Bleu-Foncé)] rounded-2xl p-8 shadow-2xl border-2 border-[var(--Violet)] relative">
 
       <!-- Titre -->
       <h2 class="text-center font-black text-[var(--Violet)] mb-6
-      2xl:text-4xl xl:text-3xl md:text-3xl sm:text-2xl text-xl">
-        Connexion
+                 2xl:text-4xl xl:text-3xl md:text-3xl sm:text-2xl text-xl">
+        <i class="fas fa-sign-in-alt mr-2"></i>Connexion
       </h2>
 
-      <!-- Formulaire -->
-      <form (ngSubmit)="valider()" #connexionForm="ngForm">
+      <form (ngSubmit)="valider()" #connexionForm="ngForm" class="space-y-4">
 
         <!-- Email -->
-        <div class="mb-4">
-          <label class="text-[var(--Blanc)] text-sm" for="email">Adresse mail</label>
-          <div class="flex items-center border-2 border-[var(--Violet)] px-3 py-2 rounded mt-1">
-            <i class="fa-solid fa-envelope text-[var(--Blanc)] mr-2"></i>
-            <input type="email" id="email" name="email"
-              class="bg-transparent outline-none text-[var(--Blanc)] w-full"
-              placeholder="Adresse mail" required [(ngModel)]="connexionData.email" #email="ngModel" />
-          </div>
-          <!-- Message d'erreur affiché uniquement après clic -->
-          <div *ngIf="formSubmitted && email.invalid" class="text-[var(--Rouge)] text-xs mt-1">
-            Email invalide.
-          </div>
+        <div>
+          <label class="text-[var(--Blanc)] text-sm font-medium flex items-center" for="email">
+            <i class="fas fa-envelope mr-2"></i> Adresse mail
+          </label>
+          <input type="email" id="email" name="email" placeholder="Adresse mail" required
+                 class="mt-1 w-full px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-md outline-none focus:ring-2 focus:ring-[var(--Violet)] transition-all"
+                 [(ngModel)]="connexionData.email" #email="ngModel" />
+          <p *ngIf="formSubmitted && email.invalid" class="text-[var(--Rouge)] text-xs mt-1">
+            <i class="fas fa-exclamation-circle mr-1"></i>Veuillez entrer un email valide
+          </p>
         </div>
 
         <!-- Mot de passe -->
-        <div class="mb-4">
-          <label class="text-[var(--Blanc)] text-sm" for="password">Mot de passe</label>
-          <div class="flex items-center border-2 border-[var(--Violet)] px-3 py-2 rounded-md mt-1 relative">
-            <i class="fa-solid fa-lock text-[var(--Blanc)] mr-2"></i>
+        <div>
+          <label class="text-[var(--Blanc)] text-sm font-medium flex items-center" for="password">
+            <i class="fas fa-lock mr-2"></i> Mot de passe
+          </label>
+          <div class="flex items-center border-2 border-[var(--Violet)] px-3 py-2 rounded-md mt-1 relative focus-within:ring-2 focus-within:ring-[var(--Violet)] transition-all">
             <input [type]="passwordVisible ? 'text' : 'password'" id="password" name="password"
-              class="bg-transparent outline-none text-[var(--Blanc)] w-full pr-10" placeholder="Mot de passe" required
-              minlength="6" [(ngModel)]="connexionData.password" #password="ngModel" />
+                   placeholder="Mot de passe" required minlength="6"
+                   class="bg-transparent outline-none text-[var(--Blanc)] w-full pr-10"
+                   [(ngModel)]="connexionData.password" #password="ngModel" />
             <button type="button" class="absolute right-3 text-[var(--Blanc)]" (click)="togglePasswordVisibility()"
-              aria-label="Afficher / masquer mot de passe" tabindex="-1">
+                    aria-label="Afficher / masquer mot de passe" tabindex="-1">
               <i class="fa" [ngClass]="passwordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
             </button>
           </div>
-          <!-- Message d'erreur affiché uniquement après clic -->
-          <div *ngIf="formSubmitted && password.invalid" class="text-[var(--Rouge)] text-xs mt-1">
-            Le mot de passe doit contenir au moins 6 caractères.
-          </div>
+          <p *ngIf="formSubmitted && password.invalid" class="text-[var(--Rouge)] text-xs mt-1">
+            <i class="fas fa-exclamation-circle mr-1"></i>Mot de passe min. 6 caractères
+          </p>
         </div>
 
-        <!-- Bouton valider -->
+        <!-- Message serveur -->
+        <p *ngIf="errorMessage" class="text-[var(--Rouge)] text-sm mt-2 text-center">
+          <i class="fas fa-times-circle mr-1"></i>{{ errorMessage }}
+        </p>
+
+        <!-- Bouton valider amélioré -->
         <button type="submit" [disabled]="!formulaireValide() || isLoading"
-          class="flex items-center justify-center gap-2 bg-[var(--Violet)] text-white font-semibold rounded hover:bg-[var(--Violet-Foncé)] disabled:opacity-50 transition-all duration-300
-       w-full min-w-[250px] py-2 px-6 sm:px-10 md:px-20 lg:px-28 xl:px-36 2xl:px-40">
-          <span class="inline-block">
-            {{ isLoading ? 'Connexion...' : 'Valider' }}
-          </span>
+        class="flex items-center justify-center gap-2 w-full py-3 font-bold text-[var(--Blanc)]
+              rounded-xl border-2 border-[var(--Violet)]
+              bg-gradient-to-r from-[var(--Bleu)] via-[var(--Violet)] to-[var(--Violet-Foncé)]
+              hover:from-[var(--Violet-Foncé)] hover:via-[var(--Violet-Foncé)] hover:to-[var(--Violet-Foncé)]
+              hover:scale-105 hover:shadow-[0_0_15px_var(--Violet)]
+              disabled:opacity-50 disabled:cursor-not-allowed
+              transition-all duration-300 ease-in-out">
+        <i class="fas fa-check mr-2"></i> {{ isLoading ? 'Connexion...' : 'Valider' }}
         </button>
 
       </form>
 
       <!-- Lien inscription -->
       <p class="text-center text-sm text-[var(--Blanc)] mt-6">
-        Vous n'avez pas encore de compte ?
+        <i class="fas fa-user-plus mr-1"></i>Vous n'avez pas encore de compte ?
         <a routerLink="/inscription" class="text-[var(--Violet)] font-semibold hover:underline transition duration-200">
           Créer un compte
         </a>

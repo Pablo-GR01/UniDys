@@ -4,139 +4,167 @@
 <div class="flex-shrink-0 2xl:ml-1 mt-3">
   <a routerLink="/accueil">
     <img src="assets/LOGO.png" alt="Logo UniDys"
-      class="hover:scale-105 transition-transform duration-300 w-30 sm:w-34 xl:w-38 2xl:w-42"/>
+         class="hover:scale-105 transition-transform duration-300 w-30 sm:w-34 xl:w-38 2xl:w-42" />
   </a>
 </div>
 
-<!-- Message succès -->
-<div *ngIf="message" class="absolute z-10 border-2 border-[#8002FF] text-white rounded-2xl shadow-lg text-center font-semibold animate-fade-in 
-         flex flex-col items-center
-         text-lg md:text-xl 2xl:text-2xl
-         md:ml-[225px] md:mt-[120px]
-         xl:ml-[480px] xl:mt-[120px]
-         2xl:ml-[780px] 2xl:-mt-[20px]">
-  <p class="mb-2">{{ message }}</p>
-</div>
+<div class="min-h-screen flex items-center justify-center px-4 -mt-12">
+  <div class="w-full max-w-md">
 
-<div class="min-h-screen flex items-center justify-center px-4 -mt-15">
-  <div class="bg-[var(--Bleu-Foncé)] rounded-2xl p-8 pt-1 w-full max-w-md shadow-xl border-2 border-[var(--Violet)] relative">
-
-    <!-- Inscription -->
-    <h2 class="text-center text-xl font-bold text-[var(--Violet)] mb-6 mt-3 2xl:text-4xl xl:text-3xl md:text-3xl">
-      S'inscrire
-    </h2>
-
-    <!-- Choix profil -->
-    <div class="flex justify-center gap-4 mb-4">
-      <button (click)="activerProf()" 
-        [ngClass]="{ 'bg-[var(--Violet)]': actif === 'prof', 'bg-transparent': actif !== 'prof' }"
-        class="text-white px-4 py-1 rounded-full font-semibold border border-white">
-        Prof
-      </button>
-      <button (click)="activerEleve()" 
-        [ngClass]="{ 'bg-[var(--Violet)]': actif === 'eleve', 'bg-transparent': actif !== 'eleve' }"
-        class="text-white px-4 py-1 rounded-full font-semibold border border-white">
-        Élève
-      </button>
+    <!-- Message de bienvenue amélioré -->
+    <div *ngIf="message" 
+         class="relative border-2 border-[var(--Violet)] rounded-3xl shadow-2xl text-center font-semibold
+                text-lg md:text-xl 2xl:text-2xl px-8 py-4 mb-4
+                bg-gradient-to-r from-[var(--Bleu-Foncé)] to-[var(--Bleu)] 
+                text-[var(--Blanc)] animate-fade-in
+                ring-1 ring-[var(--Violet)] ring-opacity-30
+                backdrop-blur-sm">
+      {{ message }}
     </div>
 
     <!-- Formulaire -->
-    <form (ngSubmit)="valider()" #inscriptionForm="ngForm">
+    <div class="bg-[var(--Bleu-Foncé)] rounded-2xl p-8 pt-4 shadow-2xl border-2 border-[var(--Violet)] relative">
 
-      <!-- Nom -->
-      <div class="mb-4">
-        <label class="text-[var(--Blanc)] text-sm">Nom</label>
-        <input type="text" [(ngModel)]="inscriptionData.nom" name="nom" required
-          class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] 
-                 text-[var(--Blanc)] rounded-md outline-none"
-          placeholder="Votre nom"/>
-        <p *ngIf="formSubmitted && !inscriptionData.nom" class="text-red-400 text-sm mt-1">
-          ⚠️ Le nom est requis
-        </p>
+      <!-- Titre -->
+      <h2 class="text-center text-xl font-bold text-[var(--Violet)] mb-6 mt-2 2xl:text-4xl xl:text-3xl md:text-3xl">
+        <i class="fas fa-user-plus mr-2"></i> S'inscrire
+      </h2>
+
+      <!-- Choix profil -->
+      <div class="flex justify-center gap-4 mb-6">
+        <!-- Bouton Prof -->
+        <button (click)="activerProf()" 
+                [ngClass]="{
+                  'bg-[var(--Violet)] shadow-[0_0_15px_var(--Violet)] scale-105': actif === 'prof',
+                  'bg-transparent hover:bg-[var(--Violet-Foncé)] hover:shadow-lg': actif !== 'prof'
+                }"
+                class="flex items-center gap-2 px-5 py-2 rounded-xl font-semibold border-2 border-[var(--Violet)] text-[var(--Blanc)]
+                       bg-gradient-to-b from-[var(--Violet)] to-[var(--Bleu)] transition-all duration-300 transform cursor-pointer hover:scale-105">
+          <i class="fas fa-chalkboard-teacher transition-transform duration-300 hover:rotate-12"></i> Prof
+        </button>
+
+        <!-- Bouton Élève -->
+        <button (click)="activerEleve()" 
+                [ngClass]="{
+                  'bg-[var(--Violet)] shadow-[0_0_15px_var(--Violet)] scale-105': actif === 'eleve',
+                  'bg-transparent hover:bg-[var(--Violet-Foncé)] hover:shadow-lg': actif !== 'eleve'
+                }"
+                class="flex items-center gap-2 px-5 py-2 rounded-xl font-semibold border-2 border-[var(--Violet)] text-[var(--Blanc)]
+                       bg-gradient-to-b from-[var(--Violet)] to-[var(--Bleu)] transition-all duration-300 transform cursor-pointer hover:scale-105">
+          <i class="fas fa-user-graduate transition-transform duration-300 hover:rotate-12"></i> Élève
+        </button>
       </div>
 
-      <!-- Prénom -->
-      <div class="mb-4">
-        <label class="text-[var(--Blanc)] text-sm">Prénom</label>
-        <input type="text" [(ngModel)]="inscriptionData.prenom" name="prenom" required
-          class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] 
-                 text-[var(--Blanc)] rounded-md outline-none"
-          placeholder="Votre prénom"/>
-        <p *ngIf="formSubmitted && !inscriptionData.prenom" class="text-red-400 text-sm mt-1">
-          ⚠️ Le prénom est requis
-        </p>
-      </div>
+      <form (ngSubmit)="valider()" #inscriptionForm="ngForm" class="space-y-4">
 
-      <!-- Email -->
-      <div class="mb-4">
-        <label class="text-[var(--Blanc)] text-sm">Adresse mail</label>
-        <input type="email" [(ngModel)]="inscriptionData.email" name="email" required
-          class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] 
-                 text-[var(--Blanc)] rounded-md outline-none"
-          placeholder="Adresse mail"/>
-        <p *ngIf="formSubmitted && !isEmailValid(inscriptionData.email)" class="text-red-400 text-sm mt-1">
-          ⚠️ Email invalide
-        </p>
-      </div>
+        <!-- Nom & Prénom -->
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div>
+            <label class="text-[var(--Blanc)] text-sm font-medium">
+              <i class="fas fa-id-badge mr-1"></i> Nom
+            </label>
+            <input type="text" [(ngModel)]="inscriptionData.nom" name="nom" required
+                   class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-md outline-none focus:ring-2 focus:ring-[var(--Violet)] transition-all cursor-pointer"
+                   placeholder="Votre nom" />
+            <p *ngIf="formSubmitted && !inscriptionData.nom" class="text-[var(--Rouge)] text-sm mt-1">
+              <i class="fas fa-exclamation-circle mr-1"></i>Le nom est requis
+            </p>
+          </div>
 
-      <!-- Mot de passe -->
-      <div class="mb-4">
-        <label class="text-[var(--Blanc)] text-sm">Mot de passe</label>
-        <div class="flex items-center bg-[var(--Bleu)] border-2 border-[var(--Violet)] px-3 py-2 rounded-md mt-1 relative">
-          <input [type]="passwordVisible ? 'text' : 'password'" [(ngModel)]="inscriptionData.password" name="password" required
-            class="bg-transparent outline-none text-white w-full pr-10"
-            placeholder="Mot de passe"/>
-          <button type="button" class="absolute right-3 text-white" (click)="togglePasswordVisibility()">
-            <i class="fa" [ngClass]="passwordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
-          </button>
+          <div>
+            <label class="text-[var(--Blanc)] text-sm font-medium">
+              <i class="fas fa-id-card mr-1"></i> Prénom
+            </label>
+            <input type="text" [(ngModel)]="inscriptionData.prenom" name="prenom" required
+                   class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-md outline-none focus:ring-2 focus:ring-[var(--Violet)] transition-all cursor-pointer"
+                   placeholder="Votre prénom" />
+            <p *ngIf="formSubmitted && !inscriptionData.prenom" class="text-[var(--Rouge)] text-sm mt-1">
+              <i class="fas fa-exclamation-circle mr-1"></i>Le prénom est requis
+            </p>
+          </div>
         </div>
-        <p *ngIf="formSubmitted && (!inscriptionData.password || inscriptionData.password.length < 6)" class="text-red-400 text-sm mt-1">
-          ⚠️ Mot de passe trop court (min. 6 caractères)
-        </p>
-      </div>
 
-      <!-- Code prof -->
-      <div *ngIf="actif === 'prof'" class="mb-4">
-        <label class="text-[var(--Blanc)] text-sm">Code professeur</label>
-        <input type="password" [(ngModel)]="inscriptionData.codeProf" name="codeProf"
-          class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] 
-                 text-[var(--Blanc)] rounded-md outline-none"
-          placeholder="Code professeur"/>
-        <p *ngIf="formSubmitted && inscriptionData.codeProf !== CODE_PROF" class="text-red-400 text-sm mt-1">
-          ⚠️ Code professeur incorrect
-        </p>
-      </div>
+        <!-- Email -->
+        <div>
+          <label class="text-[var(--Blanc)] text-sm font-medium flex items-center">
+            <i class="fas fa-envelope mr-2"></i> Adresse mail
+          </label>
+          <input type="email" [(ngModel)]="inscriptionData.email" name="email" required
+                 class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-md outline-none focus:ring-2 focus:ring-[var(--Violet)] transition-all cursor-pointer"
+                 placeholder="Adresse mail" />
+          <p *ngIf="formSubmitted && !isEmailValid(inscriptionData.email)" class="text-[var(--Rouge)] text-sm mt-1">
+            <i class="fas fa-exclamation-circle mr-1"></i>Email invalide
+          </p>
+        </div>
 
-      <!-- CGU -->
-      <div class="flex items-center mb-4">
-        <input type="checkbox" [(ngModel)]="cguAccepte" name="cgu" id="cguCheckbox"
-               (ngModelChange)="inscriptionData.cguValide = cguAccepte"/>
-        <label for="cguCheckbox" class="ml-2 text-sm text-gray-300">
-          J’accepte les 
-          <a routerLink="/cgu" class="text-[var(--Violet)] font-semibold hover:underline" target="_blank">
-            CGU
-          </a>
-        </label>
-      </div>
-      <p *ngIf="formSubmitted && !cguAccepte" class="text-red-400 text-sm mt-1">
-        ⚠️ Vous devez accepter les conditions pour continuer
+        <!-- Mot de passe -->
+        <div>
+          <label class="text-[var(--Blanc)] text-sm font-medium cursor-pointer">
+            <i class="fas fa-lock mr-1"></i> Mot de passe
+          </label>
+          <div class="flex items-center bg-[var(--Bleu)] border-2 border-[var(--Violet)] px-3 py-2 rounded-md mt-1 relative">
+            <input [type]="passwordVisible ? 'text' : 'password'" [(ngModel)]="inscriptionData.password" name="password" required
+                   class="bg-transparent outline-none text-[var(--Blanc)] w-full pr-10 cursor-pointer" placeholder="Mot de passe" />
+            <button type="button" class="absolute right-3 text-[var(--Blanc)] cursor-pointer" (click)="togglePasswordVisibility()">
+              <i class="fa" [ngClass]="passwordVisible ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
+          <p *ngIf="formSubmitted && (!inscriptionData.password || inscriptionData.password.length < 6)" class="text-[var(--Rouge)] text-sm mt-1">
+            <i class="fas fa-exclamation-circle mr-1"></i>Mot de passe trop court (min. 6 caractères)
+          </p>
+        </div>
+
+        <!-- Code Prof -->
+        <div class="transition-all duration-300 overflow-hidden" 
+             [ngStyle]="{'visibility': actif === 'prof' ? 'visible' : 'hidden', 'height': actif === 'prof' ? 'auto' : '70px', 'opacity': actif === 'prof' ? 1 : 0}">
+          <label class="text-[var(--Blanc)] text-sm font-medium">
+            <i class="fas fa-key mr-1"></i> Code professeur
+          </label>
+          <input type="password" [(ngModel)]="inscriptionData.codeProf" name="codeProf"
+                 class="w-full mt-1 px-3 py-2 bg-[var(--Bleu)] border-2 border-[var(--Violet)] text-[var(--Blanc)] rounded-md outline-none focus:ring-2 focus:ring-[var(--Violet)] transition-all"
+                 placeholder="Code professeur" />
+          <p *ngIf="formSubmitted && actif === 'prof' && inscriptionData.codeProf !== CODE_PROF" class="text-[var(--Rouge)] text-sm mt-1">
+            <i class="fas fa-exclamation-circle mr-1"></i>Code professeur incorrect
+          </p>
+        </div>
+
+        <!-- CGU -->
+        <div class="flex items-center">
+          <input type="checkbox" [(ngModel)]="cguAccepte" name="cgu" id="cguCheckbox"
+                 (ngModelChange)="inscriptionData.cguValide = cguAccepte" class="cursor-pointer" />
+          <label for="cguCheckbox" class="ml-2 text-sm text-[var(--Blanc)]">
+            J’accepte les
+            <a routerLink="/cgu" class="text-[var(--Violet)] font-semibold hover:underline" target="_blank">
+              conditions générales d'utilisation
+            </a>
+          </label>
+        </div>
+        <p *ngIf="formSubmitted && !cguAccepte" class="text-[var(--Rouge)] text-sm mt-1">
+          <i class="fas fa-exclamation-circle mr-1"></i>Vous devez accepter les conditions pour continuer
+        </p>
+
+        <!-- Bouton valider CGU -->
+        <button type="submit" [disabled]="!cguAccepte"
+                class="flex items-center justify-center gap-2 w-full py-3 font-bold text-lg text-[var(--Blanc)]
+                       rounded-xl border-2 border-[var(--Violet)]
+                       bg-gradient-to-r from-[var(--Bleu)] via-[var(--Violet)] to-[var(--Violet-Foncé)]
+                       hover:from-[var(--Violet-Foncé)] hover:via-[var(--Violet-Foncé)] hover:to-[var(--Violet-Foncé)]
+                       hover:scale-105 hover:shadow-[0_0_15px_var(--Violet)]
+                       disabled:opacity-50 disabled:cursor-not-allowed
+                       transition-all duration-300 ease-in-out">
+          <i class="fas fa-check mr-2"></i> Valider
+        </button>
+
+      </form>
+
+      <!-- Lien connexion -->
+      <p class="text-center text-sm text-[var(--Blanc)] mt-6">
+        Vous avez déjà un compte ?
+        <a routerLink="/connexion" class="text-[var(--Violet)] font-semibold hover:underline">
+          Se connecter
+        </a>
       </p>
 
-      <!-- Bouton valider -->
-      <button type="submit" 
-              [disabled]="!cguAccepte"
-              class="bg-[#8002FF] text-[var(--Blanc)] w-full py-2 rounded-md font-bold text-lg hover:bg-[#3F0255] disabled:opacity-50 disabled:cursor-not-allowed">
-        Valider
-      </button>
-    </form>
-
-    <!-- Lien connexion -->
-    <p class="text-center text-sm text-gray-300 mt-6">
-      Vous avez déjà un compte ?
-      <a routerLink="/connexion" class="text-[var(--Violet)] font-semibold hover:underline">
-        Se connecter
-      </a>
-    </p>
-
+    </div>
   </div>
 </div>

@@ -37,9 +37,9 @@
 
         <div class="flex flex-wrap sm:flex-nowrap items-center gap-2">
           <button (click)="enregistrerEmail()" [disabled]="inscrit()" 
-            class="bg-gradient-to-r from-[var(--Violet)] to-[var(--Violet-Foncé)] 
-                   hover:from-[var(--Violet-Foncé)] hover:to-[var(--Violet-Foncé2)]  
-                   text-[var(--Blanc)] rounded hover:scale-105 hover:shadow-[var(--Blanc)] 
+            class="border-2 border-[var(--Violet)] bg-gradient-to-r from-[var(--Bleu)] via-[var(--Violet)] to-[var(--Violet-Foncé)]
+                  hover:from-[var(--Violet-Foncé)] hover:via-[var(--Violet-Foncé)] hover:to-[var(--Violet-Foncé)]
+                   text-[var(--Blanc)] rounded-xl hover:scale-105 hover:shadow-[var(--Blanc)] 
                    transition-transform duration-300
                    px-3 sm:px-4 md:px-5 py-2 
                    text-xs sm:text-sm md:text-base lg:text-lg" 
@@ -51,7 +51,7 @@
                 <span class="font-black">Rejoindre la newsletter</span>
               </div>
             } @else {
-              <span class="flex items-center gap-2 text-[var(--Vert)]">
+              <span class="flex items-center gap-2 text-[var(--Vert-Claire)]">
                 <i class="fas fa-check-circle"></i>
                 Vous êtes déjà inscrit
               </span>
