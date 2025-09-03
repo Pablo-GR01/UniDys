@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, OnDestroy, ViewChild, Pipe, PipeTransform } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -8,12 +8,19 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CoursRefreshService } from '../../../../services/cours-refresh.service';
 
+@Pipe({name: 'filterTitre', standalone: true})
+export class FilterTitrePipe implements PipeTransform {
+  transform(cours: Cours[], prefixe: string): Cours[] {
+    return cours.filter(c => c.titre.startsWith(prefixe));
+  }
+}
+
 @Component({
   selector: 'app-mescours-p',
   templateUrl: './mescours-p.html',
   styleUrls: ['./mescours-p.css'],
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, FilterTitrePipe],
 })
 export class MescoursP implements OnInit, OnDestroy {
   @ViewChild('track', { static: false }) track!: ElementRef<HTMLDivElement>;
@@ -27,6 +34,11 @@ export class MescoursP implements OnInit, OnDestroy {
   pdfUrlSanitized: SafeResourceUrl | null = null;
   lienYoutubeModifie: string = '';
 
+  // Pagination
+  pageCours: number = 1;
+  pageExercices: number = 1;
+  taillePage: number = 2;
+
   private refreshSub!: Subscription;
 
   constructor(
@@ -38,7 +50,6 @@ export class MescoursP implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.chargerCoursProf();
-
     this.refreshSub = this.refreshService.refreshRequested$.subscribe(() => {
       this.chargerCoursProf();
     });
@@ -48,43 +59,43 @@ export class MescoursP implements OnInit, OnDestroy {
     if (this.refreshSub) this.refreshSub.unsubscribe();
   }
 
-  // ✅ Charge les cours du prof connecté
   chargerCoursProf(): void {
-    const nomProf = localStorage.getItem('nomProf'); // Stocker "Javier Garcia" directement
-    if (!nomProf) {
-      console.warn('Nom du professeur manquant dans localStorage');
-      this.cours = [];
-      return;
-    }
-
+    const nomProf = localStorage.getItem('nomProf');
+    if (!nomProf) { this.cours = []; return; }
     this.http.get<Cours[]>(`http://localhost:3000/api/cours/prof/${encodeURIComponent(nomProf)}`)
-      .subscribe({
-        next: (data) => {
-          console.log('Cours reçus pour', nomProf, data);
-          this.cours = data || [];
-        },
-        error: (err) => {
-          console.error('Erreur lors du chargement des cours :', err);
-          this.cours = [];
-        },
-      });
+      .subscribe({ next: data => this.cours = data || [], error: err => { console.error(err); this.cours = []; } });
   }
 
-  scroll(direction: number): void {
-    if (!this.track?.nativeElement) return;
-    const scrollAmount = 300;
-    this.track.nativeElement.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+  // -------- Pagination --------
+  getCoursParPage(prefixe: string, page: number): Cours[] {
+    const filtres = this.cours.filter(c => c.titre.startsWith(prefixe));
+    const start = (page - 1) * this.taillePage;
+    return filtres.slice(start, start + this.taillePage);
   }
 
+  getNombrePages(prefixe: string): number {
+    const filtres = this.cours.filter(c => c.titre.startsWith(prefixe));
+    return Math.ceil(filtres.length / this.taillePage);
+  }
+
+  pagePrecedente(prefixe: string): void {
+    if (prefixe === 'Cours :' && this.pageCours > 1) this.pageCours--;
+    if (prefixe === 'Exercice :' && this.pageExercices > 1) this.pageExercices--;
+  }
+
+  pageSuivante(prefixe: string): void {
+    if (prefixe === 'Cours :' && this.pageCours < this.getNombrePages('Cours :')) this.pageCours++;
+    if (prefixe === 'Exercice :' && this.pageExercices < this.getNombrePages('Exercice :')) this.pageExercices++;
+  }
+
+  // -------- Popups & fichiers --------
   ouvrirPopup(cours: Cours): void {
     this.coursSelectionne = cours;
     this.popupVisible = true;
     if (cours.fichierPdf) {
       const url = `http://localhost:3000/uploads/${encodeURIComponent(cours.fichierPdf)}`;
       this.pdfUrlSanitized = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-    } else {
-      this.pdfUrlSanitized = null;
-    }
+    } else this.pdfUrlSanitized = null;
   }
 
   fermerPopup(): void {
@@ -118,33 +129,18 @@ export class MescoursP implements OnInit, OnDestroy {
     formData.append('lienYoutube', this.lienYoutubeModifie || '');
     if (this.fichierPdfModifie) formData.append('fichierPdf', this.fichierPdfModifie);
 
-    this.http.put(`http://localhost:3000/api/cours/${this.coursAModifier._id}`, formData).subscribe({
-      next: () => {
-        alert('Cours modifié avec succès !');
-        this.fermerPopupEdition();
-        this.refreshService.demanderRafraichissement();
-      },
-      error: (err) => {
-        console.error('Erreur lors de la modification du cours', err);
-        alert('Erreur lors de la modification.');
-      },
-    });
+    this.http.put(`http://localhost:3000/api/cours/${this.coursAModifier._id}`, formData)
+      .subscribe({ next: () => { this.fermerPopupEdition(); this.refreshService.demanderRafraichissement(); },
+                   error: err => console.error(err) });
   }
 
   supprimerCours(cours: Cours): void {
     if (!confirm(`Supprimer le cours "${cours.titre}" ?`)) return;
-    this.http.delete(`http://localhost:3000/api/cours/${cours._id}`).subscribe({
-      next: () => this.chargerCoursProf(),
-      error: (err) => console.error('Erreur lors de la suppression du cours :', err),
-    });
+    this.http.delete(`http://localhost:3000/api/cours/${cours._id}`).subscribe({ next: () => this.chargerCoursProf() });
   }
 
   ouvrirLienYoutube(lien: string | null | undefined): void {
     if (lien) window.open(lien, '_blank');
-  }
-
-  goToCoursDetail(id: string): void {
-    this.router.navigate(['/coursdetail', id]);
   }
 
   telechargerFichier(nomFichier: string): void {

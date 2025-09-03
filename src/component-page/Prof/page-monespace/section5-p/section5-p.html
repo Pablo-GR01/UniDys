@@ -223,7 +223,7 @@
 
 <!-- -------------------- POPUP CRÉATION DE COURS -------------------- -->
 <div *ngIf="popupCoursOuvert"
-  class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">
+     class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-6">
 
   <div
     class="bg-gradient-to-b from-[#0A072E] to-[#020118] rounded-3xl shadow-2xl text-white w-full max-w-6xl flex flex-col md:flex-row max-h-[92vh] overflow-hidden border border-purple-600">
@@ -232,12 +232,12 @@
     <div class="w-full md:w-1/3 flex flex-col items-center justify-center bg-[#11102a] p-8 relative">
       <!-- Bouton Fermer -->
       <button (click)="fermerPopupCours()"
-        class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-3xl transition">
+              class="absolute top-4 right-4 text-gray-400 hover:text-red-500 text-3xl transition">
         <i class="fas fa-times-circle"></i>
       </button>
 
       <img src="/assets/LOGO.png" alt="Logo UniDys"
-        class="max-w-[220px] max-h-[220px] object-contain drop-shadow-lg mb-6" />
+           class="max-w-[220px] max-h-[220px] object-contain drop-shadow-lg mb-6" />
 
       <h3 class="text-xl font-bold text-purple-400 text-center flex items-center gap-2">
         <i class="fas fa-wand-magic-sparkles"></i> Crée ton cours facilement
@@ -259,31 +259,50 @@
       <!-- Image matière si dispo -->
       <div *ngIf="imageMatiere" class="mb-4 flex justify-center">
         <img [src]="imageMatiere" alt="Image matière"
-          class="w-20 h-20 object-cover rounded-xl border border-purple-600 shadow-lg" />
+             class="w-20 h-20 object-cover rounded-xl border border-purple-600 shadow-lg" />
       </div>
+
+      <!-- Boutons type de contenu -->
+      <div class="flex gap-3 mb-5">
+        <button (click)="changerType('cours')"
+                [ngClass]="{'bg-purple-600 text-white shadow-lg': typeDeContenu==='cours', 'bg-[#1a1835] text-gray-400 hover:bg-[#2a254d]': typeDeContenu!=='cours'}"
+                class="flex-1 px-4 py-2 rounded-xl font-semibold transition">
+          Cours
+        </button>
+        <button (click)="changerType('exercice')"
+                [ngClass]="{'bg-purple-600 text-white shadow-lg': typeDeContenu==='exercice', 'bg-[#1a1835] text-gray-400 hover:bg-[#2a254d]': typeDeContenu!=='exercice'}"
+                class="flex-1 px-4 py-2 rounded-xl font-semibold transition">
+          Exercice
+        </button>
+      </div>
+      
 
       <!-- Champs -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-        <!-- Titre du cours -->
-        <div class="relative">
+
+        <div class="relative col-span-1 md:col-span-2">
           <i class="fas fa-heading absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-          <input [(ngModel)]="titreCours" type="text" placeholder="Titre du cours"
-            class="pl-10 w-full bg-[#0A072E] border border-purple-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 outline-none placeholder-gray-400" />
+          <input 
+            [(ngModel)]="titreCours"
+            type="text"
+            (keydown)="verifierPrefixe($event)"
+            class="pl-10 w-full bg-[#0A072E] border border-purple-600 rounded-xl px-4 py-3 focus:ring-2 focus:ring-purple-500 outline-none placeholder-gray-400 transition" />
         </div>
+        
 
         <!-- Nom du prof -->
         <div class="relative">
           <i class="fas fa-user-tie absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"></i>
           <input [(ngModel)]="nomProf" type="text" placeholder="Nom du professeur"
-            class="pl-10 w-full bg-[#1a1835] border border-purple-600 rounded-xl px-4 py-3 text-gray-400 cursor-not-allowed"
-            readonly />
+                 class="pl-10 w-full bg-[#1a1835] border border-purple-600 rounded-xl px-4 py-3 text-gray-400 cursor-not-allowed"
+                 readonly />
         </div>
 
         <!-- Niveau -->
         <div class="relative">
           <i class="fas fa-layer-group absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
           <select [(ngModel)]="niveau"
-            class="pl-10 w-full bg-[#0A072E] border border-purple-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-purple-500 outline-none">
+                  class="pl-10 w-full bg-[#0A072E] border border-purple-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-purple-500 outline-none transition">
             <option value="" disabled selected>Niveau</option>
             <option>CP</option>
             <option>CE1</option>
@@ -297,7 +316,7 @@
         <div class="relative">
           <i class="fas fa-graduation-cap absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
           <select [(ngModel)]="matiere" (change)="mettreAJourImage()"
-            class="pl-10 w-full bg-[#0A072E] border border-purple-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-purple-500 outline-none">
+                  class="pl-10 w-full bg-[#0A072E] border border-purple-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-purple-500 outline-none transition">
             <option value="" disabled selected>Matière</option>
             <option>Français</option>
             <option>Maths</option>
@@ -310,7 +329,7 @@
         <div class="relative col-span-1 md:col-span-2">
           <i class="fab fa-youtube absolute left-3 top-1/2 -translate-y-1/2 text-red-500"></i>
           <input [(ngModel)]="lienYoutube" type="text" placeholder="Lien Youtube (optionnel)"
-            class="pl-10 w-full bg-[#0A072E] border border-purple-600 rounded-xl px-4 py-3 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 outline-none" />
+                 class="pl-10 w-full bg-[#0A072E] border border-purple-600 rounded-xl px-4 py-3 placeholder-gray-400 focus:ring-2 focus:ring-purple-500 outline-none transition" />
         </div>
 
         <!-- PDF -->
@@ -319,17 +338,18 @@
             <i class="fas fa-file-pdf text-red-500"></i> Fichier PDF obligatoire
           </label>
           <input type="file" (change)="onPdfSelected($event)"
-            class="w-full bg-[#0A072E] border border-purple-600 rounded-xl px-4 py-3 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700" />
+                 class="w-full bg-[#0A072E] border border-purple-600 rounded-xl px-4 py-3 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-600 file:text-white hover:file:bg-purple-700 transition" />
           <p *ngIf="messageErreurPdf" class="text-red-500 text-sm mt-2">{{ messageErreurPdf }}</p>
           <p *ngIf="fichierPdf" class="text-sm mt-1 text-gray-300"><i class="fas fa-check-circle text-green-500"></i> {{
             fichierPdf.name }}</p>
         </div>
+
       </div>
 
       <!-- QCM badge -->
       <div class="mt-4">
         <button *ngIf="qcms.length > 0"
-          class="bg-green-700 text-white px-4 py-1.5 rounded-full text-sm cursor-default shadow-md flex items-center gap-2 hover:scale-105 transition duration-200">
+                class="bg-green-700 text-white px-4 py-1.5 rounded-full text-sm cursor-default shadow-md flex items-center gap-2 hover:scale-105 transition duration-200">
           <i class="fas fa-list-check"></i> {{ qcms.length }} QCM créé{{ qcms.length > 1 ? 's' : '' }}
         </button>
       </div>
@@ -337,15 +357,16 @@
       <!-- Boutons -->
       <div class="mt-6 flex flex-wrap gap-3">
         <button (click)="ouvrirQCMDepuisCours()"
-          class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl font-medium flex items-center gap-2 transition shadow-lg hover:scale-105">
+                class="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl font-medium flex items-center gap-2 transition shadow-lg hover:scale-105">
           <i class="fas fa-plus-circle"></i> Ajouter un QCM
         </button>
 
         <button (click)="validerCours()"
-          class="bg-[#8002FF] hover:bg-purple-700 text-white px-8 py-3 rounded-xl font-semibold flex items-center gap-2 transition shadow-lg hover:scale-105">
+                class="bg-[#8002FF] hover:bg-purple-700 text-white px-8 py-3 rounded-xl font-semibold flex items-center gap-2 transition shadow-lg hover:scale-105">
           <i class="fas fa-rocket"></i> Valider le cours
         </button>
       </div>
+
     </div>
   </div>
 </div>

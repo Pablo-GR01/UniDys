@@ -48,7 +48,6 @@ export class Section5P implements OnInit, OnDestroy {
   coursSelectionne: Cours | null = null;
   fichierPdf?: File;
   messageErreurPdf = '';
-  titreCours = '';
   niveau  = '';
   matiere = '';
   lienYoutube = '';
@@ -57,7 +56,47 @@ export class Section5P implements OnInit, OnDestroy {
   bonneReponse: boolean[] = [false, false]; // initialisé avec deux réponses par défaut
   nouvelleQuestion = '';
   nouvellesReponses: string[] = ['', ''];
+// Initialisation du type de contenu
+typeDeContenu: 'cours' | 'exercice' = 'cours';
+titreCours: string = 'Cours : ';
 
+// Fonction pour changer le type et mettre à jour le préfixe
+changerType(type: 'cours' | 'exercice') {
+  this.typeDeContenu = type;
+
+  // Assurer que le préfixe est toujours correct
+  const prefixe = type === 'cours' ? 'Cours : ' : 'Exercice : ';
+
+  // Supprimer l'ancien préfixe si présent
+  if (this.titreCours.startsWith('Cours : ')) {
+    this.titreCours = this.titreCours.replace('Cours : ', '');
+  }
+  if (this.titreCours.startsWith('Exercice : ')) {
+    this.titreCours = this.titreCours.replace('Exercice : ', '');
+  }
+
+  // Ajouter le nouveau préfixe
+  this.titreCours = prefixe + this.titreCours;
+}
+
+// Empêcher la suppression du préfixe
+verifierPrefixe(event: KeyboardEvent) {
+  const pos = (event.target as HTMLInputElement).selectionStart || 0;
+  const prefixLength = this.typeDeContenu === 'cours' ? 'Cours : '.length : 'Exercice : '.length;
+
+  if ((event.key === 'Backspace' && pos <= prefixLength) || (event.key === 'Delete' && pos < prefixLength)) {
+    event.preventDefault();
+  }
+
+  setTimeout(() => {
+    const prefixe = this.typeDeContenu === 'cours' ? 'Cours : ' : 'Exercice : ';
+    if (!this.titreCours.startsWith(prefixe)) {
+      this.titreCours = prefixe + this.titreCours;
+    }
+  }, 0);
+}
+
+  
   xpMin = 10;
   xpMax = 50;
 
