@@ -11,10 +11,11 @@ import { AccompagnementP } from '../../../../component-page/Prof/page-accueil/ac
 import { RessourcesP } from '../../../../component-page/Prof/page-accueil/ressources-p/ressources-p';
 import { AccompagnementE } from "../../../../component-page/Eleve/page-accueil/accompagnement-e/accompagnement-e";
 import { RessourcesE } from "../../../../component-page/Eleve/page-accueil/ressources-e/ressources-e";
+import { Section4P } from "../../../../component-page/Prof/page-accueil/section4-p/section4-e";
 
 @Component({
   selector: 'app-accueil-p',
-  imports: [HeaderP, EnteteP, AccompagnementP, RessourcesP, Section4E, FooterP, ContactE, AccompagnementE, RessourcesE],
+  imports: [HeaderP, EnteteP, AccompagnementP, RessourcesP, Section4E, FooterP, ContactE, AccompagnementE, RessourcesE, Section4P],
   templateUrl: './accueil-p.html',
   styleUrl: './accueil-p.css'
 })

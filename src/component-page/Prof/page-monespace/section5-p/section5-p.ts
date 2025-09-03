@@ -49,7 +49,7 @@ export class Section5P implements OnInit, OnDestroy {
   fichierPdf?: File;
   messageErreurPdf = '';
   titreCours = '';
-  niveau = '';
+  niveau  = '';
   matiere = '';
   lienYoutube = '';
   imageMatiere = '';

@@ -73,7 +73,7 @@ export class ListeUserA implements OnInit {
     const filtered = this.roleFilter ? this.users.filter(u => u.role === this.roleFilter) : this.users;
     this.groupedUsers = {};
     filtered.forEach(u => {
-      const letter = u.nom.charAt(0).toUpperCase();
+      const letter = u.prenom.charAt(0).toUpperCase();
       if (!this.groupedUsers[letter]) this.groupedUsers[letter] = [];
       this.groupedUsers[letter].push(u);
     });
