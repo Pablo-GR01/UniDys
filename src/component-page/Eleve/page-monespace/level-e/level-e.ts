@@ -4,6 +4,7 @@ import { Observable, of, Subscription, timer } from 'rxjs';
 import { catchError, switchMap } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { ProfileService } from '../../../../services/userService/Profile.Service';
+import { HeaderE } from '../../../../component/header-e/header-e';
 
 interface User {
   xp: number;
@@ -29,28 +30,32 @@ export class LevelE implements OnInit, OnDestroy {
   level: number = 0;
   progression: number = 0;
   xpRestant: number = 0;
-  palier: string = 'Débutant';
   isLoading = true;
   errorMessage: string | null = null;
 
   derniersXp: QcmResult[] = [];
   showDerniersXp: boolean = false;
 
+  animatedXP: number = 0;
+  lastXPGain: number = 0;
+  showXPGain: boolean = false;
+  motivationalMessage: string = "Continue comme ça !";
+
   private subscription: Subscription | null = null;
 
   constructor(private http: HttpClient,
-    private ProfileService: ProfileService) {}
+              private ProfileService: ProfileService) {}
 
   ngOnInit(): void {
-    const user = this.ProfileService.getUser(); // récupère l'utilisateur connecté
+    const user = this.ProfileService.getUser();
     if (!user || !user.email) {
       this.errorMessage = 'Utilisateur non connecté.';
       this.user = { xp: 0 };
       this.isLoading = false;
       return;
     }
-  
-    const email = user.email; // email correct du profil connecté
+
+    const email = user.email;
 
     // Rafraîchissement toutes les 30 secondes
     this.subscription = timer(0, 30000)
@@ -58,14 +63,23 @@ export class LevelE implements OnInit, OnDestroy {
       .subscribe({
         next: (user) => {
           if (user) {
+            const previousXP = this.user?.xp ?? 0;
             this.user = { ...user, xp: user.xp ?? 0 };
 
-            // Calcul niveau/progression
+            // Mise à jour niveau/progression
             this.mettreAJourPalier(this.user.xp);
 
-            // Récupérer uniquement les derniers QCM de cet utilisateur
-            this.getDerniersXp(email);
+            // Animation XP
+            this.animatedXP = previousXP;
+            this.lastXPGain = this.user.xp - previousXP;
+            if (this.lastXPGain > 0) {
+              this.showXPGain = true;
+              setTimeout(() => this.showXPGain = false, 2000);
+            }
+            this.animatedXP = this.user.xp;
 
+            // Derniers QCM
+            this.getDerniersXp(email);
             this.errorMessage = null;
           } else {
             this.errorMessage = 'Utilisateur introuvable.';
@@ -82,39 +96,24 @@ export class LevelE implements OnInit, OnDestroy {
       });
   }
 
-  ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
-  }
+  ngOnDestroy(): void { this.subscription?.unsubscribe(); }
 
-  /** Récupère l'utilisateur connecté par email */
   private getUserByEmail(email: string): Observable<User | null> {
     const url = `http://localhost:3000/api/unidys/users/${encodeURIComponent(email)}`;
-    return this.http.get<User>(url).pipe(
-      catchError(err => {
-        console.error('Erreur API getUserByEmail:', err);
-        return of(null);
-      })
-    );
+    return this.http.get<User>(url).pipe(catchError(err => of(null)));
   }
 
-  /** Récupère uniquement les derniers QCM de l'utilisateur connecté */
   private getDerniersXp(email: string): void {
     const url = `http://localhost:3000/api/unidys/qcmresults/${encodeURIComponent(email)}`;
     this.http.get<QcmResult[]>(url)
-      .pipe(catchError(err => {
-        console.error('Erreur API getDerniersXp:', err);
-        return of([]);
-      }))
+      .pipe(catchError(err => of([])))
       .subscribe(results => {
-        this.derniersXp = results
-          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-          .slice(0, 5);
+        this.derniersXp = results.sort((a,b)=> new Date(b.date).getTime() - new Date(a.date).getTime()).slice(0,5);
       });
   }
 
-  /** Calcule le niveau, progression et XP restant */
   private mettreAJourPalier(xp: number): void {
-    const xpParLevel = [0, 100, 300, 600, 1000, 1500, 2100, 2800, 3600, 4500, 5500, 6600, 7800, 9100, 10500];
+    const xpParLevel = [0,100,300,600,1000,1500,2100,2800,3600,4500,5500,6600,7800,9100,10500];
 
     let lvl = 0;
     for (let i = 0; i < xpParLevel.length; i++) {
@@ -133,7 +132,5 @@ export class LevelE implements OnInit, OnDestroy {
   ouvrirPopupDerniersXp(): void { this.showDerniersXp = true; }
   fermerPopupDerniersXp(): void { this.showDerniersXp = false; }
 
-  get deuxDerniersXp(): QcmResult[] {
-    return this.derniersXp.slice(0, 2);
-  }
+  get deuxDerniersXp(): QcmResult[] { return this.derniersXp.slice(0,2); }
 }

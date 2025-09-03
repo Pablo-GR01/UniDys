@@ -73,7 +73,12 @@ export class Section5P implements OnInit, OnDestroy {
     private http: HttpClient,
     private refreshService: CoursRefreshService,
     private profileService: ProfileService
-  ) {}
+  ) {
+    // Préremplir depuis le profil connecté
+    const user = this.profileService.getUser();
+    this.prenom = user?.prenom || '';
+    this.nom = user?.nom || '';
+  }
 
   ngOnInit(): void {
     const utilisateur = JSON.parse(localStorage.getItem('utilisateur') || '{}');

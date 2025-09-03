@@ -33,6 +33,9 @@ export class CPCOURSP implements OnInit {
   itemsPerPage: number = 8;
   totalPages: number = 1;
 
+  // Liste des niveaux pour le filtre
+  niveaux: string[] = ['CP', 'CE1', 'CE2', 'CM1', 'CM2'];
+
   constructor(
     private coursService: CoursService,
     private sanitizer: DomSanitizer,

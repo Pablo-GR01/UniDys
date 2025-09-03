@@ -1,88 +1,128 @@
+<!-- ================== LEVEL DASHBOARD ================== -->
 <div class="flex justify-center mt-12 px-4 sm:px-8" *ngIf="!isLoading && user">
-  <div class="flex flex-col sm:flex-row items-center justify-center gap-10
-              bg-gradient-to-r from-[#2A013D] to-[#8002FF] border border-purple-600
-              rounded-3xl shadow-[0_0_30px_rgba(128,2,255,0.7)] p-6 sm:p-12 relative overflow-visible">
+  <div class="relative group w-full max-w-6xl">
+    
+    <!-- Background animated gradient -->
+    <div class="absolute -inset-0.5
+                rounded-3xl blur-xl opacity-75 group-hover:opacity-100 transition duration-1000 
+                group-hover:duration-200 animate-gradient-xy"></div>
+    
+    <div class="relative flex flex-col sm:flex-row items-center justify-center gap-10
+               backdrop-blur-xl border-4 border-[var(--Violet)]
+                rounded-3xl shadow-2xl p-6 sm:p-12 overflow-hidden">
+      
+      
 
-    <!-- Badge Niveau -->
-    <div class="relative group flex-shrink-0 z-10">
-      <div class="absolute inset-0 rounded-full bg-purple-700/30 blur-3xl animate-pulseGlow z-0"></div>
-      <img 
-        [src]="'assets/Level-' + level + '.png'" 
-        [alt]="'Level ' + level" 
-        class="w-64 h-64 sm:w-72 sm:h-72 object-contain select-none drop-shadow-[0_0_20px_rgba(168,85,247,0.8)]
-               transition-transform duration-500 group-hover:scale-110 relative z-10"
-      />
-    </div>
-
-    <!-- XP + Level -->
-    <div class="flex flex-col items-center flex-1 text-center mx-4 w-full">
-      <h2 class="text-white text-3xl sm:text-5xl font-extrabold tracking-wide neon-text
-                 transition-transform duration-300 group-hover:scale-105">
-        {{ user.xp }} XP
-      </h2>
-
-      <span class="px-8 py-3 rounded-full text-lg sm:text-2xl font-semibold text-purple-50 
-                   bg-gradient-to-r from-purple-600 to-purple-900 shadow-lg mt-5
-                   transition-all duration-300 hover:scale-110 hover:shadow-[0_0_25px_rgba(168,85,247,0.6)]">
-        Level : {{ level }}
-      </span>
-
-      <!-- Barre de progression -->
-      <div class="w-full bg-gray-900/70 rounded-full h-6 overflow-hidden mt-7 shadow-inner relative">
-        <div [style.width.%]="progression"
-             class="h-6 rounded-full transition-all duration-500"
-             [ngStyle]="{
-               'background': 'linear-gradient(90deg, #8002ff, #c084fc, #8002ff)',
-               'background-size': '200% 100%',
-               'animation': 'gradientMove 3s linear infinite',
-               'box-shadow': '0 0 20px #a855f7'
-             }">
+      <!-- Badge Niveau avec effet 3D -->
+      <div class="relative flex-shrink-0 z-10">
+        <div class="relative">
+          <div class="absolute inset-0 rounded-full animate-pulse"></div>
+          <div class="absolute inset-4 rounded-full animate-pulse animation-delay-1000"></div>
+          
+          <div class="relative transform transition-all duration-500">
+            <img [src]="'assets/Level-' + level + '.png'" [alt]="'Level ' + level"
+                 class="w-64 h-64 sm:w-72 sm:h-72 object-contain select-none">
+          </div>
         </div>
-        <span class="absolute right-3 top-0 text-white font-bold text-sm h-full flex items-center justify-end">
-          {{ progression | number:'1.0-0' }}%
-        </span>
+      </div>
+
+      <!-- XP Section -->
+      <div class="flex flex-col items-center flex-1 text-center mx-4 w-full relative z-10">
+        
+        <!-- XP Counter -->
+        <div class="relative mb-6">
+          <div class="text-white text-4xl sm:text-6xl font-black tracking-tight">
+            <span class="bg-[var(--Violet)] bg-clip-text text-transparent animate-gradient-x">
+              {{ animatedXP }}
+            </span>
+            <span class="text-2xl sm:text-3xl ml-2 font-black">XP</span>
+          </div>
+          <div *ngIf="showXPGain"
+               class="absolute -top-8 left-1/2 transform -translate-x-1/2
+                      bg-[var(--Violet)] text-white px-3 py-1 rounded-full text-sm font-bold animate-bounce fade-out">
+            +{{ lastXPGain }} XP
+          </div>
+        </div>
+
+        <!-- Level badge interactif -->
+        <button class="group/level relative px-8 py-4 mb-8">
+          <div class="absolute inset-0 rounded-full blur-md group-hover/level:blur-xl transition-all duration-300"></div>
+          <div class="relative flex items-center space-x-3 bg-gradient-to-r from-[var(--Bleu)] via-[var(--Violet)] to-[var(--Violet-Foncé)] backdrop-blur-sm px-8 py-3 rounded-2xl border-4 border-[var(--Violet)] transition-all duration-300 group-hover/level:scale-105">
+            <span class="text-[var(--Blanc)] text-xl font-bold">Level</span>
+            <span class="text-3xl font-black text-[var(--Blanc)]">{{ level }}</span>
+          </div>
+        </button>
+
+        <!-- Progress bar -->
+        <div class="w-full max-w-md">
+          <div class="flex justify-between text-sm text-gray-400 mb-2">
+            <span>Progression</span>
+            <span class="font-bold text-purple-300">{{ progression | number:'1.0-0' }}%</span>
+          </div>
+          <div class="relative">
+            <div class="w-full border-4 border-[var(--Violet)] rounded-full h-8 overflow-hidden backdrop-blur-sm">
+              
+              <div class="relative h-full rounded-full overflow-hidden transition-all duration-1000" [style.width.%]="progression">
+                <div class="absolute inset-0 bg-gradient-to-r from-[var(--Bleu)] via-[var(--Violet)] to-[var(--Violet-Foncé)]"></div>
+              </div>
+            </div>
+            <div class="absolute top-0 left-0 w-full h-full flex justify-between items-center px-1">
+              <div *ngFor="let milestone of [25,50,75]" class="w-0.5 h-6 bg-[var(--Violet)]" [class.bg-purple-400]="progression >= milestone"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Next goal -->
+      <div class="flex flex-col items-center justify-center flex-shrink-0 mt-6 sm:mt-0 relative z-10">
+        <div class="text-center">
+          <p class="text-[var(--Violet)] text-sm mb-2">Prochain objectif</p>
+          <div class="relative">
+            <p class="text-2xl sm:text-3xl font-bold text-[var(--Blanc)]">
+              {{ xpRestant | number:'1.0-0' }} XP
+            </p>
+            <p class="text-[var(--Blanc)] text-sm mt-1">pour <span class="text-[var(--Violet)] font-black"> Level {{ level + 1 }}</span> </p>
+          </div>
+          <div class="mt-4 p-3 bg-[var(--Violet-Foncé)] rounded-lg backdrop-blur-sm border border-[var(--Violet)]">
+            <p class="text-[var(--Blanc)] text-xs italic">"{{ motivationalMessage }}"</p>
+          </div>
+        </div>
+        <div class="mt-4 w-20 h-20 relative">
+          <svg class="w-20 h-20 transform -rotate-90">
+            <circle cx="40" cy="40" r="35" stroke="currentColor" stroke-width="4" fill="transparent" class="text-gray-700/50"/>
+            <circle cx="40" cy="40" r="35" stroke="currentColor" stroke-width="4" fill="transparent"
+                    [attr.stroke-dasharray]="220" [attr.stroke-dashoffset]="220-(progression*2.2)"
+                    class="text-[var(--Violet)] transition-all duration-1000"/>
+          </svg>
+          <div class="absolute inset-0 flex items-center justify-center">
+            <span class="text-xs font-bold text-[var(--Blanc)]">{{ progression | number:'1.0-0' }}%</span>
+          </div>
+        </div>
       </div>
     </div>
-
-    <!-- Prochain objectif -->
-    <div class="flex flex-col items-center justify-center flex-shrink-0 mt-6 sm:mt-0">
-      <span class="text-white text-base sm:text-lg font-semibold mt-3 neon-text">
-        {{ xpRestant }} XP restants
-      </span>
-    </div>
-
   </div>
 </div>
 
+<!-- Loading fallback -->
+<div *ngIf="isLoading" class="flex items-center justify-center mt-20">
+  <div class="text-white text-xl animate-pulse">Chargement du profil...</div>
+</div>
+
 <style>
-@keyframes gradientMove {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 200% 50%; }
-}
+/* Animations */
+@keyframes gradient-xy {0%,100%{transform:translateX(0) translateY(0);}25%{transform:translateX(-5px) translateY(-5px);}50%{transform:translateX(5px) translateY(-5px);}75%{transform:translateX(-5px) translateY(5px);}}
+@keyframes gradient-x {0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+@keyframes shimmer {0%{transform:translateX(-100%);}100%{transform:translateX(100%);}}
+@keyframes fade-out {0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-20px) scale(0.8);}}
 
-@keyframes pulseGlow {
-  0%, 100% { transform: scale(1); opacity: 0.35; }
-  50% { transform: scale(1.15); opacity: 0.65; }
-}
+.animate-gradient-xy{animation:gradient-xy 15s ease infinite;}
+.animate-gradient-x{background-size:200% 200%;animation:gradient-x 3s ease infinite;}
+.animate-shimmer{animation:shimmer 2s infinite;}
+.fade-out{animation:fade-out 2s forwards;}
+.animation-delay-100{animation-delay:100ms;}
+.animation-delay-300{animation-delay:300ms;}
+.animation-delay-1000{animation-delay:1s;}
+.animation-delay-2000{animation-delay:2s;}
 
-.animate-pulseGlow {
-  animation: pulseGlow 2s infinite;
-}
 
-.neon-text {
-  text-shadow:
-    0 0 5px #a855f7,
-    0 0 10px #9333ea,
-    0 0 20px #8002ff,
-    0 0 30px #c084fc;
-  transition: text-shadow 0.3s;
-}
-
-.group:hover .neon-text {
-  text-shadow:
-    0 0 10px #a855f7,
-    0 0 20px #9333ea,
-    0 0 30px #8002ff,
-    0 0 40px #c084fc;
-}
 </style>

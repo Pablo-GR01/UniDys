@@ -8,7 +8,7 @@
   <!-- Carrousel horizontal -->
   <div class="relative flex gap-6 overflow-x-auto scrollbar-hide py-2 pb-15">
     <div *ngFor="let cours of cours"
-      class="bg-gradient-to-b from-[var(--Violet)] to-[var(--Bleu-Foncé)] rounded-3xl p-4 shadow-md border border-purple-600 cursor-pointer flex-shrink-0 w-64 transition-transform transform hover:scale-105 hover:shadow-lg">
+      class="bg-gradient-to-t from-[var(--Bleu)] via-[var(--Violet)] to-[var(--Violet-Foncé)] rounded-3xl p-4 shadow-md border border-purple-600 cursor-pointer flex-shrink-0 w-64 transition-transform transform hover:scale-105 hover:shadow-lg">
 
       <!-- Image + badge niveau -->
       <div class="relative">
@@ -24,93 +24,96 @@
       <p class="text-xs text-gray-300 mb-1 truncate"><span class="font-semibold">Matière:</span> {{ cours.matiere }}</p>
       <p class="text-xs mb-2">
         <span class="font-semibold">QCM:</span>
-        <span [ngClass]="(cours.qcms?.length ?? 0) > 0 ? 'text-[var(--Vert)] font-semibold' : 'text-[var(--Rouge)] font-semibold'">
+        <span
+          [ngClass]="(cours.qcms?.length ?? 0) > 0 ? 'text-[var(--Vert)] font-semibold' : 'text-[var(--Rouge)] font-semibold'">
           {{ (cours.qcms?.length ?? 0) > 0 ? 'Oui' : 'Non' }}
         </span>
       </p>
 
       <!-- Actions principales centrées -->
       <div class="flex flex-wrap gap-2 mt-2 justify-center">
-         <!-- Lire sur YouTube -->
-  <button *ngIf="cours.lienYoutube" (click)="ouvrirLienYoutube(cours.lienYoutube)"
-  class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-white
-        bg-gradient-to-r from-[var(--Violet)] to-[var(--Bleu-Foncé)]
-         shadow-md hover:scale-105 hover:shadow-purple-400/70 transition transform duration-300">
-  <i class="fa-solid fa-play"></i> Lire
-</button>
 
-<!-- Voir le cours -->
-<a [routerLink]="['/coursdetail', cours._id]"
-  class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-white
-         bg-gradient-to-r from-[var(--Violet)] to-[var(--Bleu-Foncé)]
-         shadow-md hover:scale-105 hover:shadow-purple-400/70 transition transform duration-300">
-  <i class="fas fa-eye"></i> Voir
-</a>
+        <!-- Lire sur YouTube -->
+        <button *ngIf="cours.lienYoutube" (click)="ouvrirLienYoutube(cours.lienYoutube)" class="border-3 border-[var(--Violet)] flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-white
+          bg-gradient-to-r from-[var(--Bleu)] via-[var(--Violet)] to-[var(--Violet-Foncé)]
+          hover:from-[var(--Violet-Foncé)] hover:via-[var(--Violet-Foncé)] hover:to-[var(--Violet-Foncé)]
+          hover:scale-105 hover:shadow-purple-400/70 transition transform duration-300">
+          <i class="fa-solid fa-play"></i> Lire
+        </button>
 
-<!-- Télécharger PDF -->
-<button *ngIf="cours.fichierPdf" (click)="telechargerFichier(cours.fichierPdf)"
-  class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-white
-        bg-gradient-to-r from-[var(--Violet)] to-[var(--Bleu-Foncé)]
-         shadow-md hover:scale-105 hover:shadow-purple-400/70 transition transform duration-300">
-  <i class="fas fa-download"></i> Télécharger
-</button>
+        <!-- Voir le cours -->
+        <a [routerLink]="['/coursdetail', cours._id]" class="border-3 border-[var(--Violet)] flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-white
+          bg-gradient-to-r from-[var(--Bleu)] via-[var(--Violet)] to-[var(--Violet-Foncé)]
+          hover:from-[var(--Violet-Foncé)] hover:via-[var(--Violet-Foncé)] hover:to-[var(--Violet-Foncé)]
+          hover:scale-105 hover:shadow-purple-400/70 transition transform duration-300">
+          <i class="fas fa-eye"></i> Voir
+        </a>
 
-<!-- Modifier -->
-<button (click)="ouvrirPopupEdition(cours)"
-  class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-white
-        bg-gradient-to-r from-[var(--Violet)] to-[var(--Bleu-Foncé)]
-         shadow-md hover:scale-105 hover:shadow-purple-400/70 transition transform duration-300">
-  <i class="fas fa-pen"></i> Modifier
-</button>
+        <!-- Télécharger PDF -->
+        <button *ngIf="cours.fichierPdf" (click)="telechargerFichier(cours.fichierPdf)" class="border-3 border-[var(--Violet)] flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-white
+           bg-gradient-to-r from-[var(--Bleu)] via-[var(--Violet)] to-[var(--Violet-Foncé)]
+           hover:from-[var(--Violet-Foncé)] hover:via-[var(--Violet-Foncé)] hover:to-[var(--Violet-Foncé)]
+           hover:scale-105 hover:shadow-purple-400/70 transition transform duration-300">
+          <i class="fas fa-download"></i> Télécharger
+        </button>
 
-<!-- Supprimer -->
-<button (click)="supprimerCours(cours)"
-  class="flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-semibold text-white
-         bg-gradient-to-r from-red-600 to-red-950
-         shadow-md hover:scale-105 hover:shadow-red-400/70 transition transform duration-300">
-  <i class="fas fa-trash-alt"></i> Supprimer
-</button>
+        <!-- Modifier -->
+        <button (click)="ouvrirPopupEdition(cours)" class="border-3 border-[var(--Violet)] flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-white
+           bg-gradient-to-r from-[var(--Bleu)] via-[var(--Violet)] to-[var(--Violet-Foncé)]
+           hover:from-[var(--Violet-Foncé)] hover:via-[var(--Violet-Foncé)] hover:to-[var(--Violet-Foncé)]
+           hover:scale-105 hover:shadow-purple-400/70 transition transform duration-300">
+          <i class="fas fa-pen"></i> Modifier
+        </button>
+
+        <!-- Supprimer -->
+        <button (click)="supprimerCours(cours)" class="border-3 border-[var(--Violet)] flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-semibold text-white
+           bg-gradient-to-r from-[var(--Bleu)] via-[var(--Violet)] to-[var(--Violet-Foncé)]
+           hover:from-[var(--Violet-Foncé)] hover:via-[var(--Violet-Foncé)] hover:to-[var(--Violet-Foncé)]
+          hover:scale-105 hover:shadow-purple-400/70 transition transform duration-300">
+          <i class="fas fa-trash-alt"></i> Supprimer
+        </button>
+
       </div>
 
-    </div>
-  </div>
 
-  <!-- Popup PDF -->
-  <div *ngIf="popupVisible" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-    <div
-      class="relative bg-[#1A123A] text-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] p-6 overflow-auto border-4 border-purple-600 animate-scale-up">
-      <button class="absolute top-4 right-4 text-3xl font-bold hover:text-red-400"
-        (click)="fermerPopup()">&times;</button>
-      <h3 class="text-2xl font-bold mb-4">{{ coursSelectionne?.titre }}</h3>
-      <iframe *ngIf="pdfUrlSanitized" [src]="pdfUrlSanitized"
-        class="w-full h-[60vh] border rounded-xl shadow-md"></iframe>
-    </div>
-  </div>
+      <!-- Popup PDF -->
+      <div *ngIf="popupVisible" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+        <div
+          class="relative bg-[#1A123A] text-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] p-6 overflow-auto border-4 border-purple-600 animate-scale-up">
+          <button class="absolute top-4 right-4 text-3xl font-bold hover:text-red-400"
+            (click)="fermerPopup()">&times;</button>
+          <h3 class="text-2xl font-bold mb-4">{{ coursSelectionne?.titre }}</h3>
+          <iframe *ngIf="pdfUrlSanitized" [src]="pdfUrlSanitized"
+            class="w-full h-[60vh] border rounded-xl shadow-md"></iframe>
+        </div>
+      </div>
 
-  <!-- Popup Edition -->
-  <div *ngIf="popupEditionVisible" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-    <div
-      class="relative bg-[#1A123A] text-white rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] p-6 overflow-auto border-4 border-purple-600 animate-scale-up">
-      <button class="absolute top-4 right-4 text-3xl font-bold hover:text-red-400"
-        (click)="fermerPopupEdition()">&times;</button>
-      <h3 class="text-2xl font-bold mb-6 text-center">Modifier le cours</h3>
+      <!-- Popup Edition -->
+      <div *ngIf="popupEditionVisible" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div
+          class="relative bg-[#1A123A] text-white rounded-3xl shadow-2xl max-w-3xl w-full max-h-[90vh] p-6 overflow-auto border-4 border-purple-600 animate-scale-up">
+          <button class="absolute top-4 right-4 text-3xl font-bold hover:text-red-400"
+            (click)="fermerPopupEdition()">&times;</button>
+          <h3 class="text-2xl font-bold mb-6 text-center">Modifier le cours</h3>
 
-      <label class="block mb-2 font-semibold">Nouveau nom:</label>
-      <input [(ngModel)]="coursAModifier.titre" type="text" placeholder="Nouveau titre"
-        class="w-full border-2 border-purple-600 rounded-2xl px-4 py-2 mb-4 bg-[#2A1C4D] text-white focus:outline-none focus:ring-2 focus:ring-purple-400" />
+          <label class="block mb-2 font-semibold">Nouveau nom:</label>
+          <input [(ngModel)]="coursAModifier.titre" type="text" placeholder="Nouveau titre"
+            class="w-full border-2 border-purple-600 rounded-2xl px-4 py-2 mb-4 bg-[#2A1C4D] text-white focus:outline-none focus:ring-2 focus:ring-purple-400" />
 
-      <label class="block mb-2 font-semibold">Nouveau fichier PDF :</label>
-      <input type="file" (change)="onFileSelected($event)"
-        class="w-full border-2 border-purple-600 rounded-2xl px-4 py-2 mb-2 bg-[#2A1C4D] text-white focus:outline-none focus:ring-2 focus:ring-purple-400" />
-      <p *ngIf="fichierPdfModifie" class="text-sm text-gray-300">📄 {{ fichierPdfModifie?.name }}</p>
+          <label class="block mb-2 font-semibold">Nouveau fichier PDF :</label>
+          <input type="file" (change)="onFileSelected($event)"
+            class="w-full border-2 border-purple-600 rounded-2xl px-4 py-2 mb-2 bg-[#2A1C4D] text-white focus:outline-none focus:ring-2 focus:ring-purple-400" />
+          <p *ngIf="fichierPdfModifie" class="text-sm text-gray-300">📄 {{ fichierPdfModifie?.name }}</p>
 
-      <label class="block mb-2 font-semibold">Lien Youtube (optionnel) :</label>
-      <input [(ngModel)]="lienYoutubeModifie" type="text" placeholder="Lien vers la vidéo"
-        class="w-full border-2 border-purple-600 rounded-2xl px-4 py-2 mb-4 bg-[#2A1C4D] text-white focus:outline-none focus:ring-2 focus:ring-purple-400" />
+          <label class="block mb-2 font-semibold">Lien Youtube (optionnel) :</label>
+          <input [(ngModel)]="lienYoutubeModifie" type="text" placeholder="Lien vers la vidéo"
+            class="w-full border-2 border-purple-600 rounded-2xl px-4 py-2 mb-4 bg-[#2A1C4D] text-white focus:outline-none focus:ring-2 focus:ring-purple-400" />
 
-      <div class="flex justify-end gap-3 mt-6">
-        <button (click)="validerModificationCours()"
-          class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-2xl text-white shadow-sm hover:shadow-md transition-colors">Valider</button>
+          <div class="flex justify-end gap-3 mt-6">
+            <button (click)="validerModificationCours()"
+              class="px-4 py-2 bg-purple-600 hover:bg-purple-700 rounded-2xl text-white shadow-sm hover:shadow-md transition-colors">Valider</button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
