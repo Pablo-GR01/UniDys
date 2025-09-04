@@ -104,11 +104,13 @@
         <i class="fa-solid fa-book text-[var(--Blanc)] mr-1"></i>
         <span class="font-semibold text-[var(--Blanc)]">Matière : {{ cours.matiere }}</span>
       </p>
-      <p class="text-xs mb-3 flex items-center">
-        <i class="fa-solid fa-circle-question text-[var(--Vert)] mr-1"></i>
-        <span class="text-[var(--Blanc)] pr-1">QCM :</span>
-        <span [ngClass]="(cours.qcms?.length ?? 0) > 0 ? 'text-[var(--Vert)] font-semibold' : 'text-[var(--Rouge)] font-semibold'">
-          {{ (cours.qcms?.length ?? 0) > 0 ? 'Oui' : 'Non' }}
+      <p class="text-xs sm:text-sm mb-2">
+        <span class="text-[var(--Blanc)] mr-2">QCM :</span>
+        <span *ngIf="cours.qcms?.length" class="text-[var(--Vert)] font-medium">
+          <i class="fas fa-check-circle mr-1"></i>Disponible
+        </span>
+        <span *ngIf="!cours.qcms?.length" class="text-[var(--Rouge)] font-medium">
+          <i class="fas fa-times-circle mr-1"></i>Non disponible
         </span>
       </p>
       <div class="flex flex-wrap gap-2 mt-3 justify-center">

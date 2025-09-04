@@ -24,4 +24,9 @@ export class QcmDisplayService {
   getResultsByUser(userId: string): Observable<QcmResult[]> {
     return this.http.get<QcmResult[]>(`${this.apiBase}/results/user/${userId}`);
   }
+
+  // 🔹 Alias plus clair en français
+  getResultatsByEleve(eleveId: string): Observable<QcmResult[]> {
+    return this.http.get<QcmResult[]>(`${this.apiBase}/results/user/${eleveId}`);
+  }
 }
