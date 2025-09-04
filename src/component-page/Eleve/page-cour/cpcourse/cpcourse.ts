@@ -33,8 +33,11 @@ export class CPCOURSE implements OnInit {
   itemsPerPage: number = 8;
   totalPages: number = 1;
 
-  // Liste des niveaux pour le filtre
+  // Liste des niveaux
   niveaux: string[] = ['CP', 'CE1', 'CE2', 'CM1', 'CM2'];
+
+  // 🔹 Nouveau : bascule entre cours et exercices
+  modeAffichage: 'cours' | 'exercices' = 'cours';
 
   constructor(
     private coursService: CoursService,
@@ -45,14 +48,16 @@ export class CPCOURSE implements OnInit {
   ngOnInit(): void {
     this.coursService.getCours().subscribe({
       next: (data) => {
-        console.log('Cours reçus :', data);
         this.cours = data;
         this.filtrerCours();
       },
-      error: (err) => {
-        console.error('Erreur de chargement :', err);
-      }
+      error: (err) => console.error('Erreur de chargement :', err)
     });
+  }
+
+  changerMode(mode: 'cours' | 'exercices') {
+    this.modeAffichage = mode;
+    this.filtrerCours();
   }
 
   filtrerParNiveau(niveau: string) {
@@ -74,17 +79,24 @@ export class CPCOURSE implements OnInit {
       const parMatiere = this.recherche
         ? (c.matiere && c.matiere.toLowerCase().includes(rechercheLower))
         : true;
-      return parNiveau && parMatiere;
+
+      // 🔹 Séparation par titre
+      const estCours = c.titre?.toLowerCase().startsWith('cours :');
+      const estExercice = c.titre?.toLowerCase().startsWith('exercice :');
+
+      const parType =
+        this.modeAffichage === 'cours' ? estCours : estExercice;
+
+      return parNiveau && parMatiere && parType;
     });
 
-    this.currentPage = 1; 
-    this.totalPages = Math.ceil(this.coursFiltres.length / this.itemsPerPage);
+    this.currentPage = 1;
+    this.totalPages = Math.max(1, Math.ceil(this.coursFiltres.length / this.itemsPerPage));
   }
 
   getCoursPage(): Cours[] {
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    return this.coursFiltres.slice(startIndex, endIndex);
+    return this.coursFiltres.slice(startIndex, startIndex + this.itemsPerPage);
   }
 
   pageSuivante() {
