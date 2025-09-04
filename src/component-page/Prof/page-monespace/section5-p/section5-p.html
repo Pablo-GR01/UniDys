@@ -378,32 +378,32 @@
   class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-6">
   
   <div
-    class="bg-gradient-to-br from-[#1E0B3A] to-[#2D0C55] rounded-3xl shadow-2xl text-white w-full max-w-5xl p-8 flex flex-col gap-8 border border-purple-600 animate-fadeIn">
+    class="bg-gradient-to-br from-[var(--Bleu)] to-[var(--Violet)] rounded-3xl shadow-2xl text-[var(--Blanc)] w-full max-w-5xl p-8 flex flex-col gap-8 border-3 border-[var(--Violet)] animate-fadeIn">
 
     <!-- Header -->
-    <div class="flex justify-between items-center border-b border-[#8002FF] pb-4">
-      <h2 class="text-3xl font-extrabold text-[#FFCC00] flex items-center gap-3 drop-shadow-lg">
+    <div class="flex justify-between items-center border-b border-[var(--Violet)] pb-4">
+      <h2 class="text-3xl font-extrabold text-[var(--Blanc)] flex items-center gap-3 drop-shadow-lg">
         <i class="fas fa-tasks"></i> Crée ton QCM
       </h2>
       <button (click)="fermerPopupQCM()"
-        class="text-gray-400 hover:text-red-500 text-4xl font-bold transition-transform duration-300 transform hover:scale-125">
+        class="text-[var(--Blanc)] hover:text-[var(--Rouge)] text-4xl font-bold transition-transform duration-300 transform hover:scale-125">
         <i class="fas fa-times-circle"></i>
       </button>
     </div>
 
     <!-- XP -->
     <div class="flex flex-col gap-3">
-      <label class="font-bold text-[#FFCC00] text-lg flex items-center gap-2">
+      <label class="font-bold text-[var(--Violet)] text-lg flex items-center gap-2">
         <i class="fas fa-star"></i> Points XP attribués
       </label>
       <div class="flex items-center gap-4">
         <button (click)="decrementXp()"
-          class="bg-purple-700 hover:bg-purple-800 text-white px-5 py-2 rounded-full font-bold transition-transform duration-300 transform hover:scale-110">
+          class="bg-[var(--Violet)] hover:bg-[var(--Violet-Foncé)]  text-[var(--Blanc)] pt-2 pb-2 pl-3 pr-3 rounded-full font-bold transition-transform duration-300 transform hover:scale-110">
           <i class="fas fa-minus"></i>
         </button>
-        <span class="w-20 text-center text-2xl font-mono text-[#FFCC00]">{{xpMin}}</span>
+        <span class="w-20 text-center text-2xl font-mono text-[var(--Blanc)]">{{xpMin}}</span>
         <button (click)="incrementXp()"
-          class="bg-purple-700 hover:bg-[#3F0255] text-white px-5 py-2 rounded-full font-bold transition-transform duration-300 transform hover:scale-110">
+          class="bg-[var(--Violet)] hover:bg-[var(--Violet-Foncé)]  text-[var(--Blanc)] pt-2 pb-2 pl-3 pr-3 rounded-full font-bold transition-transform duration-300 transform hover:scale-110">
           <i class="fas fa-plus"></i>
         </button>
       </div>
@@ -411,37 +411,36 @@
 
     <!-- Question -->
     <div class="flex flex-col gap-2">
-      <label class="font-bold text-[#8002FF] text-lg flex items-center gap-2">
+      <label class="font-bold text-[var(--Violet)] text-lg flex items-center gap-2">
         <i class="fas fa-question-circle"></i> Question
       </label>
       <textarea [(ngModel)]="nouvelleQuestion" placeholder="Écris ta question ici..." rows="2"
-        class="w-full border border-[#8002FF] p-4 rounded-2xl bg-[#020118] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FFCC00] text-lg transition-all resize-none shadow-inner"></textarea>
+        class="w-full border border-[var(--Violet)] p-4 rounded-2xl bg-[var(--Bleu-Foncé)] placeholder-[var(--Gris)] text-lg resize-none shadow-inner transition-transform duration-300 transform hover:scale-105"></textarea>
     </div>
 
     <!-- Réponses -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
       <div *ngFor="let rep of nouvellesReponses; let i = index; trackBy: trackByIndex"
-        class="flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-r from-[#8002FF] to-[#3F0255] shadow-md transition-transform duration-300 transform hover:scale-105 hover:shadow-[#FFCC00]/50">
+        class="border-2 border-[var(--Violet)] flex items-center gap-3 p-4 rounded-2xl bg-gradient-to-r from-[var(--Bleu)] via-[var(--Violet)] to-[var(--Violet-Foncé)] shadow-md transition-transform duration-300 transform hover:scale-105">
 
         <!-- Icône -->
-        <div class="flex-shrink-0 text-2xl text-yellow-300">
+        <div class="flex-shrink-0 text-2xl text-[var(--Blanc)]">
           <i class="fas fa-lightbulb"></i>
         </div>
 
         <!-- Réponse -->
         <textarea [(ngModel)]="nouvellesReponses[i]" placeholder="Réponse {{i+1}}" rows="1"
-          class="flex-1 border border-purple-600 p-3 rounded-xl bg-[#020118] placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#FFCC00] text-base transition-all resize-none"></textarea>
+          class="flex-1 border-3 border-[var(--Violet)] p-3 rounded-xl bg-[var(--Bleu-Foncé)] placeholder-[var(--Gris)] text-base transition-all resize-none"></textarea>
 
         <!-- Actions -->
         <div class="flex flex-col items-center gap-2">
-          <label class="flex items-center gap-1 text-white cursor-pointer">
+          <label class="flex items-center gap-1 text-[var(--Blanc)] cursor-pointer">
             <input type="radio" name="bonneReponse" [checked]="bonneReponse[i]" (change)="choisirBonneReponse(i)"
-              class="accent-[#FFCC00] w-5 h-5" />
-            <i class="fas fa-check-circle text-[#FFCC00]"></i>
+              class="accent-[var(--Violet)] w-5 h-5" />
           </label>
 
           <button (click)="supprimerReponsePopup(i)"
-            class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded-full text-white font-semibold transition-transform duration-300 transform hover:scale-110">
+            class="bg-[var(--Rouge)] hover:bg-red-700 px-3 py-1 rounded-full text-[var(--Blanc)] font-semibold transition-transform duration-300 transform hover:scale-110">
             <i class="fas fa-trash-alt"></i>
           </button>
         </div>
@@ -450,13 +449,13 @@
 
     <!-- Ajouter réponse -->
     <button (click)="ajouterReponsePopup()"
-      class="bg-green-600 hover:bg-green-700 px-5 py-3 rounded-2xl w-full font-bold transition-all duration-300 shadow-md hover:shadow-green-400/50 text-lg flex items-center justify-center gap-2">
+      class="border-3 border-[var(--Violet)] bg-gradient-to-r from-[var(--Bleu)] via-[var(--Violet)] to-[var(--Violet-Foncé)] hover:from-[var(--Violet-Foncé)] hover:via-[var(--Violet-Foncé)] hover:to-[var(--Violet-Foncé)] px-5 py-3 rounded-2xl w-full font-bold transition-all duration-300 text-lg flex items-center justify-center gap-2">
       <i class="fas fa-plus-circle"></i> Ajouter une réponse
     </button>
 
     <!-- Valider QCM -->
     <button (click)="validerQCM()"
-      class="bg-gradient-to-r from-[#FFCC00] to-[#FFAA00] hover:from-[#FFAA00] hover:to-[#FFCC00] px-6 py-4 rounded-2xl w-full font-extrabold text-lg transition-all duration-300 shadow-lg hover:shadow-yellow-400/50 flex items-center justify-center gap-3">
+      class="bg-[var(--Violet-Foncé)] hover:bg-[var(--Violet)] px-6 py-4 rounded-2xl w-full font-extrabold text-lg transition-all duration-300 flex items-center justify-center gap-3">
       <i class="fas fa-check"></i> Valider le QCM
     </button>
 

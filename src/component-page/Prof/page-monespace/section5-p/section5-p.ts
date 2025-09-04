@@ -320,4 +320,8 @@ verifierPrefixe(event: KeyboardEvent) {
   choisirBonneReponse(index: number) {
     this.bonneReponse = this.nouvellesReponses.map((_, j) => j === index);
   }
+  toggleBonneReponse(i: number) {
+    this.bonneReponse[i] = !this.bonneReponse[i];
+  }
+  
 }
