@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 
 
 
+
 @Component({
   selector: 'app-apropos-e',
   standalone: true,
@@ -18,8 +19,7 @@ import { CommonModule } from '@angular/common';
     EngagementE,
     Entete4E,
     FooterE,
-    
-  ],
+],
   templateUrl: './apropos-e.html',
   styleUrls: ['./apropos-e.css'], // <-- corrigé
 })

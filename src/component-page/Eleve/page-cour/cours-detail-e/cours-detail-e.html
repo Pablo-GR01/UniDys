@@ -1,169 +1,120 @@
 <app-header-e></app-header-e>
 
-<!-- ================== BARRE D'AIDE + ACCESSIBILITÉ ================== -->
-<div class="container mx-auto px-4 sm:px-6 md:px-12 py-4 sm:py-6 flex justify-center relative">
-  <div class="w-full max-w-4xl
-              bg-[var(--Bleu)]/95 backdrop-blur-md rounded-2xl shadow-2xl 
-              border border-[var(--Violet)] p-4 sm:p-5 md:p-6">
-    
-    <!-- Barre horizontale responsive -->
-    <div class="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8 py-3 px-2 sm:px-4">
-      
-      <!-- Boutons d'accessibilité -->
-      <ng-container *ngFor="let btn of boutonsAccessibilite">
-        <div class="flex flex-col items-center gap-1 sm:gap-2">
-          <button class="border-2 border-[var(--Violet)]"
-                  (click)="btn.action()"
-                  [title]="btn.title"
-                  [ngClass]="btn.bgClass + ' w-12 sm:w-14 md:w-16 h-12 sm:h-14 md:h-16 rounded-xl shadow-lg flex items-center justify-center hover:scale-110 focus:outline-none focus:ring-4 focus:ring-[var(--Violet)] transition-all duration-200 ease-out'">
-            <i [class]="btn.icon + ' text-white text-sm sm:text-lg md:text-xl'"></i>
-          </button>
-          <span class="text-[10px] sm:text-xs md:text-sm text-[var(--Blanc)] text-center font-medium tracking-wide">
-            {{ btn.label }}
-          </span>
-        </div>
-      </ng-container>
+<div class="max-w-7xl mx-auto p-6 mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8 font-sans">
 
-      <!-- Bouton surlignage -->
-      <div class="flex flex-col items-center gap-1 sm:gap-2 relative">
-        <button (click)="menuSurlignageOuvert = !menuSurlignageOuvert"
-                class="w-12 sm:w-14 md:w-16 h-12 sm:h-14 md:h-16 border-2 border-[var(--Violet)] rounded-xl shadow-lg flex items-center justify-center hover:scale-110 focus:outline-none focus:ring-4 focus:ring-[var(--Violet)] transition-all duration-200 ease-out"
-                title="Surlignage">
-          <i class="fas fa-highlighter text-white text-sm sm:text-lg md:text-xl"></i>
-        </button>
-        <span class="text-[10px] sm:text-xs md:text-sm text-[var(--Blanc)] text-center font-medium tracking-wide">
-          Surligner
-        </span>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Menu déroulant flottant surlignage -->
-<div *ngIf="menuSurlignageOuvert"
-     class="absolute top-[180px] sm:top-[200px] left-1/2 -translate-x-1/2 mt-4 sm:mt-6 
-            bg-[var(--Bleu-Foncé)] rounded-xl shadow-2xl p-3 grid grid-cols-3 sm:grid-cols-6 gap-2 z-50 animate-fadeIn">
-
-  <!-- Flèche -->
-  <div class="absolute w-3 h-3 bg-[var(--Bleu-Foncé)] rotate-45 -top-1 left-1/2 -translate-x-1/2 border-t border-l border-[var(--Violet)]"></div>
-
-  <!-- Couleurs -->
-  <button *ngFor="let couleur of [
-            { code: '#cbbe03', ring: 'yellow-300', nom: 'jaune' },
-            { code: '#cb03c4', ring: 'pink-400', nom: 'rose' },
-            { code: '#0603cb', ring: 'blue-400', nom: 'bleu' },
-            { code: '#1acb03', ring: 'green-400', nom: 'vert' },
-            { code: '#cb7103', ring: 'orange-400', nom: 'orange' },
-            { code: '#7b03cb', ring: 'purple-400', nom: 'violet' }
-          ]"
-          class="w-9 h-9 sm:w-10 sm:h-10 rounded-md shadow-md hover:scale-105 focus:outline-none transition-transform duration-200"
-          [ngStyle]="{ 'background-color': couleur.code }"
-          [ngClass]="'focus:ring-2 focus:ring-' + couleur.ring"
-          (click)="surlignerTexte(couleur.nom); menuSurlignageOuvert = false">
-  </button>
-</div>
-
-<!-- ================== CONTENU COURS + QCM ================== -->
-<div class="container mx-auto px-3 sm:px-4 md:px-6 py-6 flex flex-col lg:flex-row gap-6 lg:gap-8">
-
-  <!-- COURS -->
-  <div class="w-full lg:w-2/3 bg-[var(--Bleu)]/80 backdrop-blur-md text-[var(--Blanc)] 
-              rounded-3xl shadow-2xl border-2 border-[var(--Violet)] p-4 sm:p-6"
-       [ngStyle]="{'font-size.px': texteTaille, 'font-family': policeTexte, 'letter-spacing.px': espacement, 'line-height.em': interligne}">
-    
-    <h2 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold mb-4 sm:mb-6 md:mb-8 
-               text-center text-[var(--Violet)] drop-shadow-lg tracking-wider 
-               pb-2 border-b-4 border-[var(--Violet)] max-w-xl mx-auto flex items-center justify-center gap-2 sm:gap-3">
-      <i class="fa-solid fa-book-open"></i> Détail du cours
+  <!-- ======================= COURS ======================= -->
+  <div class="bg-[var(--Bleu)] text-[var(--Blanc)] rounded-2xl shadow-2xl border border-[var(--Violet)] p-6">
+    <h2 class="text-3xl font-extrabold mb-4 text-center text-[var(--Violet)] drop-shadow-lg">
+      <i class="fa-solid fa-book-open"></i> Cours
     </h2>
 
-    <section *ngIf="contenuHtml" [innerHTML]="contenuHtml"
-         class="max-w-none leading-relaxed
-                [&_img]:mx-auto [&_img]:my-4 [&_img]:rounded-2xl [&_img]:shadow-lg
-                [&_p]:text-justify [&_h1]:text-2xl sm:[&_h1]:text-3xl [&_h2]:text-xl sm:[&_h2]:text-2xl [&_ul]:list-disc [&_ul]:pl-6"
-         aria-label="Contenu du cours">
-    </section>
+    <!-- ================= CONTROLES TEXTE ================= -->
+    <div class="flex flex-col md:flex-row justify-center items-center gap-6 mb-6">
+      <!-- Boutons taille -->
+      <div class="flex items-center gap-4">
+        <button (click)="diminuerTexte()"
+                class="p-2 pl-3 pr-3 bg-[var(--Violet)] rounded-full text-[var(--Blanc)] hover:bg-[var(--Violet-Foncé)] transition">
+          <i class="fas fa-minus"></i>
+        </button>
+        <span class="text-[var(--Blanc)] font-semibold">Taille : {{ texteTaille }}px</span>
+        <button (click)="augmenterTexte()"
+                class="p-2 pl-3 pr-3 bg-[var(--Violet)] rounded-full text-[var(--Blanc)] hover:bg-[var(--Violet-Foncé)] transition">
+          <i class="fas fa-plus"></i>
+        </button>
+      </div>
 
-    <div *ngIf="loading" class="flex flex-col items-center justify-center p-6 sm:p-8 md:p-10">
-      <div class="animate-spin rounded-full h-8 w-8 sm:h-10 sm:w-10 border-b-4 border-[var(--Jaune)]"></div>
-      <span class="mt-4 text-base sm:text-lg font-medium">Chargement du contenu...</span>
+      <!-- Police -->
+      <div class="flex items-center gap-3">
+        <label class="text-[var(--Blanc)] font-semibold">Police :</label>
+        <select [(ngModel)]="policeTexte" (change)="changerPolice()"
+                class="p-2 rounded-lg bg-[var(--Violet)] text-[var(--Blanc)] hover:bg-[var(--Violet-Foncé)] cursor-pointer">
+          <option *ngFor="let font of policesDisponibles" [value]="font">{{ font }}</option>
+        </select>
+      </div>
     </div>
 
-    <div *ngIf="!loading && !contenuHtml" class="text-center p-4 sm:p-6 md:p-8 text-sm sm:text-base md:text-lg font-semibold opacity-70 italic">
-      Aucun contenu disponible pour le moment.
+    <!-- Contenu cours -->
+    <div [ngStyle]="{'font-size.px': texteTaille, 'font-family': policeTexte}">
+      <section *ngIf="contenuHtml" [innerHTML]="contenuHtml"
+               class="prose prose-invert max-w-none leading-relaxed
+                      [&_img]:mx-auto [&_img]:my-4 [&_img]:rounded-xl [&_img]:shadow-md
+                      [&_p]:text-justify [&_h1]:text-3xl [&_h2]:text-2xl [&_ul]:list-disc [&_ul]:pl-6">
+      </section>
+
+      <div *ngIf="loading" class="flex justify-center items-center p-8">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-[var(--Blanc)]"></div>
+        <span class="ml-3 text-[var(--Blanc)]">Chargement du contenu...</span>
+      </div>
+
+      <div *ngIf="!loading && !contenuHtml" class="text-center p-8 text-gray-400">
+        Aucun contenu disponible
+      </div>
     </div>
   </div>
 
-  <!-- QCM -->
-  <div class="w-full lg:w-1/3 bg-[var(--Bleu)]/80 backdrop-blur-md text-[var(--Blanc)] 
-              rounded-3xl shadow-xl border-2 border-[var(--Violet)] p-4 sm:p-6">
-    
-    <!-- Header QCM -->
-    <div class="flex flex-col sm:flex-row justify-between items-center mb-4 sm:mb-6 gap-3 sm:gap-0">
-      <h3 class="text-lg sm:text-xl md:text-2xl font-bold text-[var(--Violet)] flex items-center gap-2 sm:gap-3">
-        <i class="fa-solid fa-clipboard-list"></i> QCM
-      </h3>
-      <span class="text-[var(--Blanc)] font-bold text-xs sm:text-sm md:text-lg 
-                   bg-[var(--Bleu-Foncé)] border border-[var(--Violet)] 
-                   px-2 sm:px-3 md:px-4 py-1 rounded-full shadow">
-        XP total : {{ xptotal }}
-      </span>
-    </div>
+  <!-- ======================= QCM ======================= -->
+  <div class="bg-[var(--Bleu)] rounded-2xl shadow-2xl border border-[var(--Violet)] p-6">
+    <h2 class="text-3xl font-extrabold mb-4 text-center text-[var(--Jaune)] drop-shadow-lg">
+      <i class="fa-solid fa-clipboard-list"></i> QCM
+    </h2>
 
-    <!-- Questions -->
-    <form (ngSubmit)="validerQCM()" #qcmForm="ngForm" novalidate class="space-y-4 sm:space-y-6 md:space-y-8">
-      <fieldset *ngFor="let question of qcm; let questionIndex = index"
-                class="rounded-2xl p-3 sm:p-4 md:p-6 transition-transform duration-300 
-                       hover:scale-[1.02] hover:shadow-2xl relative border-2"
-                [ngClass]="{
-                  'bg-green-900/30 border-[var(--Vert)]': resultat !== null && questionEstJuste(questionIndex),
-                  'bg-red-900/30 border-[var(--Rouge)]': resultat !== null && !questionEstJuste(questionIndex),
-                  'bg-[var(--Bleu)]/80 border-[var(--Violet)]/40': resultat === null
-                }">
-
-        <!-- Question -->
-        <legend class="text-sm sm:text-base md:text-lg font-bold mb-3 sm:mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-3">
-          <div class="flex items-center gap-2 sm:gap-3">
-            <span class="px-2 py-1 bg-[var(--Violet)] rounded-full text-[10px] sm:text-xs md:text-sm font-medium shadow">
-              {{ questionIndex + 1 }}/{{ qcm.length }}
-            </span>
-            <span class="text-[var(--Blanc)] text-sm sm:text-base md:text-lg font-semibold drop-shadow-[0_2px_0px_var(--Violet)]">
-              {{ question.question }}
-            </span>
-          </div>
-          <span class="text-[var(--Blanc)] font-semibold text-[10px] sm:text-xs md:text-sm bg-[var(--Bleu-Foncé)] border border-[var(--Violet)] px-2 sm:px-3 py-1 rounded-lg">
-            {{ question.xp || 0 }} XP
-          </span>
-        </legend>
-
-        <!-- Réponses -->
-        <ul class="space-y-1.5 sm:space-y-2 md:space-y-3">
-          <li *ngFor="let reponse of question.reponses; let reponseIndex = index">
-            <label class="flex items-center gap-2 sm:gap-3 px-2 sm:px-3 md:px-4 py-1.5 sm:py-2 rounded-xl transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md"
-                   [ngClass]="{
-                     'bg-[var(--Vert)] text-white font-semibold': resultat !== null && isBonneReponse(question, reponseIndex),
-                     'bg-[var(--Rouge)] text-white line-through': resultat !== null && !questionEstJuste(questionIndex) && estCoche(questionIndex, reponseIndex) && !isBonneReponse(question, reponseIndex),
-                     'bg-white/10 hover:bg-white/20': resultat === null
-                   }">
-              <input type="radio" name="qcm_{{ questionIndex }}" [value]="reponseIndex"
-                     [(ngModel)]="reponsesUtilisateur[questionIndex]" 
-                     [disabled]="qcmDejaFait || resultat !== null" 
-                     class="accent-[var(--Jaune)] w-4 h-4 sm:w-5 sm:h-5" />
-              <span class="text-xs sm:text-sm md:text-base">{{ reponse }}</span>
-            </label>
-          </li>
-        </ul>
-      </fieldset>
-
-      <!-- Bouton validation -->
-      <div class="flex justify-center mt-3 sm:mt-4 md:mt-6">
-        <button *ngIf="!qcmDejaFait" type="submit"
-          class="px-5 sm:px-6 md:px-8 py-1.5 sm:py-2 md:py-2.5 
-                 bg-[var(--Violet)] text-white font-semibold rounded-full shadow-lg 
-                 hover:bg-[var(--Violet-Foncé)] hover:scale-105 transition">
-          Valider
-        </button>
+    <section *ngIf="qcm.length > 0"
+             class="p-4 bg-gradient-to-b from-[var(--Bleu)] to-[var(--Violet)] rounded-xl shadow-xl border-4 border-[var(--Violet)]">
+      <div class="flex justify-between items-center mb-4">
+        <span class="text-[var(--Jaune)] font-semibold text-2xl">XP total : {{ xptotal }} XP</span>
       </div>
-    </form>
+
+      <form (ngSubmit)="validerQCM()" #qcmForm="ngForm" novalidate class="space-y-6">
+        <fieldset *ngFor="let question of qcm; let questionIndex = index"
+                  [ngClass]="{
+                    'bg-green-900/20 border-l-4 border-[var(--Vert)] shadow-md': resultat !== null && questionEstJuste(questionIndex),
+                    'bg-red-900/20 border-l-4 border-[var(--Rouge)] shadow-md': resultat !== null && !questionEstJuste(questionIndex),
+                    'bg-[var(--Bleu)] border border-[var(--Violet)]/40': resultat === null
+                  }"
+                  class="rounded-xl p-6 transition-all duration-300 hover:scale-[1.01] border-4">
+
+          <legend class="text-lg font-bold text-[var(--Blanc)] mb-4 flex justify-between items-center">
+            <div class="flex items-center gap-2">
+              <span class="px-3 py-1 bg-[var(--Violet)] rounded-full text-sm font-medium">
+                {{ questionIndex + 1 }}/{{ qcm.length }}
+              </span>
+              <span class="text-[var(--Jaune)] text-2xl">{{ question.question || 'Question sans titre' }}</span>
+            </div>
+            <span class="absolute text-[var(--Jaune)] font-semibold text-2xl mt-4"
+                  style="right: 1rem; top: 0.5rem;">
+              {{ question.xp || 0 }} XP
+            </span>
+          </legend>
+
+          <ul class="space-y-3">
+            <li *ngFor="let reponse of question.reponses; let reponseIndex = index">
+              <label class="flex items-center gap-3 px-4 py-2 rounded-lg transition-all duration-200 cursor-pointer"
+                     [ngClass]="{
+                       'bg-[var(--Vert)] text-[var(--Blanc)] font-semibold': resultat !== null && isBonneReponse(question, reponseIndex),
+                       'bg-[var(--Rouge)] text-[var(--Blanc)] line-through': resultat !== null && !questionEstJuste(questionIndex) && estCoche(questionIndex, reponseIndex) && !isBonneReponse(question, reponseIndex),
+                       'bg-white/10 text-[var(--Blanc)] hover:bg-white/20': !(resultat !== null && isBonneReponse(question, reponseIndex)) && !(resultat !== null && !questionEstJuste(questionIndex) && estCoche(questionIndex, reponseIndex) && !isBonneReponse(question, reponseIndex))
+                     }">
+                <input type="radio" name="qcm_{{ questionIndex }}" [value]="reponseIndex"
+                       [(ngModel)]="reponsesUtilisateur[questionIndex]" [disabled]="qcmDejaFait || resultat !== null" />
+                <span>{{ reponse }}</span>
+              </label>
+            </li>
+          </ul>
+
+        </fieldset>
+
+        <div class="flex justify-center mt-6">
+          <button *ngIf="!qcmDejaFait" type="submit"
+                  class="px-8 py-3 bg-[var(--Violet)] text-[var(--Blanc)] font-semibold rounded-full shadow-lg hover:bg-[var(--Violet-Foncé)] active:scale-95 transition duration-200">
+            Valider mes réponses
+          </button>
+
+          <button *ngIf="qcmDejaFait" type="button" (click)="showPopup = true"
+                  class="px-8 py-3 border-4 border-[var(--Jaune)] text-[var(--Blanc)] font-black rounded-full shadow-lg hover:bg-[var(--Violet-Foncé)] active:scale-95 transition duration-200">
+            Voir mes résultats
+          </button>
+        </div>
+      </form>
+    </section>
   </div>
 </div>
