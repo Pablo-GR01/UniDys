@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { HeaderE } from '../../../../component/header-e/header-e';
 import { ProfileService } from '../../../../services/userService/Profile.Service';
 import { Subscription } from 'rxjs';
+import { Icon } from "../../../../component/icon/icon";
 
 interface QcmQuestion {
   question: string;
@@ -26,7 +27,7 @@ interface Cours {
   templateUrl: './cours-detail-e.html',
   styleUrls: ['./cours-detail-e.css'],
   standalone: true,
-  imports: [CommonModule, HeaderE, FormsModule, HttpClientModule],
+  imports: [CommonModule, HeaderE, FormsModule, HttpClientModule, Icon],
 })
 export class CoursDetailE implements OnInit, OnDestroy {
   contenuHtml: SafeHtml | null = null;
@@ -149,7 +150,7 @@ export class CoursDetailE implements OnInit, OnDestroy {
   }
 
   diminuerTexte(): void {
-    if (this.texteTaille > 16) {
+    if (this.texteTaille > 22) {
       this.texteTaille -= 2;
       localStorage.setItem('texteTaille', this.texteTaille.toString());
     }
