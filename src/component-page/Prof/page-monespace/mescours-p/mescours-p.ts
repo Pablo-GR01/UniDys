@@ -8,10 +8,11 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { CoursRefreshService } from '../../../../services/cours-refresh.service';
 
-@Pipe({name: 'filterTitre', standalone: true})
+@Pipe({ name: 'filterTitre', standalone: true })
 export class FilterTitrePipe implements PipeTransform {
   transform(cours: Cours[], prefixe: string): Cours[] {
-    return cours.filter(c => c.titre.startsWith(prefixe));
+    if (!cours || !prefixe) return cours || [];
+    return cours.filter(c => !!c.titre && c.titre.startsWith(prefixe));
   }
 }
 
@@ -34,6 +35,10 @@ export class MescoursP implements OnInit, OnDestroy {
   pdfUrlSanitized: SafeResourceUrl | null = null;
   lienYoutubeModifie: string = '';
 
+  // Champs pour gestion du préfixe / titre modifiable
+  prefixeTitre: string = 'Cours :';
+  titreSansPrefix: string = '';
+  Math = Math;
   // Pagination
   pageCours: number = 1;
   pageExercices: number = 1;
@@ -46,7 +51,7 @@ export class MescoursP implements OnInit, OnDestroy {
     private sanitizer: DomSanitizer,
     private refreshService: CoursRefreshService,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.chargerCoursProf();
@@ -63,19 +68,22 @@ export class MescoursP implements OnInit, OnDestroy {
     const nomProf = localStorage.getItem('nomProf');
     if (!nomProf) { this.cours = []; return; }
     this.http.get<Cours[]>(`http://localhost:3000/api/cours/prof/${encodeURIComponent(nomProf)}`)
-      .subscribe({ next: data => this.cours = data || [], error: err => { console.error(err); this.cours = []; } });
+      .subscribe({
+        next: data => this.cours = data || [],
+        error: err => { console.error(err); this.cours = []; }
+      });
   }
 
   // -------- Pagination --------
   getCoursParPage(prefixe: string, page: number): Cours[] {
-    const filtres = this.cours.filter(c => c.titre.startsWith(prefixe));
+    const filtres = this.cours.filter(c => !!c.titre && c.titre.startsWith(prefixe));
     const start = (page - 1) * this.taillePage;
     return filtres.slice(start, start + this.taillePage);
   }
 
   getNombrePages(prefixe: string): number {
-    const filtres = this.cours.filter(c => c.titre.startsWith(prefixe));
-    return Math.ceil(filtres.length / this.taillePage);
+    const filtres = this.cours.filter(c => !!c.titre && c.titre.startsWith(prefixe));
+    return Math.max(1, Math.ceil(filtres.length / this.taillePage));
   }
 
   pagePrecedente(prefixe: string): void {
@@ -105,16 +113,34 @@ export class MescoursP implements OnInit, OnDestroy {
   }
 
   ouvrirPopupEdition(cours: Cours): void {
+    // clone pour ne pas modifier l'original tant que l'utilisateur n'a pas validé
     this.coursAModifier = { ...cours };
-    this.popupEditionVisible = true;
     this.fichierPdfModifie = null;
     this.lienYoutubeModifie = cours.lienYoutube || '';
+
+    // déterminer le préfixe et la partie modifiable du titre
+    if (this.coursAModifier.titre?.startsWith('Exercice :')) {
+      this.prefixeTitre = 'Exercice :';
+      this.titreSansPrefix = this.coursAModifier.titre.replace(/^Exercice\s*:\s*/i, '').trim();
+    } else if (this.coursAModifier.titre?.startsWith('Cours :')) {
+      this.prefixeTitre = 'Cours :';
+      this.titreSansPrefix = this.coursAModifier.titre.replace(/^Cours\s*:\s*/i, '').trim();
+    } else {
+      // si pas de préfixe connu, considère comme "Cours :"
+      this.prefixeTitre = 'Cours :';
+      this.titreSansPrefix = (this.coursAModifier.titre || '').trim();
+    }
+
+    this.popupEditionVisible = true;
   }
 
   fermerPopupEdition(): void {
     this.popupEditionVisible = false;
     this.coursAModifier = {} as Cours;
     this.fichierPdfModifie = null;
+    this.titreSansPrefix = '';
+    this.prefixeTitre = 'Cours :';
+    this.lienYoutubeModifie = '';
   }
 
   onFileSelected(event: Event): void {
@@ -124,19 +150,32 @@ export class MescoursP implements OnInit, OnDestroy {
 
   validerModificationCours(): void {
     if (!this.coursAModifier?._id) return;
+
+    // reconstruire le titre complet avec le préfixe figé
+    const titreComplet = `${this.prefixeTitre} ${this.titreSansPrefix}`.trim();
+
     const formData = new FormData();
-    formData.append('titre', this.coursAModifier.titre);
+    formData.append('titre', titreComplet);
+    formData.append('matiere', this.coursAModifier.matiere || '');
     formData.append('lienYoutube', this.lienYoutubeModifie || '');
     if (this.fichierPdfModifie) formData.append('fichierPdf', this.fichierPdfModifie);
 
     this.http.put(`http://localhost:3000/api/cours/${this.coursAModifier._id}`, formData)
-      .subscribe({ next: () => { this.fermerPopupEdition(); this.refreshService.demanderRafraichissement(); },
-                   error: err => console.error(err) });
+      .subscribe({
+        next: () => {
+          this.fermerPopupEdition();
+          this.refreshService.demanderRafraichissement();
+        },
+        error: err => console.error(err)
+      });
   }
 
   supprimerCours(cours: Cours): void {
     if (!confirm(`Supprimer le cours "${cours.titre}" ?`)) return;
-    this.http.delete(`http://localhost:3000/api/cours/${cours._id}`).subscribe({ next: () => this.chargerCoursProf() });
+    this.http.delete(`http://localhost:3000/api/cours/${cours._id}`).subscribe({
+      next: () => this.chargerCoursProf(),
+      error: err => console.error(err)
+    });
   }
 
   ouvrirLienYoutube(lien: string | null | undefined): void {
@@ -154,6 +193,7 @@ export class MescoursP implements OnInit, OnDestroy {
   }
 
   getImageParMatiere(matiere: string): string {
+    if (!matiere) return 'assets/img/default.jpg';
     switch (matiere.toLowerCase()) {
       case 'maths': return 'assets/coursmaths.png';
       case 'français': return 'assets/coursfrançais.png';

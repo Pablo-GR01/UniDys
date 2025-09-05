@@ -35,6 +35,14 @@ export class CoursDetailE implements OnInit, OnDestroy {
   cours: Cours | null = null;
   reponsesUtilisateur: (number | null)[] = [];
   reponsesSauvegardees: number[] = [];
+  contrasteActif = false;
+  grasActif = false;
+  italiqueActif = false;
+  soulignerActif = false;
+  barrerActif = false;
+  surlignerActif = false;
+  couleurTexte = '#ffffff';
+  couleurFond = '#000000';
 
   idCours: string | null = null;
   userId: string | null = null;
@@ -49,19 +57,11 @@ export class CoursDetailE implements OnInit, OnDestroy {
   private apiBase = 'http://localhost:3000/api';
   private refreshSub: Subscription | null = null;
 
-  // --- contrôle texte et police ---
   texteTaille = 22;
   policeTexte = 'Arial';
   policesDisponibles: string[] = [
-    'Arial',
-    'Times New Roman',
-    'Georgia',
-    'Verdana',
-    'Courier New',
-    'Trebuchet MS',
-    'Roboto',
-    'Open Sans',
-    'Comic Sans MS'
+    'Arial', 'Times New Roman', 'Georgia', 'Verdana',
+    'Courier New', 'Trebuchet MS', 'Roboto', 'Open Sans', 'Comic Sans MS'
   ];
 
   constructor(
@@ -101,7 +101,6 @@ export class CoursDetailE implements OnInit, OnDestroy {
 
   private chargerCoursEtQcm(): void {
     this.loading = true;
-
     this.http
       .get<{ html: string; qcm: QcmQuestion[]; coursInfo: Cours }>(
         `${this.apiBase}/cours/complet/${this.idCours}`
@@ -111,25 +110,21 @@ export class CoursDetailE implements OnInit, OnDestroy {
           this.contenuHtml = this.sanitizer.bypassSecurityTrustHtml(html);
           this.qcm = qcm;
           this.cours = coursInfo;
-
           if (!this.qcmDejaFait) this.reponsesUtilisateur = qcm.map(() => null);
 
-          // Vérifier si l'utilisateur a déjà répondu
           if (this.userId && this.qcm.length > 0) {
-            this.http
-              .get<any>(`${this.apiBase}/qcm/resultats/${this.idCours}/${this.userId}`)
-              .subscribe({
-                next: (res) => {
-                  if (res) {
-                    this.qcmDejaFait = true;
-                    this.reponsesSauvegardees = res.reponses || [];
-                    this.resultat = res.score ?? 0;
-                    this.xp = res.xpGagne ?? 0;
-                    this.reponsesUtilisateur = [...this.reponsesSauvegardees];
-                  }
-                },
-                error: () => {}
-              });
+            this.http.get<any>(`${this.apiBase}/qcm/resultats/${this.idCours}/${this.userId}`).subscribe({
+              next: (res) => {
+                if (res) {
+                  this.qcmDejaFait = true;
+                  this.reponsesSauvegardees = res.reponses || [];
+                  this.resultat = res.score ?? 0;
+                  this.xp = res.xpGagne ?? 0;
+                  this.reponsesUtilisateur = [...this.reponsesSauvegardees];
+                }
+              },
+              error: () => {}
+            });
           }
 
           this.loading = false;
@@ -141,7 +136,6 @@ export class CoursDetailE implements OnInit, OnDestroy {
       });
   }
 
-  // --- contrôles texte ---
   augmenterTexte(): void {
     if (this.texteTaille < 38) {
       this.texteTaille += 2;
@@ -150,7 +144,7 @@ export class CoursDetailE implements OnInit, OnDestroy {
   }
 
   diminuerTexte(): void {
-    if (this.texteTaille > 22) {
+    if (this.texteTaille > 16) {
       this.texteTaille -= 2;
       localStorage.setItem('texteTaille', this.texteTaille.toString());
     }
@@ -159,6 +153,9 @@ export class CoursDetailE implements OnInit, OnDestroy {
   changerPolice(): void {
     localStorage.setItem('policeTexte', this.policeTexte);
   }
+
+  changerCouleurTexte(couleur: string) { this.couleurTexte = couleur; }
+  changerCouleurFond(couleur: string) { this.couleurFond = couleur; }
 
   estCoche(indexQ: number, indexR: number): boolean {
     return this.qcmDejaFait
@@ -176,14 +173,12 @@ export class CoursDetailE implements OnInit, OnDestroy {
 
   validerQCM(): void {
     if (this.qcmDejaFait) return;
-
     for (let i = 0; i < this.qcm.length; i++) {
       if (this.reponsesUtilisateur[i] === null) {
         alert(`Réponds à la question ${i + 1}`);
         return;
       }
     }
-
     let score = 0;
     let xpTotal = 0;
     this.qcm.forEach((q, i) => {
@@ -204,10 +199,7 @@ export class CoursDetailE implements OnInit, OnDestroy {
         : '👍 Bien essayé, mais tu peux faire mieux !';
 
     this.qcmDejaFait = true;
-    this.reponsesSauvegardees = this.reponsesUtilisateur.filter(
-      (r): r is number => r !== null
-    );
-    
+    this.reponsesSauvegardees = this.reponsesUtilisateur.filter((r): r is number => r !== null);
     this.showPopup = true;
 
     this.sauvegarderQCM();
@@ -216,46 +208,100 @@ export class CoursDetailE implements OnInit, OnDestroy {
 
   private sauvegarderQCM(): void {
     if (!this.userId || !this.idCours) return;
-
     const reponsesFinales = this.reponsesUtilisateur.filter((r): r is number => r !== null);
-
-    this.http
-      .post(`${this.apiBase}/qcm/resultats`, {
-        userId: this.userId,
-        qcmId: this.idCours,
-        score: this.resultat,
-        reponses: reponsesFinales,
-        xpGagne: this.xp,
-      })
-      .subscribe({
-        next: () => console.log('✅ Résultats QCM sauvegardés'),
-        error: (err) => console.error('❌ Erreur sauvegarde QCM', err)
-      });
+    this.http.post(`${this.apiBase}/qcm/resultats`, {
+      userId: this.userId,
+      qcmId: this.idCours,
+      score: this.resultat,
+      reponses: reponsesFinales,
+      xpGagne: this.xp,
+    }).subscribe({
+      next: () => console.log('✅ Résultats QCM sauvegardés'),
+      error: (err) => console.error('❌ Erreur sauvegarde QCM', err)
+    });
   }
 
   private ajouterXPServeur(): void {
     if (!this.userId || this.xp <= 0) return;
-
-    this.http.post<{ updatedXP: number }>(
-      `${this.apiBase}/users/${this.userId}/ajouterXP`,
-      { xp: this.xp }
-    ).subscribe({
-      next: (res) => {
-        const user = this.profileService.getUser();
-        if (user) {
-          user.xp = res.updatedXP;
-          localStorage.setItem('user', JSON.stringify(user));
-        }
-      },
-      error: (err) => console.error('❌ Erreur ajout XP serveur', err)
-    });
+    this.http.post<{ updatedXP: number }>(`${this.apiBase}/users/${this.userId}/ajouterXP`, { xp: this.xp })
+      .subscribe({
+        next: (res) => {
+          const user = this.profileService.getUser();
+          if (user) {
+            user.xp = res.updatedXP;
+            localStorage.setItem('user', JSON.stringify(user));
+          }
+        },
+        error: (err) => console.error('❌ Erreur ajout XP serveur', err)
+      });
   }
 
-  fermerPopup(): void {
-    this.showPopup = false;
+  fermerPopup(): void { this.showPopup = false; }
+
+  get xptotal(): number { return this.qcm.reduce((t, q) => t + (q.xp || 0), 0); }
+
+  // --- Accessibilité ---
+  changerContraste() { this.contrasteActif = !this.contrasteActif; }
+  toggleGras() { this.grasActif = !this.grasActif; }
+  toggleItalique() { this.italiqueActif = !this.italiqueActif; }
+  toggleSouligner() { this.soulignerActif = !this.soulignerActif; }
+  toggleBarrer() { this.barrerActif = !this.barrerActif; }
+  toggleSurligner() { this.surlignerActif = !this.surlignerActif; }
+
+  lireTexte() {
+    const synth = window.speechSynthesis;
+    const texte = document.body.innerText;
+    const utterance = new SpeechSynthesisUtterance(texte);
+    synth.speak(utterance);
   }
 
-  get xptotal(): number {
-    return this.qcm.reduce((t, q) => t + (q.xp || 0), 0);
+  resetParametres() {
+    this.texteTaille = 22;
+    this.policeTexte = 'Arial';
+    this.contrasteActif = false;
+    this.grasActif = false;
+    this.italiqueActif = false;
+    this.soulignerActif = false;
+    this.barrerActif = false;
+    this.surlignerActif = false;
+    this.couleurTexte = '#ffffff';
+    this.couleurFond = '#000000';
   }
+
+  applyStyle(style: string, value?: string) {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+  
+    const range = selection.getRangeAt(0);
+    if (range.collapsed) return; // rien n'est sélectionné
+  
+    const span = document.createElement("span");
+  
+    switch (style) {
+      case 'gras':
+        span.style.fontWeight = "bold";
+        break;
+      case 'italique':
+        span.style.fontStyle = "italic";
+        break;
+      case 'souligne':
+        span.style.textDecoration = "underline";
+        break;
+      case 'barre':
+        span.style.textDecoration = "line-through";
+        break;
+      case 'surligne':
+        span.style.backgroundColor = value || "yellow";
+        break;
+      case 'couleur':
+        span.style.color = value || "red";
+        break;
+    }
+  
+    range.surroundContents(span);
+  }
+  
+  
 }
+
+
