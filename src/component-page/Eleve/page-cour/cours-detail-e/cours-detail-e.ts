@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HeaderE } from '../../../../component/header-e/header-e';
 import { ProfileService } from '../../../../services/userService/Profile.Service';
-import { Subscription } from 'rxjs';
+import { Subscription, interval } from 'rxjs';
 import { Icon } from "../../../../component/icon/icon";
 
 /* ========================= INTERFACES ========================= */
@@ -90,20 +90,29 @@ export class CoursDetailE implements OnInit, OnDestroy {
     private renderer: Renderer2
   ) {}
 
-  /* ========================= CYCLE DE VIE ========================= */
-  ngOnInit(): void {
-    this.idCours = this.route.snapshot.paramMap.get('id');
-    const user = this.profileService.getUser();
-    this.userId = user?._id || null;
+ /* ========================= CYCLE DE VIE ========================= */
+ngOnInit(): void {
+  this.idCours = this.route.snapshot.paramMap.get('id');
+  const user = this.profileService.getUser();
+  this.userId = user?._id || null;
 
-    this.restaurerPreferences();
-    if (!this.idCours) { this.loading = false; return; }
-    this.chargerCoursEtQcm();
+  this.restaurerPreferences();
+
+  if (!this.idCours) { 
+    this.loading = false; 
+    return; 
   }
 
-  ngOnDestroy(): void {
-    if (this.refreshSub) this.refreshSub.unsubscribe();
+  // ✅ Chargement immédiat à 0s (une seule fois)
+  this.chargerCoursEtQcm();
+}
+
+ngOnDestroy(): void {
+  if (this.refreshSub) {
+    this.refreshSub.unsubscribe();
   }
+}
+
 
   /* ========================= RESTAURER PREFERENCES ========================= */
   private restaurerPreferences(): void {
@@ -151,7 +160,7 @@ export class CoursDetailE implements OnInit, OnDestroy {
     if(this.texteTaille<38){this.texteTaille+=2; localStorage.setItem('texteTaille', this.texteTaille.toString());} 
   }
   diminuerTexte(): void { 
-    if(this.texteTaille>16){this.texteTaille-=2; localStorage.setItem('texteTaille', this.texteTaille.toString());} 
+    if(this.texteTaille>22){this.texteTaille-=2; localStorage.setItem('texteTaille', this.texteTaille.toString());} 
   }
   changerPolice(): void { 
     localStorage.setItem('policeTexte', this.policeTexte); 
@@ -229,15 +238,14 @@ export class CoursDetailE implements OnInit, OnDestroy {
           case 'violet': span.style.backgroundColor = "#dda0dd"; span.style.color = "#000"; break;
           default: span.style.backgroundColor = "yellow"; span.style.color = "#000";
         }
-        span.style.padding = "3px 5px"; // padding vertical et horizontal
-        span.style.borderRadius = "5px";   // coins arrondis
-        span.style.margin = "0.1rem";         // petit espace autour
+        span.style.padding = "3px 5px";
+        span.style.borderRadius = "5px";
+        span.style.margin = "0.1rem";
         break;
 
       case'couleur': span.style.color = value || "red"; break;
     }
 
-    // Appliquer le style sur la sélection
     try{
       range.surroundContents(span);
     }catch{
@@ -267,7 +275,6 @@ export class CoursDetailE implements OnInit, OnDestroy {
     localStorage.setItem('texteTaille', this.texteTaille.toString());
     localStorage.setItem('policeTexte', this.policeTexte);
 
-    // Supprimer toutes les mises en forme appliquées
     const contenu = document.querySelector('.user-highlight');
     if (contenu) {
       const spans = contenu.querySelectorAll('span');
