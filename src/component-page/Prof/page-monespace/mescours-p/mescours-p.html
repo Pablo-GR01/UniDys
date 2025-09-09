@@ -80,10 +80,7 @@
             </div>
           </div>
 
-          <div *ngIf="getCoursParPage('Cours :', pageCours).length === 0"
-            class="text-center text-sm text-[var(--Blanc)] py-6">
-            Aucun cours trouvé.
-          </div>
+          
         </div>
 
         <!-- pagination -->
@@ -172,9 +169,10 @@
           </div>
 
           <div *ngIf="getCoursParPage('Exercice :', pageExercices).length === 0"
-            class="text-center text-sm text-[var(--Blanc)] py-6">
+              class="flex items-center justify-center text-center text-xl text-[var(--Blanc)] py-6 col-span-full">
             Aucun exercice trouvé.
           </div>
+
         </div>
 
         <!-- pagination -->

@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HeaderE } from '../../../../component/header-e/header-e';
 import { ProfileService } from '../../../../services/userService/Profile.Service';
-import { Subscription, interval } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Icon } from "../../../../component/icon/icon";
 
 /* ========================= INTERFACES ========================= */
@@ -32,8 +32,6 @@ interface Cours {
   imports: [CommonModule, HeaderE, FormsModule, HttpClientModule, Icon],
 })
 export class CoursDetailE implements OnInit, OnDestroy {
-
-  /* ========================= VARIABLES PRINCIPALES ========================= */
   contenuHtml: SafeHtml | null = null;
   qcm: QcmQuestion[] = [];
   cours: Cours | null = null;
@@ -71,17 +69,32 @@ export class CoursDetailE implements OnInit, OnDestroy {
   ];
 
   couleursSurligneur = [
-    { nom: 'Jaune', code: 'jaune' },
-    { nom: 'Vert', code: 'vert' },
-    { nom: 'Bleu', code: 'bleu' },
-    { nom: 'Rose', code: 'rose' },
-    { nom: 'Orange', code: 'orange' },
-    { nom: 'Violet', code: 'violet' },
+    { nom: 'Jaune', code: '#a59503' },
+    { nom: 'Jaune clair', code: '#ecd505' },
+    { nom: 'Jaune foncé', code: '#645a01' },
+    { nom: 'Vert', code: '#168a02' },
+    { nom: 'Vert clair', code: '#28f604' },
+    { nom: 'Vert foncé', code: '#083700' },
+    { nom: 'Bleu', code: '#0b0193' },
+    { nom: 'Bleu clair', code: '#1404ea' },
+    { nom: 'Bleu foncé', code: '#06014f' },
+    { nom: 'Rose', code: '#8f048d' },
+    { nom: 'Rose clair', code: '#fc03f8' },
+    { nom: 'Rose foncé', code: '#4f014e' },
+    { nom: 'Orange', code: '#a46903' },
+    { nom: 'Orange clair', code: '#e59203' },
+    { nom: 'Orange foncé', code: '#573802' },
+    { nom: 'Violet', code: '#4b0394' },
+    { nom: 'Violet clair', code: '#7805ec' },
+    { nom: 'Violet foncé', code: '#250148' },
+    { nom: 'Rouge', code: '#860202' },
+    { nom: 'Rouge clair', code: '#ec0202' },
+    { nom: 'Rouge foncé', code: '#410101' },
   ];
 
-  couleurSurligneur = 'jaune';
+  // On stocke directement le code hex de la couleur sélectionnée
+  couleurSurligneur = this.couleursSurligneur[0].code;
 
-  /* ========================= CONSTRUCTEUR ========================= */
   constructor(
     private route: ActivatedRoute,
     private http: HttpClient,
@@ -90,40 +103,31 @@ export class CoursDetailE implements OnInit, OnDestroy {
     private renderer: Renderer2
   ) {}
 
- /* ========================= CYCLE DE VIE ========================= */
-ngOnInit(): void {
-  this.idCours = this.route.snapshot.paramMap.get('id');
-  const user = this.profileService.getUser();
-  this.userId = user?._id || null;
+  ngOnInit(): void {
+    this.idCours = this.route.snapshot.paramMap.get('id');
+    const user = this.profileService.getUser();
+    this.userId = user?._id || null;
+    this.restaurerPreferences();
 
-  this.restaurerPreferences();
+    if (!this.idCours) {
+      this.loading = false;
+      return;
+    }
 
-  if (!this.idCours) { 
-    this.loading = false; 
-    return; 
+    this.chargerCoursEtQcm();
   }
 
-  // ✅ Chargement immédiat à 0s (une seule fois)
-  this.chargerCoursEtQcm();
-}
-
-ngOnDestroy(): void {
-  if (this.refreshSub) {
-    this.refreshSub.unsubscribe();
+  ngOnDestroy(): void {
+    if (this.refreshSub) this.refreshSub.unsubscribe();
   }
-}
 
-
-  /* ========================= RESTAURER PREFERENCES ========================= */
   private restaurerPreferences(): void {
     const savedTaille = localStorage.getItem('texteTaille');
     if (savedTaille) this.texteTaille = parseInt(savedTaille, 10);
-
     const savedPolice = localStorage.getItem('policeTexte');
     if (savedPolice) this.policeTexte = savedPolice;
   }
 
-  /* ========================= CHARGEMENT COURS ET QCM ========================= */
   private chargerCoursEtQcm(): void {
     this.loading = true;
     this.http
@@ -151,105 +155,73 @@ ngOnDestroy(): void {
           }
           this.loading = false;
         },
-        error: (err) => { console.error('Erreur chargement cours:', err); this.loading = false; }
+        error: (err) => {
+          console.error('Erreur chargement cours:', err);
+          this.loading = false;
+        }
       });
   }
 
-  /* ========================= MODIFICATION TAILLE ET POLICE ========================= */
-  augmenterTexte(): void { 
-    if(this.texteTaille<38){this.texteTaille+=2; localStorage.setItem('texteTaille', this.texteTaille.toString());} 
-  }
-  diminuerTexte(): void { 
-    if(this.texteTaille>22){this.texteTaille-=2; localStorage.setItem('texteTaille', this.texteTaille.toString());} 
-  }
-  changerPolice(): void { 
-    localStorage.setItem('policeTexte', this.policeTexte); 
-  }
-  changerContraste() { 
-    this.contrasteActif = !this.contrasteActif; 
+  augmenterTexte(): void {
+    if (this.texteTaille < 38) {
+      this.texteTaille += 2;
+      localStorage.setItem('texteTaille', this.texteTaille.toString());
+    }
   }
 
-  /* ========================= QCM ========================= */
-  estCoche(indexQ: number, indexR: number): boolean {
-    return this.qcmDejaFait ? this.reponsesSauvegardees[indexQ] === indexR : this.reponsesUtilisateur[indexQ] === indexR;
-  }
-  questionEstJuste(indexQ: number): boolean { return this.reponsesUtilisateur[indexQ] === this.qcm[indexQ]?.bonneReponse; }
-  isBonneReponse(question: QcmQuestion, indexR: number): boolean { return indexR === question.bonneReponse; }
-
-  validerQCM(): void {
-    if(this.qcmDejaFait) return;
-    for(let i=0;i<this.qcm.length;i++){if(this.reponsesUtilisateur[i]===null){alert(`Réponds à la question ${i+1}`); return;}}
-    let score=0,xpTotal=0;
-    this.qcm.forEach((q,i)=>{if(this.reponsesUtilisateur[i]===q.bonneReponse){score++; xpTotal+=q.xp||0;}});
-    this.resultat=score; this.xp=xpTotal;
-    this.message=score===this.qcm.length?'🎉 Bravo ! Toutes les réponses sont correctes.':score===0?'❌ Perdu ! Aucune bonne réponse.':'👍 Bien essayé, mais tu peux faire mieux !';
-    this.qcmDejaFait=true; 
-    this.reponsesSauvegardees=this.reponsesUtilisateur.filter((r):r is number=>r!==null); 
-    this.showPopup=true;
-    this.sauvegarderQCM(); 
-    this.ajouterXPServeur();
+  diminuerTexte(): void {
+    if (this.texteTaille > 22) {
+      this.texteTaille -= 2;
+      localStorage.setItem('texteTaille', this.texteTaille.toString());
+    }
   }
 
-  private sauvegarderQCM(): void {
-    if(!this.userId || !this.idCours) return;
-    const reponsesFinales=this.reponsesUtilisateur.filter((r):r is number=>r!==null);
-    this.http.post(`${this.apiBase}/qcm/resultats`,{userId:this.userId,qcmId:this.idCours,score:this.resultat,reponses:reponsesFinales,xpGagne:this.xp}).subscribe();
+  changerPolice(): void {
+    localStorage.setItem('policeTexte', this.policeTexte);
   }
 
-  private ajouterXPServeur(): void {
-    if(!this.userId || this.xp<=0) return;
-    this.http.post<{updatedXP:number}>(`${this.apiBase}/users/${this.userId}/ajouterXP`,{xp:this.xp}).subscribe(res=>{
-      const user=this.profileService.getUser(); 
-      if(user){user.xp=res.updatedXP; localStorage.setItem('user',JSON.stringify(user));}
-    });
+  changerContraste() {
+    this.contrasteActif = !this.contrasteActif;
   }
 
-  fermerPopup(): void { this.showPopup=false; }
-  get xptotal(): number { return this.qcm.reduce((t,q)=>t+(q.xp||0),0); }
+  /* ========================= Surlignage ========================= */
+  changerCouleurSurligneur(codeHex: string) {
+    this.couleurSurligneur = codeHex;
+  }
 
-  /* ========================= BARRE D'OUTILS DE STYLE ========================= */
   toggleGras() { this.applyStyle("gras"); }
   toggleItalique() { this.applyStyle("italique"); }
   toggleSouligner() { this.applyStyle("souligne"); }
   toggleBarrer() { this.applyStyle("barre"); }
   toggleSurligner() { this.applyStyle("surligne", this.couleurSurligneur); }
 
-  applyStyle(style:string,value?:string){
-    const selection=window.getSelection();
-    if(!selection||selection.rangeCount===0) return;
-    const range=selection.getRangeAt(0);
-    if(range.collapsed) return;
-    const span=document.createElement("span");
+  applyStyle(style: string, value?: string) {
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    const range = selection.getRangeAt(0);
+    if (range.collapsed) return;
+    const span = document.createElement("span");
 
-    switch(style){
-      case'gras': span.style.fontWeight="bold"; break;
-      case'italique': span.style.fontStyle="italic"; break;
-      case'souligne': span.style.textDecoration="underline"; break;
-      case'barre': span.style.textDecoration="line-through"; break;
-
-      /* ========================= SURBRILLAGE ========================= */
+    switch (style) {
+      case 'gras': span.style.fontWeight = "bold"; break;
+      case 'italique': span.style.fontStyle = "italic"; break;
+      case 'souligne': span.style.textDecoration = "underline"; break;
+      case 'barre': span.style.textDecoration = "line-through"; break;
       case 'surligne':
-        switch (value) {
-          case 'jaune': span.style.backgroundColor = "#ffff00"; span.style.color = "#000"; break;
-          case 'vert': span.style.backgroundColor = "#90ee90"; span.style.color = "#000"; break;
-          case 'bleu': span.style.backgroundColor = "#add8e6"; span.style.color = "#000"; break;
-          case 'rose': span.style.backgroundColor = "#ffb6c1"; span.style.color = "#000"; break;
-          case 'orange': span.style.backgroundColor = "#ffa500"; span.style.color = "#000"; break;
-          case 'violet': span.style.backgroundColor = "#dda0dd"; span.style.color = "#000"; break;
-          default: span.style.backgroundColor = "yellow"; span.style.color = "#000";
-        }
+        const couleur = value || '#a59503';
+        span.style.backgroundColor = couleur;
+        span.style.color = this.getTextColor(couleur);
         span.style.padding = "3px 5px";
         span.style.borderRadius = "5px";
         span.style.margin = "0.1rem";
         break;
-
-      case'couleur': span.style.color = value || "red"; break;
+      case 'couleur': span.style.color = value || "red"; break;
     }
 
-    try{
+    try {
       range.surroundContents(span);
-    }catch{
-      const content=range.extractContents();
+    } catch {
+      const content = range.extractContents();
       span.appendChild(content);
       range.insertNode(span);
     }
@@ -258,7 +230,94 @@ ngOnDestroy(): void {
     selection.addRange(range);
   }
 
-  /* ========================= RÉINITIALISER LA BARRE D'OUTILS ========================= */
+  getTextColor(hexColor: string): string {
+    if (!hexColor) return '#000';
+    if (hexColor.startsWith('var(')) {
+      const varName = hexColor.slice(4, -1).trim();
+      const style = getComputedStyle(document.documentElement).getPropertyValue(varName);
+      hexColor = style || '#000';
+    }
+    const r = parseInt(hexColor.substr(1, 2), 16);
+    const g = parseInt(hexColor.substr(3, 2), 16);
+    const b = parseInt(hexColor.substr(5, 2), 16);
+    const luminance = 0.299 * r + 0.587 * g + 0.114 * b;
+    return luminance > 186 ? '#000' : '#fff';
+  }
+
+  /* ========================= QCM ========================= */
+  estCoche(indexQ: number, indexR: number): boolean {
+    return this.qcmDejaFait ? this.reponsesSauvegardees[indexQ] === indexR : this.reponsesUtilisateur[indexQ] === indexR;
+  }
+
+  questionEstJuste(indexQ: number): boolean {
+    return this.reponsesUtilisateur[indexQ] === this.qcm[indexQ]?.bonneReponse;
+  }
+
+  isBonneReponse(question: QcmQuestion, indexR: number): boolean {
+    return indexR === question.bonneReponse;
+  }
+
+  validerQCM(): void {
+    if (this.qcmDejaFait) return;
+    for (let i = 0; i < this.qcm.length; i++) {
+      if (this.reponsesUtilisateur[i] === null) {
+        alert(`Réponds à la question ${i + 1}`);
+        return;
+      }
+    }
+    let score = 0, xpTotal = 0;
+    this.qcm.forEach((q, i) => {
+      if (this.reponsesUtilisateur[i] === q.bonneReponse) {
+        score++;
+        xpTotal += q.xp || 0;
+      }
+    });
+    this.resultat = score;
+    this.xp = xpTotal;
+    this.message =
+      score === this.qcm.length
+        ? '🎉 Bravo ! Toutes les réponses sont correctes.'
+        : score === 0
+        ? '❌ Perdu ! Aucune bonne réponse.'
+        : '👍 Bien essayé, mais tu peux faire mieux !';
+    this.qcmDejaFait = true;
+    this.reponsesSauvegardees = this.reponsesUtilisateur.filter((r): r is number => r !== null);
+    this.showPopup = true;
+    this.sauvegarderQCM();
+    this.ajouterXPServeur();
+  }
+
+  private sauvegarderQCM(): void {
+    if (!this.userId || !this.idCours) return;
+    const reponsesFinales = this.reponsesUtilisateur.filter((r): r is number => r !== null);
+    this.http.post(`${this.apiBase}/qcm/resultats`, {
+      userId: this.userId,
+      qcmId: this.idCours,
+      score: this.resultat,
+      reponses: reponsesFinales,
+      xpGagne: this.xp
+    }).subscribe();
+  }
+
+  private ajouterXPServeur(): void {
+    if (!this.userId || this.xp <= 0) return;
+    this.http.post<{ updatedXP: number }>(`${this.apiBase}/users/${this.userId}/ajouterXP`, { xp: this.xp }).subscribe(res => {
+      const user = this.profileService.getUser();
+      if (user) {
+        user.xp = res.updatedXP;
+        localStorage.setItem('user', JSON.stringify(user));
+      }
+    });
+  }
+
+  fermerPopup(): void {
+    this.showPopup = false;
+  }
+
+  get xptotal(): number {
+    return this.qcm.reduce((t, q) => t + (q.xp || 0), 0);
+  }
+
   resetParametres() {
     this.texteTaille = 22;
     this.policeTexte = 'Arial';
@@ -270,7 +329,7 @@ ngOnDestroy(): void {
     this.surlignerActif = false;
     this.couleurTexte = '#000000';
     this.couleurFond = '#ffffff';
-    this.couleurSurligneur = '';
+    this.couleurSurligneur = this.couleursSurligneur[0].code;
 
     localStorage.setItem('texteTaille', this.texteTaille.toString());
     localStorage.setItem('policeTexte', this.policeTexte);
@@ -280,12 +339,9 @@ ngOnDestroy(): void {
       const spans = contenu.querySelectorAll('span');
       spans.forEach(span => {
         const parent = span.parentNode;
-        while (span.firstChild) {
-          parent?.insertBefore(span.firstChild, span);
-        }
+        while (span.firstChild) parent?.insertBefore(span.firstChild, span);
         parent?.removeChild(span);
       });
     }
   }
-
 }
